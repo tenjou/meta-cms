@@ -1,0 +1,91 @@
+* {
+    padding: 0;
+    margin: 0;
+}
+
+body {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: #ccc;
+    font-size: 12px;
+    font-family: "Open Sans"
+}
+
+button {
+    padding: 2px;
+    margin: 2px;
+    min-width: 32px;
+    font-size: 10px;
+    font-weight: bold;
+    text-transform: uppercase;
+    cursor: pointer;
+}
+
+list {
+    display: flex;
+    flex-direction: column;
+}
+list > header {
+    padding: 4px;
+    font-size: 10px;
+    font-weight: bold;
+    text-transform: uppercase;
+    color: #777;
+}
+list item {
+    display: flex;
+    padding: 0 3px 0 3px;    
+}
+list a {
+    flex: 1;
+    color: #222;
+    font-weight: 600;
+    font-size: 12px; 
+    cursor: pointer;
+    text-decoration: none;
+}
+list a:hover {
+    text-decoration: underline;
+}
+
+layout {
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+}
+
+panel {
+    flex: 1;
+}
+panel:not(:first-child) {
+    border-left: 1px solid #888;
+}
+
+sheet {
+    display: flex;
+}
+
+sheet {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+sheet header {
+    display: flex;
+    flex: 1;
+    padding: 2px 2px 4px 9px;    
+}
+sheet header item {
+    flex: 1;
+}
+sheet content {
+    display: flex;
+    flex-direction: column;
+}
+sheet content item {
+    display: flex;
+}
+sheet content item field {
+    flex: 1;    
+}
