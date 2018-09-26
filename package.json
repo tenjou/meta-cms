@@ -5,12 +5,13 @@
 	"author": "Arturs Šefers",
 	"main": "src/index.js",
 	"scripts": {
-		"build": "build-replica src/index.js -i index.html -t -u",
-		"dev": "build-replica src/index.js -i index.html -t -s 8030 8031 -si -l ../../libs/meta2d meta -l ../../libs/wabi"
+		"build": "node_modules/.bin/build-replica src/index.js -i index.html -t -u",
+		"dev": "node_modules/.bin/build-replica src/index.js -i index.html -t -s 8030 8031 -si -l ../../libs/meta2d meta -l ../../libs/wabi"
 	},
 	"keywords": [],
 	"license": "MIT",
 	"dependencies": {
+		"build-replica": "^0.2.59",
 		"wabi": "^0.10.7"
 	}
 }
