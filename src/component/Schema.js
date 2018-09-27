@@ -4,6 +4,10 @@ import TextInput from "./TextInput"
 import Select from "./Select"
 
 const SchemaItem = component({
+    mount() {
+        this.propsRemove = { onclick: this.handleRemove.bind(this) }
+    },
+
     render() {
         elementOpen("item")
             elementOpen("field")
@@ -29,15 +33,23 @@ const SchemaItem = component({
                         }
                     })
                 elementClose("value")
-            elementClose("field")            
+            elementClose("field")
+            
+            elementOpen("button", this.propsRemove)
+                text("Remove")
+            elementClose("button")
         elementClose("item")
+    },
+
+    handleRemove(event) {
+        store.remove(this.bind)
     }
 })
 
 const Schema = component({
     mount() {
-        this.$value = []
-        store.set("state/popup/cache", this.$value)
+        store.set("state/popup/cache", [])
+        this.bind = "state/popup/cache"
         this.handleAddFunc = this.handleAdd.bind(this)
     },
 
