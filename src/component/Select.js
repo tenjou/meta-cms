@@ -28,7 +28,7 @@ const Select = component({
     },
 
     handleChange(event) {
-        console.log(event.srcElement.value)
+        this.$value = event.srcElement.value
     }
 })
 
