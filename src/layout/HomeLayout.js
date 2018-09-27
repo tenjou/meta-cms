@@ -1,6 +1,7 @@
 import { component, componentVoid, elementOpen, elementClose, text } from "wabi"
 import AssetService from "../service/AssetService"
 import Sheet from "../component/Sheet"
+import Popups from "../component/Popups"
 
 const ContentPanel = component({
 	mount() {
@@ -122,6 +123,8 @@ const HomeLayout = component({
 			componentVoid(ContentPanel, { $value: id })
 			componentVoid(AssetPanel)
 		elementClose("layout")
+
+		componentVoid(Popups)
 	}
 })
 

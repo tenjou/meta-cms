@@ -2,6 +2,9 @@ import { store, route } from "wabi"
 import HomeLayout from "./layout/HomeLayout"
 import Commander from "./Commander"
 
+import PopupService from "./service/PopupService"
+import Schema from "./component/Schema"
+
 store.set("", {
 	meta: {
 
@@ -27,8 +30,13 @@ store.set("", {
 	},
 	cache: {
 
+	},
+	state: {
+		popup: null
 	}
 })
+
+PopupService.openPopup("Edit schema", Schema)
 
 window.addEventListener("keydown", (event) => {
 	if(event.keyCode === 90 && event.ctrlKey) {

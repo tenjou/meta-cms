@@ -12,7 +12,7 @@ const Sheet = component({
 
 		if(!schema) {
 			elementOpen("info")
-				text("Asset not found")
+				text("No asset selected")
 			elementClose("info")
 			return
 		}
@@ -46,10 +46,10 @@ const SheetItem = component({
 	},
 
 	render() {
-		elementOpen("item")
-			const fields = this.$value
-			const schema = this.$schema
+		const fields = this.$value
+		const schema = this.$schema
 
+		elementOpen("item")
 			elementOpen("field")
 				text(this.$index)
 			elementClose("field")
