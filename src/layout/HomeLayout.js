@@ -1,7 +1,13 @@
 import { component, componentVoid, elementOpen, elementClose, text } from "wabi"
 import AssetService from "../service/AssetService"
+import PopupService from "../service/PopupService"
 import Sheet from "../component/Sheet"
 import Popups from "../component/Popups"
+import Schema from "../component/Schema"
+
+const editSchema = () => {
+	PopupService.openPopup("Edit schema", Schema)
+}
 
 const ContentPanel = component({
 	mount() {
@@ -45,7 +51,7 @@ const ContentPanel = component({
 	},
 
 	handleEdit(event) {
-		console.log("edit")
+		editSchema()
 	}
 })
 
@@ -88,6 +94,7 @@ const AssetPanel = component({
 const Asset = component({
 	mount() {
 		this.handleRemoveFunc = this.handleRemove.bind(this)
+		this.handleEditFunc = this.handleEdit.bind(this)
 	},
 
 	render() {
@@ -103,7 +110,7 @@ const Asset = component({
 					text("Remove")
 				elementClose("button")
 
-				elementOpen("button")
+				elementOpen("button", { onclick: this.handleEditFunc })
 					text("Edit")
 				elementClose("button")				
 			elementClose("buttons")
@@ -112,6 +119,10 @@ const Asset = component({
 
 	handleRemove(event) {
 		AssetService.remove(this.$value.id)
+	},
+
+	handleEdit(event) {
+		editSchema()
 	}
 })
 
