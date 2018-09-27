@@ -23,8 +23,7 @@ button {
 }
 
 list {
-    display: flex;
-    flex-direction: column;
+    overflow-y: auto;
 }
 list > header {
     padding: 4px;
@@ -117,4 +116,19 @@ popup header title {
     flex: 1;
     color: white;
     line-height: 21px;
+}
+popup content {
+    display: flex;
+    flex-direction: column;
+    background: #ccc;
+    height: 400px;
+}
+
+schema {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+schema list {
+    flex: 1;
 }

@@ -13,6 +13,7 @@ const ContentPanel = component({
 	mount() {
 		this.handleAddRowFunc = this.handleAddRow.bind(this)
 		this.handleEditFunc = this.handleEdit.bind(this)
+		editSchema()
 	},
 
 	render() {
