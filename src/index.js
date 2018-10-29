@@ -1,6 +1,7 @@
 import { store, route } from "wabi"
 import HomeLayout from "./layout/HomeLayout"
 import Commander from "./Commander"
+import Utils from "./Utils"
 
 store.set("meta", {})
 store.set("data", {
@@ -9,8 +10,8 @@ store.set("data", {
 			id: "1234",
 			name: "Sheet",
 			schema: {
-				id: { type: "Id" },
-				type: { type: "String" }
+				id: { hash: Utils.uuid4(), type: "Id" },
+				type: { hash: Utils.uuid4(), type: "String" }
 			}
 		},
 		data: [
@@ -38,9 +39,9 @@ window.addEventListener("keydown", (event) => {
 	}
 })
 
-route("/", HomeLayout)
-route(/#[0-9]*/, HomeLayout, (data) => {
+route(/\/#[0-9]*/, HomeLayout, (data) => {
 	return { $value: location.hash.slice(1) }
 })
+route("/", HomeLayout)
 
 window.store = store

@@ -1,23 +1,41 @@
 import { component, componentVoid, elementOpen, elementClose, text } from "wabi"
 import AssetService from "../service/AssetService"
 import PopupService from "../service/PopupService"
+import SchemaService from "../service/SchemaService"
 import Sheet from "../component/Sheet"
 import Popups from "../component/Popups"
 import Schema from "../component/Schema"
 
-const editSchema = () => {
-	PopupService.openPopup("Edit schema", Schema)
+const editSchema = (id) => {
+	const schema = store.get(`data/${id}/meta/schema`)
+	const data = SchemaService.prepareData(schema)
+	const dataPrev = SchemaService.prepareData(schema)
+	const hashes = {}
+	for(let n = 0; n < dataPrev.length; n++) {
+		const item = dataPrev[n]
+		hashes[item.hash] = item
+	}
+	store.set("cache/schema", {
+		id, data, dataPrev, hashes, schema
+	})
+	PopupService.openPopup("Add Column", Schema, { 
+		bind: {
+			value: "cache/schema",
+			data: "cache/schema/data"
+		}
+	})
 }
 
 const ContentPanel = component({
 	mount() {
 		this.handleAddRowFunc = this.handleAddRow.bind(this)
 		this.handleEditFunc = this.handleEdit.bind(this)
-		editSchema()
 	},
 
 	render() {
 		const id = this.$value
+
+		editSchema(this.$value)
 
 		elementOpen("panel")
 			elementOpen("header")
@@ -27,11 +45,11 @@ const ContentPanel = component({
 
 				elementOpen("buttons")
 					elementOpen("button", { onclick: this.handleAddRowFunc })
-						text("Add")
+						text("Add Row")
 					elementClose("button")		
 					
 					elementOpen("button", { onclick: this.handleEditFunc })
-						text("Edit")
+						text("Add Column")
 					elementClose("button")							
 				elementClose("buttons")
 			elementClose("header")
@@ -109,11 +127,7 @@ const Asset = component({
 			elementOpen("buttons")
 				elementOpen("button", { onclick: this.handleRemoveFunc })
 					text("Remove")
-				elementClose("button")
-
-				elementOpen("button", { onclick: this.handleEditFunc })
-					text("Edit")
-				elementClose("button")				
+				elementClose("button")			
 			elementClose("buttons")
 		elementClose("item")
 	},

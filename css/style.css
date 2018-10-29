@@ -104,7 +104,7 @@ back {
 popup {
     display: flex;
     flex-direction: column;
-    width: 50%;
+    min-width: 400px;
 }
 popup header {
     display: flex;
@@ -121,7 +121,7 @@ popup content {
     display: flex;
     flex-direction: column;
     background: #ccc;
-    height: 400px;
+    min-height: 300px;
 }
 
 schema {

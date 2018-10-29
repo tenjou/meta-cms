@@ -2,37 +2,30 @@ import { component, componentVoid, elementOpen, elementClose, text, store, eleme
 import SchemaService from "../service/SchemaService"
 import TextInput from "./TextInput"
 import Select from "./Select"
+import Word from "./Word"
 
 const SchemaItem = component({
     mount() {
+        this.handleChangeFunc = this.handleChange.bind(this)
         this.propsRemove = { onclick: this.handleRemove.bind(this) }
     },
 
     render() {
         elementOpen("item")
             elementOpen("field")
-                elementOpen("name")
-                    text("Name")
-                elementClose("name")
-
-                elementOpen("value")
-                    componentVoid(TextInput, { bind: `${this.bind}/name` })
-                elementClose("value")
+                componentVoid(Word, {
+                    bind: `${this.bind}/key`,
+                    $onchange: this.handleChangeFunc
+                })
             elementClose("field")
 
             elementOpen("field")
-                elementOpen("name")
-                    text("Type")
-                elementClose("name")
-
-                elementOpen("value")
-                    componentVoid(Select, { 
-                        bind: {
-                            value: `${this.bind}/type`,
-                            src: "column-types" 
-                        }
-                    })
-                elementClose("value")
+                componentVoid(Select, { 
+                    bind: {
+                        value: `${this.bind}/type`,
+                        src: "column-types" 
+                    }
+                })
             elementClose("field")
             
             elementOpen("button", this.propsRemove)
@@ -41,25 +34,33 @@ const SchemaItem = component({
         elementClose("item")
     },
 
+    handleChange(value) {
+        return value
+    },
+
     handleRemove(event) {
         store.remove(this.bind)
     }
 })
 
 const Schema = component({
+    state: {
+        value: null,
+        data: null
+    },
+
     mount() {
-        store.set("state/popup/cache", [])
-        this.bind = "state/popup/cache"
         this.handleAddFunc = this.handleAdd.bind(this)
+        this.handleApplyFunc = this.handleApply.bind(this)
     },
 
     render() {
-        const schema = this.$value
+        const data = this.$data
 
         elementOpen("schema")
             elementOpen("list")
-                for(let n = 0; n < schema.length; n++) {
-                    componentVoid(SchemaItem, { bind: `state/popup/cache/${n}` })
+                for(let n = 0; n < data.length; n++) {
+                    componentVoid(SchemaItem, { bind: `${this.bind.data}/${n}` })
                 }    
             elementClose("list")
 
@@ -68,16 +69,21 @@ const Schema = component({
                     text("Add")
                 elementClose("button")
 
-                elementOpen("button")
+                elementOpen("button", { onclick: this.handleApplyFunc })
                     text("Apply")
-                elementClose("button")                
+                elementClose("button")
             elementClose("buttons")
         elementClose("schema")
     },
 
     handleAdd(event) {
-        this.$value.push({ name: "column", type: "String" })
+        this.$value.data.push(SchemaService.createItem(this.$value.data))
         this.updateAll()
+    },
+
+    handleApply(event) {
+        const value = this.$value
+        SchemaService.create(value.data, value.dataPrev, value.hashes, value.schema)
     }
 })
 
