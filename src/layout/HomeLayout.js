@@ -9,19 +9,12 @@ import Schema from "../component/Schema"
 const editSchema = (id) => {
 	const schema = store.get(`data/${id}/meta/schema`)
 	const data = SchemaService.prepareData(schema)
-	const dataPrev = SchemaService.prepareData(schema)
-	const hashes = {}
-	for(let n = 0; n < dataPrev.length; n++) {
-		const item = dataPrev[n]
-		hashes[item.hash] = item
-	}
-	store.set("cache/schema", {
-		id, data, dataPrev, hashes, schema
-	})
+	store.set("cache/schema", { id, data, schema })
+
 	PopupService.openPopup("Add Column", Schema, { 
 		bind: {
 			value: "cache/schema",
-			data: "cache/schema/data"
+			buffer: "cache/schema/data/buffer"
 		}
 	})
 }

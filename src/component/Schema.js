@@ -46,7 +46,7 @@ const SchemaItem = component({
 const Schema = component({
     state: {
         value: null,
-        data: null
+        buffer: null
     },
 
     mount() {
@@ -55,12 +55,11 @@ const Schema = component({
     },
 
     render() {
-        const data = this.$data
-
         elementOpen("schema")
             elementOpen("list")
-                for(let n = 0; n < data.length; n++) {
-                    componentVoid(SchemaItem, { bind: `${this.bind.data}/${n}` })
+                const buffer = this.$buffer
+                for(let n = 0; n < buffer.length; n++) {
+                    componentVoid(SchemaItem, { bind: `${this.bind.buffer}/${n}` })
                 }    
             elementClose("list")
 
@@ -77,13 +76,12 @@ const Schema = component({
     },
 
     handleAdd(event) {
-        this.$value.data.push(SchemaService.createItem(this.$value.data))
-        this.updateAll()
+        store.add(this.bind.buffer, SchemaService.createItem(this.$value.data))
     },
 
     handleApply(event) {
         const value = this.$value
-        SchemaService.create(value.data, value.dataPrev, value.hashes, value.schema)
+        SchemaService.create(value.data, value.schema)
     }
 })
 

@@ -10,8 +10,8 @@ store.set("data", {
 			id: "1234",
 			name: "Sheet",
 			schema: {
-				id: { hash: Utils.uuid4(), type: "Id" },
-				type: { hash: Utils.uuid4(), type: "String" }
+				id: { type: "Id" },
+				type: { type: "String" }
 			}
 		},
 		data: [

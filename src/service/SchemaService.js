@@ -1,59 +1,70 @@
 import { store } from "wabi"
-import Utils from "../Utils"
 
 store.set("column-types", [ "String", "Number", "Boolean", "Id" ])
 
-const create = (data, dataPrev, hashes, schema) => {
+const create = (data, schema) => {
+    const schemaNew = {}
     let itemsFromPrev = 0
 
-    for(let n = 0; n < data.length; n++) {
-        const item = data[n]
-        const itemPrev = hashes[item.hash]
+    const buffer = data.buffer
+	const bufferPrev = prepareData(schema).buffer
+	const hashes = {}
+	for(let n = 0; n < bufferPrev.length; n++) {
+		const item = bufferPrev[n]
+		hashes[item.id] = item
+	}    
+
+    for(let n = 0; n < buffer.length; n++) {
+        const item = buffer[n]
+        const itemPrev = hashes[item.id]
         if(itemPrev !== undefined) {
             itemsFromPrev++
-            if(item.key !== itemPrev.key) {
+            schemaNew[item.key] = { type: item.type }
+            if(item.key !== itemPrev.key) { 
                 console.log(`rename from: ${itemPrev.key} to: ${item.key}`)
-            }
-            if(item.index !== itemPrev.index) {
-                console.log(`move position from: ${itemPrev.index} to: ${item.index}`)
             }
             if(item.type !== itemPrev.type) {
                 console.log(`change type from: ${itemPrev.type} to: ${item.type}`)
             }
         }
         else {
+            schemaNew[item.key] = { type: item.type }
             console.log(`add: ${item.key}`)
         }
     }
 
-    if(itemsFromPrev !== dataPrev.length) {
+    if(itemsFromPrev !== bufferPrev.length) {
         loop:
-        for(let n = 0; n < dataPrev.length; n++) {
-            const entry = dataPrev[n]
-            for(let m = 0; m < data.length; m++) {
-                const item = data[m]
-                if(item.hash === entry.hash) {
+        for(let n = 0; n < bufferPrev.length; n++) {
+            const entry = bufferPrev[n]
+            for(let m = 0; m < buffer.length; m++) {
+                const item = buffer[m]
+                if(item.id === entry.id) {
                     continue loop
                 }
             }
             console.log(`remove column: ${entry.key}`)
         }
     }
+
+    console.log(schemaNew)
 }
 
 const createItem = (data) => {
-    return { hash: Utils.uuid4(), key: "column", type: "String", index: data.length }
+    return { id: data.id++, key: "column", type: "String", index: data.buffer.length }
 }
 
 const prepareData = (schema) => {
-    const result = []
+    const buffer = []
     let index = 0
+    let id = 0
     for(let key in schema) {
         const entry = schema[key]
-        result.push({ hash: entry.hash, key, type: entry.type, index }) 
+        buffer.push({ id, key, type: entry.type, index }) 
         index++
+        id++
     }
-    return result
+    return { id, buffer }
 }
 
 export { create, createItem, prepareData }
