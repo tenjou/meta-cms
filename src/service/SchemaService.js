@@ -2,10 +2,11 @@ import { store } from "wabi"
 
 store.set("column-types", [ "String", "Number", "Boolean", "Id" ])
 
-const create = (data, schema) => {
+const create = (id, data, schema) => {
     const schemaNew = {}
     let itemsFromPrev = 0
 
+    const asset = store.get(`asset/${id}`)
     const buffer = data.buffer
 	const bufferPrev = prepareData(schema).buffer
 	const hashes = {}
@@ -21,14 +22,17 @@ const create = (data, schema) => {
             itemsFromPrev++
             schemaNew[item.key] = { type: item.type }
             if(item.key !== itemPrev.key) { 
+                modifyAsset_rename(asset.data, itemPrev.key, item.key)
                 console.log(`rename from: ${itemPrev.key} to: ${item.key}`)
             }
             if(item.type !== itemPrev.type) {
+                modifyAsset_type(asset.data, item.key, item.type)
                 console.log(`change type from: ${itemPrev.type} to: ${item.type}`)
             }
         }
         else {
             schemaNew[item.key] = { type: item.type }
+            modifyAsset_add(asset.data, item)
             console.log(`add: ${item.key}`)
         }
     }
@@ -43,6 +47,7 @@ const create = (data, schema) => {
                     continue loop
                 }
             }
+            modifyAsset_remove(asset.data, entry.key)
             console.log(`remove column: ${entry.key}`)
         }
     }
@@ -65,6 +70,35 @@ const prepareData = (schema) => {
         id++
     }
     return { id, buffer }
+}
+
+const modifyAsset_add = (data, item) => {
+    for(let n = 0; n < data.length; n++) {
+        const item = data[n]
+        
+    }
+}
+
+const modifyAsset_type = (data, key, type) => {
+    for(let n = 0; n < data.length; n++) {
+        const item = data[n]
+        
+    }
+}
+
+const modifyAsset_rename = (data, from, to) => {
+    for(let n = 0; n < data.length; n++) {
+        const item = data[n]
+        item[to] = item[from]
+        delete item[from]
+    }
+}
+
+const modifyAsset_remove = (data, key) => {
+    for(let n = 0; n < data.length; n++) {
+        const item = data[n]
+        delete item[key]
+    }
 }
 
 export { create, createItem, prepareData }
