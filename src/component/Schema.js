@@ -80,8 +80,7 @@ const Schema = component({
     },
 
     handleApply(event) {
-        const value = this.$value
-        SchemaService.create(value.data, value.schema)
+        SchemaService.create(this.$value.id, this.$value.data, this.$value.schema)
     }
 })
 

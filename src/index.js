@@ -4,7 +4,7 @@ import Commander from "./Commander"
 import Utils from "./Utils"
 
 store.set("meta", {})
-store.set("data", {
+store.set("asset", {
 	"1234": {
 		meta: {
 			id: "1234",

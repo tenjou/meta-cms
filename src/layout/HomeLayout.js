@@ -7,11 +7,11 @@ import Popups from "../component/Popups"
 import Schema from "../component/Schema"
 
 const editSchema = (id) => {
-	const schema = store.get(`data/${id}/meta/schema`)
+	const schema = store.get(`asset/${id}/meta/schema`)
 	const data = SchemaService.prepareData(schema)
 	store.set("cache/schema", { id, data, schema })
 
-	PopupService.openPopup("Add Column", Schema, { 
+	PopupService.openPopup("Edit schema", Schema, { 
 		bind: {
 			value: "cache/schema",
 			buffer: "cache/schema/data/buffer"
@@ -50,8 +50,8 @@ const ContentPanel = component({
 			elementOpen("content")
 				componentVoid(Sheet, {
 					bind: {
-						value: `data/${id}/data`,
-						schema: `data/${id}/meta/schema`
+						value: `asset/${id}/data`,
+						schema: `asset/${id}/meta/schema`
 					}	
 				})
 			elementClose("content")
@@ -69,7 +69,7 @@ const ContentPanel = component({
 
 const AssetPanel = component({
 	mount() {
-		this.bind = "data"
+		this.bind = "asset"
 		this.handleAddAssetFunc = this.handleAddAsset.bind(this)
 	},
 
@@ -91,7 +91,7 @@ const AssetPanel = component({
 
 					const items = this.$value
 					for(let key in items) {
-						componentVoid(Asset, { bind: `data/${key}/meta` })
+						componentVoid(Asset, { bind: `asset/${key}/meta` })
 					}					
 				elementClose("list")
 			elementClose("content")
