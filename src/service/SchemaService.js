@@ -1,4 +1,5 @@
 import { store } from "wabi"
+import Utils from "../Utils"
 
 store.set("column-types", [ "String", "Number", "Boolean", "Id" ])
 
@@ -8,7 +9,7 @@ const create = (id, data, schema) => {
 
     const asset = store.get(`asset/${id}`)
     const buffer = data.buffer
-	const bufferPrev = prepareData(schema).buffer
+	const bufferPrev = prepareData(asset.meta.schema).buffer
 	const hashes = {}
 	for(let n = 0; n < bufferPrev.length; n++) {
 		const item = bufferPrev[n]
@@ -52,7 +53,10 @@ const create = (id, data, schema) => {
         }
     }
 
-    console.log(schemaNew)
+    console.log(asset.data)
+    asset.meta.schema = schemaNew
+    store.update(`asset/${id}/meta`)
+    store.update(`asset/${id}/data`)
 }
 
 const createItem = (data) => {
@@ -72,17 +76,17 @@ const prepareData = (schema) => {
     return { id, buffer }
 }
 
-const modifyAsset_add = (data, item) => {
+const modifyAsset_add = (data, value) => {
     for(let n = 0; n < data.length; n++) {
         const item = data[n]
-        
+        item[value.key] = createDefaultValue(value.type)
     }
 }
 
 const modifyAsset_type = (data, key, type) => {
     for(let n = 0; n < data.length; n++) {
         const item = data[n]
-        
+        item[key] = createDefaultValue(type)
     }
 }
 
@@ -101,4 +105,27 @@ const modifyAsset_remove = (data, key) => {
     }
 }
 
-export { create, createItem, prepareData }
+const createDefaultValue = (type) => {
+    switch(type) {
+        case "Id":
+            return Utils.uuid4()
+        case "String":
+            return "foo_bar"
+        case "Number":
+            return 0
+        case "Boolean":
+            return false
+    }
+    return null
+}
+
+const createRow = (schema) => {
+    const row = {}
+    for(let key in schema) {
+        const item = schema[key]
+        row[key] = createDefaultValue(item.type)
+    }    
+    return row
+}
+
+export { create, createItem, prepareData, createDefaultValue, createRow }

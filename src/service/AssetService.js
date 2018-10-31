@@ -1,4 +1,5 @@
 import { store } from "wabi"
+import SchemaService from "./SchemaService"
 import AddRowCommand from "../command/AddRowCommand"
 import AddAssetCommand from "../command/AddAssetCommand"
 import RenameAssetCommand from "../command/RenameAssetCommand"
@@ -32,20 +33,9 @@ const edit = (id) => {
 }
 
 const addRow = (id) => {
-    const data = {}
-    const schema = store.get(`data/${id}/meta/schema`)
-    for(let key in schema) {
-        const schemaItem = schema[key]
-        switch(schemaItem.type) {
-            case "Id":
-                data[key] = Utils.uuid4()
-                break
-            case "String":
-                data[key] = "foo_bar"
-                break
-        }
-    }
-    Commander.execute(new AddRowCommand(`data/${id}/data`, data))
+    const schema = store.get(`asset/${id}/meta/schema`)
+    const row = SchemaService.createRow(schema)
+    Commander.execute(new AddRowCommand(`asset/${id}/data`, row))
 }
 
 const removeField = (id, path) => {

@@ -9,7 +9,7 @@ import Schema from "../component/Schema"
 const editSchema = (id) => {
 	const schema = store.get(`asset/${id}/meta/schema`)
 	const data = SchemaService.prepareData(schema)
-	store.set("cache/schema", { id, data, schema })
+	store.set("cache/schema", { id, data })
 
 	PopupService.openPopup("Edit schema", Schema, { 
 		bind: {
