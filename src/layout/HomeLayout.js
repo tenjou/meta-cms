@@ -42,7 +42,7 @@ const ContentPanel = component({
 					elementClose("button")		
 					
 					elementOpen("button", { onclick: this.handleEditFunc })
-						text("Add Column")
+						text("Edit")
 					elementClose("button")							
 				elementClose("buttons")
 			elementClose("header")
@@ -63,7 +63,7 @@ const ContentPanel = component({
 	},
 
 	handleEdit(event) {
-		editSchema()
+		editSchema(this.$value)
 	}
 })
 
@@ -130,7 +130,7 @@ const Asset = component({
 	},
 
 	handleEdit(event) {
-		editSchema()
+		editSchema(this.$value.id)
 	}
 })
 

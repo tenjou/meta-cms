@@ -1,5 +1,6 @@
 import { component, componentVoid, elementOpen, elementClose, text, store, element } from "wabi"
 import SchemaService from "../service/SchemaService"
+import PopupService from "../service/PopupService"
 import TextInput from "./TextInput"
 import Select from "./Select"
 import Word from "./Word"
@@ -81,6 +82,7 @@ const Schema = component({
 
     handleApply(event) {
         SchemaService.create(this.$value.id, this.$value.data)
+        PopupService.closePopup()
     }
 })
 
