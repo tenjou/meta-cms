@@ -1,4 +1,6 @@
 import { component, componentVoid, elementOpen, elementClose, text, store } from "wabi"
+import Checkbox from "./Checkbox"
+import Word from "./Word"
 
 const Sheet = component({
 	state: {
@@ -46,7 +48,6 @@ const SheetItem = component({
 	},
 
 	render() {
-		const fields = this.$value
 		const schema = this.$schema
 
 		elementOpen("item")
@@ -56,10 +57,27 @@ const SheetItem = component({
 
 			for(let key in schema) {
 				elementOpen("field")
-					text(fields[key])
+					this.renderValue(key)
 				elementClose("field")
 			}
 		elementClose("item")
+	},
+
+	renderValue(key) {
+		const entry = this.$schema[key]
+		const props = { bind: `${this.bind}/${key}` }
+
+		switch(entry.type) {
+			case "String":
+				componentVoid(Word, props)
+				break
+			case "Boolean":
+				componentVoid(Checkbox, props)
+				break
+			default: 
+				text(this.$value[key])
+				break
+		}
 	}
 })
 

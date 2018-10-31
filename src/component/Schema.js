@@ -45,7 +45,15 @@ const SchemaItem = component({
     },
 
     renderValue() {
-
+        switch(this.$value.type) {
+            case "Number":
+                break
+            case "String":
+                componentVoid(TextInput)
+                break
+            case "Boolean":
+                break
+        }
     },
 
     handleChange(value) {
