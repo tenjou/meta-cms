@@ -28,8 +28,6 @@ const ContentPanel = component({
 	render() {
 		const id = this.$value
 
-		editSchema(this.$value)
-
 		elementOpen("panel")
 			elementOpen("header")
 				elementOpen("name")

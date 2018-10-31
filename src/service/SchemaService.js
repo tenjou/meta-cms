@@ -53,7 +53,21 @@ const create = (id, data) => {
 }
 
 const createItem = (data) => {
-    return { id: data.id++, key: "column", type: "String", index: data.buffer.length }
+    const keyBase = "column"
+    let keyIndex = data.id
+    let key = `${keyBase}_${keyIndex}`
+
+    for(let n = 0; n < data.buffer.length; n++) {
+        const item = data.buffer[n]
+        if(item.key === key) {
+            keyIndex++
+            key = `${keyBase}_${keyIndex}`
+            n = 0
+            continue
+        }
+    }
+    
+    return { id: data.id++, key, type: "String", index: data.buffer.length }
 }
 
 const prepareData = (schema) => {
