@@ -8,12 +8,12 @@ class RenameAssetCommand {
     }
 
     execute() {
-        this.prevName = store.get(`data/${this.id}/name`)
-        store.set(`data/${this.id}/name`, this.name)
+        this.prevName = store.get(`asset/${this.id}/name`)
+        store.set(`asset/${this.id}/name`, this.name)
     }
 
     undo() {
-        store.set(`data/${this.id}/name`, this.prevName)
+        store.set(`asset/${this.id}/name`, this.prevName)
     }
 }
 

@@ -6,11 +6,11 @@ class AddAssetCommand {
     }
 
     execute() {
-        store.set(`data/${this.asset.meta.id}`, this.asset)
+        store.set(`asset/${this.asset.meta.id}`, this.asset)
     }
 
     undo() {
-        store.remove(`data/${this.asset.meta.id}`)
+        store.remove(`asset/${this.asset.meta.id}`)
     }
 }
 

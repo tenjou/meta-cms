@@ -1,7 +1,6 @@
 import { store, route } from "wabi"
 import HomeLayout from "./layout/HomeLayout"
 import Commander from "./Commander"
-import Utils from "./Utils"
 
 store.set("meta", {})
 store.set("asset", {
@@ -27,6 +26,7 @@ store.set("cache", {})
 store.set("state", {
 	popup: null
 })
+store.set("column-types", [ "String", "Number", "Boolean", "Id" ])
 
 window.addEventListener("keydown", (event) => {
 	if(event.keyCode === 90 && event.ctrlKey) {

@@ -1,9 +1,7 @@
 import { store } from "wabi"
 import Utils from "../Utils"
 
-store.set("column-types", [ "String", "Number", "Boolean", "Id" ])
-
-const create = (id, data, schema) => {
+const create = (id, data) => {
     const schemaNew = {}
     let itemsFromPrev = 0
 
@@ -24,17 +22,14 @@ const create = (id, data, schema) => {
             schemaNew[item.key] = { type: item.type }
             if(item.key !== itemPrev.key) { 
                 modifyAsset_rename(asset.data, itemPrev.key, item.key)
-                console.log(`rename from: ${itemPrev.key} to: ${item.key}`)
             }
             if(item.type !== itemPrev.type) {
                 modifyAsset_type(asset.data, item.key, item.type)
-                console.log(`change type from: ${itemPrev.type} to: ${item.type}`)
             }
         }
         else {
             schemaNew[item.key] = { type: item.type }
             modifyAsset_add(asset.data, item)
-            console.log(`add: ${item.key}`)
         }
     }
 
@@ -49,11 +44,9 @@ const create = (id, data, schema) => {
                 }
             }
             modifyAsset_remove(asset.data, entry.key)
-            console.log(`remove column: ${entry.key}`)
         }
     }
 
-    console.log(asset.data)
     asset.meta.schema = schemaNew
     store.update(`asset/${id}/meta`)
     store.update(`asset/${id}/data`)

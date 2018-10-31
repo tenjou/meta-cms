@@ -7,12 +7,12 @@ class RemoveAssetCommand {
     }
 
     execute() {
-        this.asset = store.get(`data/${this.id}`)
-        store.remove(`data/${this.id}`)
+        this.asset = store.get(`asset/${this.id}`)
+        store.remove(`asset/${this.id}`)
     }
 
     undo() {
-        store.set(`data/${this.id}`, this.asset)
+        store.set(`asset/${this.id}`, this.asset)
     }
 }
 
