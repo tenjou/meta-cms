@@ -66,7 +66,7 @@ const createItem = (data) => {
             continue
         }
     }
-    
+
     return { id: data.id++, key, type: "String", index: data.buffer.length }
 }
 
@@ -135,4 +135,13 @@ const createRow = (schema) => {
     return row
 }
 
-export { create, createItem, prepareData, createDefaultValue, createRow }
+const isKeyUnique = (schema, name) => {
+    for(let key in schema) {
+        if(key === name) {
+            return false
+        }
+    }
+    return true
+}
+
+export { create, createItem, prepareData, createDefaultValue, createRow, isKeyUnique }

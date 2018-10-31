@@ -6,6 +6,11 @@ import Select from "./Select"
 import Word from "./Word"
 
 const SchemaItem = component({
+    state: {
+        value: null,
+        schema: null
+    },
+
     mount() {
         this.handleChangeFunc = this.handleChange.bind(this)
         this.propsRemove = { onclick: this.handleRemove.bind(this) }
@@ -15,7 +20,7 @@ const SchemaItem = component({
         elementOpen("item")
             elementOpen("field")
                 componentVoid(Word, {
-                    bind: `${this.bind}/key`,
+                    bind: `${this.bind.value}/key`,
                     $onchange: this.handleChangeFunc
                 })
             elementClose("field")
@@ -23,10 +28,14 @@ const SchemaItem = component({
             elementOpen("field")
                 componentVoid(Select, { 
                     bind: {
-                        value: `${this.bind}/type`,
+                        value: `${this.bind.value}/type`,
                         src: "column-types" 
                     }
                 })
+            elementClose("field")
+
+            elementOpen("field")
+                this.renderValue()
             elementClose("field")
             
             elementOpen("button", this.propsRemove)
@@ -35,8 +44,15 @@ const SchemaItem = component({
         elementClose("item")
     },
 
+    renderValue() {
+
+    },
+
     handleChange(value) {
-        return value
+        if(SchemaService.isKeyUnique(this.$schema, value)) {
+            return value
+        }
+        return this.$value.key
     },
 
     handleRemove(event) {
@@ -60,7 +76,12 @@ const Schema = component({
             elementOpen("list")
                 const buffer = this.$buffer
                 for(let n = 0; n < buffer.length; n++) {
-                    componentVoid(SchemaItem, { bind: `${this.bind.buffer}/${n}` })
+                    componentVoid(SchemaItem, { 
+                        bind: {
+                            value: `${this.bind.buffer}/${n}`,
+                            schema: `asset/${this.$value.id}/meta/schema`
+                        } 
+                    })
                 }    
             elementClose("list")
 
