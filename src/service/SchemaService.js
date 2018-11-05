@@ -86,14 +86,14 @@ const prepareData = (schema) => {
 const modifyAsset_add = (data, value) => {
     for(let n = 0; n < data.length; n++) {
         const item = data[n]
-        item[value.key] = createDefaultValue(value.type)
+        item[value.key] = createDefaultValue(value.type, data, value.key)
     }
 }
 
 const modifyAsset_type = (data, key, type) => {
     for(let n = 0; n < data.length; n++) {
         const item = data[n]
-        item[key] = createDefaultValue(type)
+        item[key] = createDefaultValue(type, data, key)
     }
 }
 
@@ -112,12 +112,24 @@ const modifyAsset_remove = (data, key) => {
     }
 }
 
-const createDefaultValue = (type) => {
+const createDefaultValue = (type, data, key) => {
     switch(type) {
         case "Id":
+            let id = 1
+            for(;;) {
+                for(let n = 0; n < data.length; n++) {
+                    const item = data[n]
+                    if(item[key] === id) {
+                        id++
+                    }
+                }
+                break
+            }
+            return id
+        case "UUID":
             return Utils.uuid4()
         case "String":
-            return "foo_bar"
+            return "Key"
         case "Number":
             return 0
         case "Boolean":
@@ -126,18 +138,19 @@ const createDefaultValue = (type) => {
     return null
 }
 
-const createRow = (schema) => {
+const createRow = (asset) => {
     const row = {}
+    const schema = asset.meta.schema
     for(let key in schema) {
         const item = schema[key]
-        row[key] = createDefaultValue(item.type)
+        row[key] = createDefaultValue(item.type, asset.data, key)
     }    
     return row
 }
 
-const isKeyUnique = (schema, name) => {
-    for(let key in schema) {
-        if(key === name) {
+const isKeyUnique = (schema, key) => {
+    for(let schemaKey in schema) {
+        if(schemaKey === key) {
             return false
         }
     }

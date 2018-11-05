@@ -69,36 +69,60 @@ const AssetPanel = component({
 	mount() {
 		this.bind = "asset"
 		this.handleAddAssetFunc = this.handleAddAsset.bind(this)
+		this.handleAddEnumFunc = this.handleAddEnum.bind(this)
 	},
 
 	render() {
+		const assets = this.$value
+		const types = {}
+		for(let key in assets) {
+			const asset = assets[key]
+			const buffer = types[asset.meta.type]
+			if(buffer) {
+				buffer.push(asset)
+			}
+			else {
+				types[asset.meta.type] = [ asset ]
+			}
+		}
+
 		elementOpen("panel", { style: "flex: 200px 0 0;" })
+			elementOpen("buttons")
+				elementOpen("button", { onclick: this.handleAddAssetFunc })
+					text("Sheet")
+				elementClose("button")
+
+				elementOpen("button", { onclick: this.handleAddEnumFunc })
+					text("Enum")
+				elementClose("button")				
+			elementClose("buttons")
+
 			elementOpen("content")
-				elementOpen("list")
-					elementOpen("header")
-						elementOpen("name")
-							text("sheets")
-						elementClose("name")
+				for(let type in types) {
+					const buffer = types[type]
 
-						elementOpen("buttons")
-							elementOpen("button", { onclick: this.handleAddAssetFunc })
-								text("Add")
-							elementClose("button")
-						elementClose("buttons")
-					elementClose("header")
+					elementOpen("list")
+						elementOpen("header")
+							text(type)
+						elementClose("header")
 
-					const items = this.$value
-					for(let key in items) {
-						componentVoid(Asset, { bind: `asset/${key}/meta` })
-					}					
-				elementClose("list")
+						for(let n = 0; n < buffer.length; n++) {
+							const asset = buffer[n]
+							componentVoid(Asset, { bind: `asset/${asset.meta.id}/meta` })
+						}					
+					elementClose("list")
+				}				
 			elementClose("content")
 		elementClose("panel")
 	},
 
 	handleAddAsset(event) {
-		AssetService.add("Sheet")
-	}
+		AssetService.addSheet()
+	},
+
+	handleAddEnum(event) {
+		AssetService.addEnum()
+	}	
 })
 
 const Asset = component({

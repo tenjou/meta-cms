@@ -7,21 +7,33 @@ import RemoveAssetCommand from "../command/RemoveAssetCommand"
 import Commander from "../Commander"
 import Utils from "../Utils"
 
-const add = (type) => {
-    const asset = create(type)
+const add = (type, schema) => {
+    const asset = create(type, schema)
     Commander.execute(new AddAssetCommand(asset))
 }
 
-const create = (type) => {
+const create = (type, schema = {}) => {
     const asset = {
         meta: {
             id: Utils.uuid4(),
             name: type,
-            schema: {}
+            type,
+            schema
         },
         data: []
     }
     return asset
+}
+
+const addSheet = () => {
+    add("Sheet")
+}
+
+const addEnum = () => {
+    add("Enum", {
+        Key: { type: "String" },
+        Value: { type: "Id" }
+    })
 }
 
 const remove = (id) => {
@@ -33,8 +45,8 @@ const edit = (id) => {
 }
 
 const addRow = (id) => {
-    const schema = store.get(`asset/${id}/meta/schema`)
-    const row = SchemaService.createRow(schema)
+    const asset = store.get(`asset/${id}`)
+    const row = SchemaService.createRow(asset)
     Commander.execute(new AddRowCommand(`asset/${id}/data`, row))
 }
 
@@ -42,4 +54,4 @@ const removeField = (id, path) => {
 
 }
 
-export { add, create, remove, edit, addRow }
+export { add, create, addSheet, addEnum, remove, edit, addRow }

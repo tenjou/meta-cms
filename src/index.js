@@ -8,8 +8,9 @@ store.set("asset", {
 		meta: {
 			id: "1234",
 			name: "Sheet",
+			type: "Sheet",
 			schema: {
-				id: { type: "Id" },
+				id: { type: "UUID" },
 				type: { type: "String" }
 			}
 		},
@@ -26,7 +27,7 @@ store.set("cache", {})
 store.set("state", {
 	popup: null
 })
-store.set("column-types", [ "String", "Number", "Boolean", "Id" ])
+store.set("column-types", [ "String", "Number", "Boolean", "Id", "UUID" ])
 
 window.addEventListener("keydown", (event) => {
 	if(event.keyCode === 90 && event.ctrlKey) {

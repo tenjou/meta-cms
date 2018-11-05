@@ -64,7 +64,7 @@ const SchemaItem = component({
     },
 
     handleRemove(event) {
-        store.remove(this.bind)
+        store.remove(this.bind.value)
     }
 })
 
