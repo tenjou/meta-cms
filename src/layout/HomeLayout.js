@@ -1,4 +1,4 @@
-import { component, componentVoid, elementOpen, elementClose, text } from "wabi"
+import { component, componentVoid, elementOpen, elementClose, elementVoid, text } from "wabi"
 import AssetService from "../service/AssetService"
 import PopupService from "../service/PopupService"
 import SchemaService from "../service/SchemaService"
@@ -67,68 +67,26 @@ const ContentPanel = component({
 	}
 })
 
-const AssetPanel = component({
-	mount() {
-		this.bind = "assets"
-		this.handleAddAssetFunc = this.handleAddAsset.bind(this)
-	},
-
-	render() {
-		const assets = this.$value
-		const types = {}
-		for(let key in assets) {
-			const asset = assets[key]
-			const buffer = types[asset.meta.type]
-			if(buffer) {
-				buffer.push(asset)
-			}
-			else {
-				types[asset.meta.type] = [ asset ]
-			}
-		}
-
-		elementOpen("panel", { style: "flex: 200px 0 0;" })
-			elementOpen("buttons")
-				elementOpen("button", { onclick: this.handleAddAssetFunc })
-					text("Sheet")
-				elementClose("button")				
-			elementClose("buttons")
-
-			elementOpen("content")
-				for(let type in types) {
-					const buffer = types[type]
-
-					elementOpen("list")
-						elementOpen("header")
-							text(type)
-						elementClose("header")
-
-						for(let n = 0; n < buffer.length; n++) {
-							const asset = buffer[n]
-							componentVoid(Asset, { bind: `assets/${asset.meta.id}/meta` })
-						}					
-					elementClose("list")
-				}				
-			elementClose("content")
-		elementClose("panel")
-	},
-
-	handleAddAsset(event) {
-		AssetService.addSheet()
-	}
-})
-
 const Asset = component({
 	mount() {
 		this.handleRemoveFunc = this.handleRemove.bind(this)
 		this.handleEditFunc = this.handleEdit.bind(this)
+		this.handleClickFunc = this.handleClick.bind(this)
 	},
 
 	render() {
 		const meta = this.$value
+		const props = {
+			class: (store.data.cache.assets.selected === meta.id) ? "active" : "",
+		}
+		const propsA = { 
+			href: `#asset/${meta.id}`, 
+			onclick: this.handleClickFunc,
+			"data-key": meta.id
+		}
 
-		elementOpen("item")
-			elementOpen("a", { href: `#asset/${meta.id}` })
+		elementOpen("item", props)
+			elementOpen("a", propsA)
 				text(meta.name)
 			elementClose("a")
 
@@ -146,6 +104,48 @@ const Asset = component({
 
 	handleEdit(event) {
 		editSchema(this.$value.id)
+	},
+
+	handleClick(event) {
+		store.set("cache/assets/selected", event.currentTarget.dataset.key)
+	}
+})
+
+const AssetPanel = component({
+	mount() {
+		this.bind = "assets"
+		this.handleAddAssetFunc = this.handleAddAsset.bind(this)
+	},
+
+	render() {
+		const assets = this.$value
+
+		elementOpen("panel", { style: "flex: 200px 0 0;" })
+			elementOpen("header")
+				elementOpen("name")
+					text("Assets")
+				elementClose("name")
+
+				elementOpen("buttons")
+					elementOpen("button", { onclick: this.handleAddAssetFunc })
+						elementVoid("i", { class: "fas fa-plus-circle" })
+					elementClose("button")				
+				elementClose("buttons")				
+			elementClose("header")
+
+			elementOpen("content")
+				elementOpen("list", { class: "assets" })
+					for(let key in assets) {
+						const asset = assets[key]
+						componentVoid(Asset, { bind: `assets/${asset.meta.id}/meta` })
+					}
+				elementClose("list")				
+			elementClose("content")
+		elementClose("panel")
+	},
+
+	handleAddAsset(event) {
+		AssetService.addSheet()
 	}
 })
 

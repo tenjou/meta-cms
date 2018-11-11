@@ -51,6 +51,10 @@ list item {
 	display: flex;
 	padding: 0 3px 0 3px;    
 }
+list item:hover,
+list item.active {
+	background: #bbb;
+}
 list a {
 	flex: 1;
 	color: #222;
@@ -58,9 +62,6 @@ list a {
 	font-size: 12px; 
 	cursor: pointer;
 	text-decoration: none;
-}
-list a:hover {
-	text-decoration: underline;
 }
 list key {
 	flex: 0 0 40px;
@@ -117,6 +118,11 @@ panel header {
 }
 panel header name {
 	flex: 1;
+    padding: 4px;
+    font-size: 10px;
+    font-weight: bold;
+    text-transform: uppercase;
+    color: #777;	
 }
 
 sheet {
@@ -229,4 +235,8 @@ pre {
 	flex: 1;
 	overflow-y: auto;
 	user-select: all;
+}
+
+list.assets item a {
+	padding: 2px;
 }

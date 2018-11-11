@@ -11,6 +11,14 @@ const createMeta = () => {
 	}
 }
 
+const createCache = () => {
+	return {
+		assets: {
+			selected: null
+		}
+	}
+}
+
 const assets = localStorage.getItem("assets")
 if(assets) {
 	store.set("assets", JSON.parse(assets))
@@ -19,18 +27,17 @@ if(assets) {
 	store.set("meta", meta ? JSON.parse(meta) : createMeta())
 
 	const cache = localStorage.getItem("cache")
-	store.set("cache", cache ? JSON.parse(cache) : {})
+	store.set("cache", cache ? JSON.parse(cache) : createCache())
 }
 else {
 	store.set("assets", {})
-	store.set("cache", {})
+	store.set("cache", createCache())
 	store.set("meta", createMeta())
 }
 
 store.set("state", {
 	popup: null,
 	menu: "",
-	assetPrev: "",
 	export: {
 		minify: false
 	}
@@ -50,17 +57,18 @@ window.addEventListener("keydown", (event) => {
 
 route(/#asset\/([0-9a-z]*)/, HomeLayout, (data) => {
 	store.set("state/menu", "")
-	store.set("state/assetPrev", data[0][1])
+	store.set("cache/assets/selected", data[0][1])
 	return { $value: data[0][1] }
 })
 route("#export", ExportLayout, () => {
 	store.set("state/menu", "export")
 })
 route("/", HomeLayout, () => {
-	document.location.hash = `#asset/${store.data.state.assetPrev}`
+	document.location.hash = `#asset/${store.data.cache.assets.selected}`
 })
 
 window.onbeforeunload = () => {
+	localStorage.setItem("meta", JSON.stringify(store.data.meta))
 	localStorage.setItem("assets", JSON.stringify(store.data.assets))
 	localStorage.setItem("cache", JSON.stringify(store.data.cache))
 }
