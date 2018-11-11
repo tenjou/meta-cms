@@ -7,7 +7,7 @@ import Popups from "../component/Popups"
 import Schema from "../component/Schema"
 
 const editSchema = (id) => {
-	const schema = store.get(`asset/${id}/meta/schema`)
+	const schema = store.get(`assets/${id}/meta/schema`)
 	const data = SchemaService.prepareData(schema)
 	store.set("cache/schema", { id, data })
 
@@ -48,8 +48,8 @@ const ContentPanel = component({
 			elementOpen("content")
 				componentVoid(Sheet, {
 					bind: {
-						value: `asset/${id}/data`,
-						schema: `asset/${id}/meta/schema`
+						value: `assets/${id}/data`,
+						schema: `assets/${id}/meta/schema`
 					}	
 				})
 			elementClose("content")
@@ -67,9 +67,8 @@ const ContentPanel = component({
 
 const AssetPanel = component({
 	mount() {
-		this.bind = "asset"
+		this.bind = "assets"
 		this.handleAddAssetFunc = this.handleAddAsset.bind(this)
-		this.handleAddEnumFunc = this.handleAddEnum.bind(this)
 	},
 
 	render() {
@@ -90,10 +89,6 @@ const AssetPanel = component({
 			elementOpen("buttons")
 				elementOpen("button", { onclick: this.handleAddAssetFunc })
 					text("Sheet")
-				elementClose("button")
-
-				elementOpen("button", { onclick: this.handleAddEnumFunc })
-					text("Enum")
 				elementClose("button")				
 			elementClose("buttons")
 
@@ -108,7 +103,7 @@ const AssetPanel = component({
 
 						for(let n = 0; n < buffer.length; n++) {
 							const asset = buffer[n]
-							componentVoid(Asset, { bind: `asset/${asset.meta.id}/meta` })
+							componentVoid(Asset, { bind: `assets/${asset.meta.id}/meta` })
 						}					
 					elementClose("list")
 				}				
@@ -118,11 +113,7 @@ const AssetPanel = component({
 
 	handleAddAsset(event) {
 		AssetService.addSheet()
-	},
-
-	handleAddEnum(event) {
-		AssetService.addEnum()
-	}	
+	}
 })
 
 const Asset = component({

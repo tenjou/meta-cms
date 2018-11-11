@@ -5,7 +5,7 @@ const create = (id, data) => {
     const schemaNew = {}
     let itemsFromPrev = 0
 
-    const asset = store.get(`asset/${id}`)
+    const asset = store.get(`assets/${id}`)
     const buffer = data.buffer
 	const bufferPrev = prepareData(asset.meta.schema).buffer
 	const hashes = {}
@@ -48,8 +48,8 @@ const create = (id, data) => {
     }
 
     asset.meta.schema = schemaNew
-    store.update(`asset/${id}/meta`)
-    store.update(`asset/${id}/data`)
+    store.update(`assets/${id}/meta`)
+    store.update(`assets/${id}/data`)
 }
 
 const createItem = (data) => {
@@ -132,8 +132,12 @@ const createDefaultValue = (type, data, key) => {
             return "Key"
         case "Number":
             return 0
+        case "Float":
+            return 0.0
         case "Boolean":
             return false
+        case "Reference":
+            return null
     }
     return null
 }

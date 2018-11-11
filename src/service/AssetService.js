@@ -45,9 +45,9 @@ const edit = (id) => {
 }
 
 const addRow = (id) => {
-    const asset = store.get(`asset/${id}`)
+    const asset = store.get(`assets/${id}`)
     const row = SchemaService.createRow(asset)
-    Commander.execute(new AddRowCommand(`asset/${id}/data`, row))
+    Commander.execute(new AddRowCommand(`assets/${id}/data`, row))
 }
 
 const removeField = (id, path) => {

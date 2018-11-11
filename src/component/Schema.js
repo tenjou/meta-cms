@@ -2,8 +2,9 @@ import { component, componentVoid, elementOpen, elementClose, text, store, eleme
 import SchemaService from "../service/SchemaService"
 import PopupService from "../service/PopupService"
 import TextInput from "./TextInput"
+import NumberInput from "./NumberInput"
 import Select from "./Select"
-import Word from "./Word"
+import Checkbox from "./Checkbox"
 
 const SchemaItem = component({
     state: {
@@ -17,43 +18,57 @@ const SchemaItem = component({
     },
 
     render() {
-        elementOpen("item")
-            elementOpen("field")
-                componentVoid(Word, {
-                    bind: `${this.bind.value}/key`,
-                    $onchange: this.handleChangeFunc
-                })
-            elementClose("field")
+        elementOpen("tr")
+            elementOpen("td")
+            elementClose("td")
 
-            elementOpen("field")
+            elementOpen("td")
+                componentVoid(TextInput, { bind: `${this.bind.value}/key` })
+            elementClose("td")
+
+            elementOpen("td")
                 componentVoid(Select, { 
                     bind: {
                         value: `${this.bind.value}/type`,
                         src: "column-types" 
                     }
                 })
-            elementClose("field")
+            elementClose("td")
 
-            elementOpen("field")
-                this.renderValue()
-            elementClose("field")
-            
-            elementOpen("button", this.propsRemove)
-                text("Remove")
-            elementClose("button")
-        elementClose("item")
+            elementOpen("td")
+                elementOpen("button")
+                    text("Remove")
+                elementClose("button")                        
+            elementClose("td")
+        elementClose("tr")
     },
 
-    renderValue() {
+    renderProperties() {
         switch(this.$value.type) {
             case "Number":
+                this.renderProperty("Default value", NumberInput, { bind: `${this.bind.value}/default` })
                 break
+
             case "String":
-                componentVoid(TextInput)
+                this.renderProperty("Default value", TextInput, { bind: `${this.bind.value}/default` })
                 break
-            case "Boolean":
-                break
+
+            case "String":
+                this.renderProperty("Default value", Checkbox, { bind: `${this.bind.value}/default` })
+                break 
         }
+    },
+
+    renderProperty(type, component, props) {
+        elementOpen("property")
+            elementOpen("name")
+                text(type)
+            elementClose("name")
+
+            elementOpen("value")
+                componentVoid(component, props)
+            elementClose("value")  
+        elementClose("property")
     },
 
     handleChange(value) {
@@ -81,23 +96,42 @@ const Schema = component({
 
     render() {
         elementOpen("schema")
-            elementOpen("list")
+            elementOpen("buttons")
+                elementOpen("button", { onclick: this.handleAddFunc })
+                    text("Add Column")
+                elementClose("button")
+            elementClose("buttons")
+
+            elementOpen("table")
+                elementOpen("tr")
+                    elementOpen("th")
+                    elementClose("th")
+
+                    elementOpen("th")
+                        text("name")
+                    elementClose("th")
+
+                    elementOpen("th")
+                        text("type")
+                    elementClose("th")
+                    
+                    elementOpen("th")
+                        text("actions")
+                    elementClose("th")
+                elementClose("tr")
+
                 const buffer = this.$buffer
                 for(let n = 0; n < buffer.length; n++) {
                     componentVoid(SchemaItem, { 
                         bind: {
                             value: `${this.bind.buffer}/${n}`,
-                            schema: `asset/${this.$value.id}/meta/schema`
+                            schema: `assets/${this.$value.id}/meta/schema`
                         } 
-                    })
-                }    
-            elementClose("list")
+                    })       
+                }   
+            elementClose("table")            
 
             elementOpen("buttons")
-                elementOpen("button", { onclick: this.handleAddFunc })
-                    text("Add")
-                elementClose("button")
-
                 elementOpen("button", { onclick: this.handleApplyFunc })
                     text("Apply")
                 elementClose("button")
