@@ -62,7 +62,6 @@ const Sheet = component({
 		}
 
 		elementOpen("table")
-		
 			elementOpen("tr")
 				for(let n = 0; n < schemaBuffer.length; n++) {
 					const key = schemaBuffer[n]

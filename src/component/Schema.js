@@ -36,7 +36,7 @@ const SchemaItem = component({
             elementClose("td")
 
             elementOpen("td")
-                elementOpen("button")
+                elementOpen("button", this.propsRemove)
                     text("Remove")
                 elementClose("button")                        
             elementClose("td")
