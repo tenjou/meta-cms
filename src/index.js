@@ -3,28 +3,37 @@ import HomeLayout from "./layout/HomeLayout"
 import ExportLayout from "./layout/ExportLayout"
 import Commander from "./Commander"
 
+const createMeta = () => {
+	return {
+		name: "Project",
+		version: 1,
+		created: Date.now()
+	}
+}
+
 const assets = localStorage.getItem("assets")
 if(assets) {
 	store.set("assets", JSON.parse(assets))
+	
+	const meta = localStorage.getItem("meta")
+	store.set("meta", meta ? JSON.parse(meta) : createMeta())
 
 	const cache = localStorage.getItem("cache")
-	if(cache) {
-		store.set("cache", JSON.parse(cache))
-	}
-	else {
-		store.set("cache", {})
-	}
+	store.set("cache", cache ? JSON.parse(cache) : {})
 }
 else {
 	store.set("assets", {})
 	store.set("cache", {})
+	store.set("meta", createMeta())
 }
 
-store.set("meta", {})
 store.set("state", {
 	popup: null,
 	menu: "",
-	assetPrev: ""
+	assetPrev: "",
+	export: {
+		minify: false
+	}
 })
 store.set("column-types", [ "Id", "String", "Number", "Float", "Boolean", "UUID", "Reference" ])
 
