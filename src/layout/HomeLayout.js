@@ -31,30 +31,37 @@ const ContentPanel = component({
 		const id = this.$value
 
 		elementOpen("panel")
-			elementOpen("header")
-				elementOpen("name")
-					componentVoid(Word, { bind: `assets/${id}/meta/name` })
-				elementClose("name")
+			if(!id) {
+				elementOpen("info")
+					text("No asset selected")
+				elementClose("info")
+			}
+			else {
+				elementOpen("header")
+					elementOpen("name")
+						componentVoid(Word, { bind: `assets/${id}/meta/name` })
+					elementClose("name")
 
-				elementOpen("buttons")
-					elementOpen("button", { onclick: this.handleAddRowFunc })
-						text("Add Row")
-					elementClose("button")		
-					
-					elementOpen("button", { onclick: this.handleEditFunc })
-						text("Edit")
-					elementClose("button")							
-				elementClose("buttons")
-			elementClose("header")
+					elementOpen("buttons")
+						elementOpen("button", { onclick: this.handleAddRowFunc })
+							text("Add Row")
+						elementClose("button")		
+						
+						elementOpen("button", { onclick: this.handleEditFunc })
+							text("Edit")
+						elementClose("button")							
+					elementClose("buttons")
+				elementClose("header")
 
-			elementOpen("content")
-				componentVoid(Sheet, {
-					bind: {
-						value: `assets/${id}/data`,
-						schema: `assets/${id}/meta/schema`
-					}	
-				})
-			elementClose("content")
+				elementOpen("content")
+					componentVoid(Sheet, {
+						bind: {
+							value: `assets/${id}/data`,
+							schema: `assets/${id}/meta/schema`
+						}	
+					})
+				elementClose("content")
+			}
 		elementClose("panel")
 	},
 
@@ -80,7 +87,7 @@ const Asset = component({
 			class: (store.data.cache.assets.selected === meta.id) ? "active" : "",
 		}
 		const propsA = { 
-			href: `#asset/${meta.id}`, 
+			href: `#assets/${meta.id}`, 
 			onclick: this.handleClickFunc,
 			"data-key": meta.id
 		}

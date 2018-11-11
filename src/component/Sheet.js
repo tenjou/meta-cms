@@ -2,44 +2,6 @@ import { component, componentVoid, elementOpen, elementClose, text, store } from
 import Checkbox from "./Checkbox"
 import Word from "./Word"
 
-const Sheet = component({
-	state: {
-		value: null,
-		schema: null
-	},
-
-	render() {
-		const schema = this.$schema
-		const items = this.$value
-
-		if(!schema) {
-			elementOpen("info")
-				text("No asset selected")
-			elementClose("info")
-			return
-		}
-
-		elementOpen("sheet")
-			elementOpen("header")
-				elementOpen("item")
-					text("#")
-				elementClose("item")
-				for(let key in schema) {
-					elementOpen("item")
-						text(key)
-					elementClose("item")
-				}
-			elementClose("header")
-
-			elementOpen("content")
-				for(let n = 0; n < items.length; n++) {
-					componentVoid(SheetItem, { bind: `${this.bind.value}/${n}`, $schema: schema, $index: n })
-				}
-			elementClose("content")
-		elementClose("sheet")
-	}
-})
-
 const SheetItem = component({
 	state: {
 		value: null,
@@ -50,17 +12,19 @@ const SheetItem = component({
 	render() {
 		const schema = this.$schema
 
-		elementOpen("item")
-			elementOpen("field")
-				text(this.$index)
-			elementClose("field")
-
+		elementOpen("tr")
 			for(let key in schema) {
-				elementOpen("field")
+				elementOpen("td")
 					this.renderValue(key)
-				elementClose("field")
+				elementClose("td")
 			}
-		elementClose("item")
+
+			elementOpen("td")
+				elementOpen("button")
+					text("Remove")
+				elementClose("button")
+			elementClose("td")
+		elementClose("tr")
 	},
 
 	renderValue(key) {
@@ -78,6 +42,43 @@ const SheetItem = component({
 				text(this.$value[key])
 				break
 		}
+	}
+})
+
+const Sheet = component({
+	state: {
+		value: null,
+		schema: null
+	},
+
+	render() {
+		const schema = this.$schema
+		const items = this.$value
+		const schemaBuffer = Object.keys(schema)
+		const cellStyle = {
+			style: {
+				width: `${100 / schemaBuffer.length}%`
+			}
+		}
+
+		elementOpen("table")
+		
+			elementOpen("tr")
+				for(let n = 0; n < schemaBuffer.length; n++) {
+					const key = schemaBuffer[n]
+					elementOpen("th", cellStyle)
+						text(key)
+					elementClose("th")
+				}	
+				
+				elementOpen("th")
+				elementClose("th")				
+			elementClose("tr")
+
+			for(let n = 0; n < items.length; n++) {
+				componentVoid(SheetItem, { bind: `${this.bind.value}/${n}`, $schema: schema, $index: n })
+			}
+		elementClose("table")
 	}
 })
 

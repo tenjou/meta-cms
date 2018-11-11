@@ -55,7 +55,7 @@ window.addEventListener("keydown", (event) => {
 	}
 })
 
-route(/#asset\/([0-9a-z]*)/, HomeLayout, (data) => {
+route(/#assets\/([0-9a-z]*)/, HomeLayout, (data) => {
 	store.set("state/menu", "")
 	store.set("cache/assets/selected", data[0][1])
 	return { $value: data[0][1] }
@@ -64,7 +64,11 @@ route("#export", ExportLayout, () => {
 	store.set("state/menu", "export")
 })
 route("/", HomeLayout, () => {
-	document.location.hash = `#asset/${store.data.cache.assets.selected}`
+	const assetId = store.data.cache.assets.selected
+	const asset = store.get(`assets/${assetId}`)
+	if(asset) {
+		document.location.hash = `#assets/${assetId}`
+	}
 })
 
 window.onbeforeunload = () => {
