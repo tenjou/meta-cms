@@ -5,6 +5,8 @@ import SchemaService from "../service/SchemaService"
 import Sheet from "../component/Sheet"
 import Popups from "../component/Popups"
 import Schema from "../component/Schema"
+import Word from "../component/Word"
+import Menu from "../component/Menu"
 
 const editSchema = (id) => {
 	const schema = store.get(`assets/${id}/meta/schema`)
@@ -31,7 +33,7 @@ const ContentPanel = component({
 		elementOpen("panel")
 			elementOpen("header")
 				elementOpen("name")
-					text("Sheet")
+					componentVoid(Word, { bind: `assets/${id}/meta/name` })
 				elementClose("name")
 
 				elementOpen("buttons")
@@ -126,7 +128,7 @@ const Asset = component({
 		const meta = this.$value
 
 		elementOpen("item")
-			elementOpen("a", { href: `#${meta.id}` })
+			elementOpen("a", { href: `#asset/${meta.id}` })
 				text(meta.name)
 			elementClose("a")
 
@@ -152,8 +154,12 @@ const HomeLayout = component({
 		const id = this.$value
 		
 		elementOpen("layout")
-			componentVoid(ContentPanel, { $value: id })
-			componentVoid(AssetPanel)
+			componentVoid(Menu)
+
+			elementOpen("workspace")
+				componentVoid(ContentPanel, { $value: id })
+				componentVoid(AssetPanel)
+			elementClose("workspace")
 		elementClose("layout")
 
 		componentVoid(Popups)

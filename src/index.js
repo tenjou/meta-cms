@@ -1,5 +1,6 @@
 import { store, route } from "wabi"
 import HomeLayout from "./layout/HomeLayout"
+import ExportLayout from "./layout/ExportLayout"
 import Commander from "./Commander"
 
 const assets = localStorage.getItem("assets")
@@ -21,7 +22,9 @@ else {
 
 store.set("meta", {})
 store.set("state", {
-	popup: null
+	popup: null,
+	menu: "",
+	assetPrev: ""
 })
 store.set("column-types", [ "Id", "String", "Number", "Float", "Boolean", "UUID", "Reference" ])
 
@@ -36,10 +39,17 @@ window.addEventListener("keydown", (event) => {
 	}
 })
 
-route(/\/#[0-9]*/, HomeLayout, (data) => {
-	return { $value: location.hash.slice(1) }
+route(/#asset\/([0-9a-z]*)/, HomeLayout, (data) => {
+	store.set("state/menu", "")
+	store.set("state/assetPrev", data[0][1])
+	return { $value: data[0][1] }
 })
-route("/", HomeLayout)
+route("#export", ExportLayout, () => {
+	store.set("state/menu", "export")
+})
+route("/", HomeLayout, () => {
+	document.location.hash = `#asset/${store.data.state.assetPrev}`
+})
 
 window.onbeforeunload = () => {
 	localStorage.setItem("assets", JSON.stringify(store.data.assets))

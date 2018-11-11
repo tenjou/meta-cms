@@ -1,171 +1,204 @@
 * {
-    padding: 0;
-    margin: 0;
+	padding: 0;
+	margin: 0;
 }
 
 body {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background-color: #ccc;
-    font-size: 12px;
-    font-family: "Open Sans"
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	background-color: #ddd;
+	font-size: 12px;
+	font-family: "Open Sans"
 }
 
 button {
-    padding: 2px;
-    margin: 2px;
-    min-width: 32px;
-    font-size: 10px;
-    font-weight: bold;
-    text-transform: uppercase;
-    cursor: pointer;
+	padding: 2px;
+	margin: 2px;
+	min-width: 32px;
+	font-size: 10px;
+	font-weight: bold;
+	text-transform: uppercase;
+	cursor: pointer;
 }
 
 select, input {
-    width: 100%;
-    height: 20px;
-    box-sizing: border-box;
+	width: 100%;
+	height: 20px;
+	box-sizing: border-box;
 }
 input {
-    padding-left: 5px;
+	padding-left: 5px;
 }
 
 list {
-    overflow-y: auto;
+	overflow-y: auto;
 }
 list > header {
-    padding: 4px;
-    font-size: 10px;
-    font-weight: bold;
-    text-transform: uppercase;
-    color: #777;
+	padding: 4px;
+	font-size: 10px;
+	font-weight: bold;
+	text-transform: uppercase;
+	color: #777;
 }
 list item {
-    display: flex;
-    padding: 0 3px 0 3px;    
+	display: flex;
+	padding: 0 3px 0 3px;    
 }
 list a {
-    flex: 1;
-    color: #222;
-    font-weight: 600;
-    font-size: 12px; 
-    cursor: pointer;
-    text-decoration: none;
+	flex: 1;
+	color: #222;
+	font-weight: 600;
+	font-size: 12px; 
+	cursor: pointer;
+	text-decoration: none;
 }
 list a:hover {
-    text-decoration: underline;
+	text-decoration: underline;
 }
 
 layout {
-    display: flex;
-    flex-direction: row;
-    height: 100%;
+	display: flex;
+	flex-direction: column;;
+	height: 100%;
+}
+
+workspace {
+	display: flex;
+	flex: 1;
+}
+
+menu {
+	display: flex;
+	background: black;
+	
+	border-bottom: 1px solid #e4e4e4;
+}
+menu a {
+	padding: 4px;
+	text-transform: uppercase;
+	font-size: 10px;
+	font-weight: 600;
+	cursor: pointer;
+	text-decoration: none;
+	color: #bbb;
+}
+menu a:hover,
+menu a.active {
+	color: white;
+	/* font-weight: bold; */
 }
 
 panel {
-    flex: 1;
+	flex: 1;
+	background: #ccc;
+	margin: 2px;
+	padding: 3px;
 }
-panel:not(:first-child) {
-    border-left: 1px solid #888;
+panel header {
+	display: flex;
+}
+panel header name {
+	flex: 1;
 }
 
 sheet {
-    display: flex;
+	display: flex;
 }
 
 sheet {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
+	display: flex;
+	flex-direction: column;
+	flex: 1;
 }
 sheet header {
-    display: flex;
-    flex: 1;
-    padding: 2px 2px 4px 9px;    
+	display: flex;
+	flex: 1;
+	padding: 2px 2px 4px 9px;    
 }
 sheet header item {
-    flex: 1;
+	flex: 1;
 }
 sheet content {
-    display: flex;
-    flex-direction: column;
+	display: flex;
+	flex-direction: column;
 }
 sheet content item {
-    display: flex;
+	display: flex;
 }
 sheet content item field {
-    flex: 1;    
+	flex: 1;    
 }
 
 back {
-    display: flex;
-    align-items: center;
-    justify-content: center;     
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-    background: rgba(0, 0, 0, 0.7)
+	display: flex;
+	align-items: center;
+	justify-content: center;     
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	top: 0;
+	left: 0;
+	background: rgba(0, 0, 0, 0.7)
 }
 
 popup {
-    display: flex;
-    flex-direction: column;
-    min-width: 400px;
+	display: flex;
+	flex-direction: column;
+	min-width: 400px;
 }
 popup header {
-    display: flex;
-    background: black;
-    padding: 2px 2px 2px 10px;
+	display: flex;
+	background: black;
+	padding: 2px 2px 2px 10px;
 }
 popup header title {
-    display: block;
-    flex: 1;
-    color: white;
-    line-height: 21px;
+	display: block;
+	flex: 1;
+	color: white;
+	line-height: 21px;
 }
 popup content {
-    display: flex;
-    flex-direction: column;
-    background: #ccc;
-    min-height: 300px;
+	display: flex;
+	flex-direction: column;
+	background: #ccc;
+	min-height: 300px;
 }
 
 schema {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
+	display: flex;
+	flex-direction: column;
+	flex: 1;
 }
 schema list {
-    flex: 1;
+	flex: 1;
 }
 schema list item {
-    margin: 1px;
-    padding: 3px;
-    line-height: 20px;
-    cursor: pointer;
-    border-bottom: 1px solid black;
+	margin: 1px;
+	padding: 3px;
+	line-height: 20px;
+	cursor: pointer;
+	border-bottom: 1px solid black;
 }
 schema list item:hover {
-    background: #bbb;
+	background: #bbb;
 }
 schema list item properties {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
+	display: flex;
+	flex-direction: column;
+	flex: 1;
 }
 schema list item properties property {
-    display: flex;
-    margin: 2px;
+	display: flex;
+	margin: 2px;
 }
 schema list item properties property name {
-    flex: 0 0 90px;
+	flex: 0 0 90px;
 }
 schema list item properties property value {
-    flex: 1;
+	flex: 1;
 }
 schema list item buttons {
-    margin-left: 10px;
+	margin-left: 10px;
 }
+
