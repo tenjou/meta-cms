@@ -56,8 +56,14 @@ window.addEventListener("keydown", (event) => {
 })
 
 route(/#assets\/([0-9a-z]*)/, HomeLayout, (data) => {
+	const assetId = data[0][1]
+	const asset = store.get(`assets/${assetId}`)
+	if(!asset) {
+		document.location.hash = ""
+		return
+	}
 	store.set("state/menu", "")
-	store.set("cache/assets/selected", data[0][1])
+	store.set("cache/assets/selected", assetId)
 	return { $value: data[0][1] }
 })
 route("#export", ExportLayout, () => {

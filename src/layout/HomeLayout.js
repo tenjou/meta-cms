@@ -28,10 +28,8 @@ const ContentPanel = component({
 	},
 
 	render() {
-		const id = this.$value
-
 		elementOpen("panel")
-			if(!id) {
+			if(!this.$value) {
 				elementOpen("info")
 					text("No asset selected")
 				elementClose("info")
@@ -39,7 +37,7 @@ const ContentPanel = component({
 			else {
 				elementOpen("header")
 					elementOpen("name")
-						componentVoid(Word, { bind: `assets/${id}/meta/name` })
+						componentVoid(Word, { bind: `${this.bind}/meta/name` })
 					elementClose("name")
 
 					elementOpen("buttons")
@@ -56,8 +54,8 @@ const ContentPanel = component({
 				elementOpen("content")
 					componentVoid(Sheet, {
 						bind: {
-							value: `assets/${id}/data`,
-							schema: `assets/${id}/meta/schema`
+							value: `${this.bind}/data`,
+							schema: `${this.bind}/meta/schema`
 						}	
 					})
 				elementClose("content")
@@ -66,11 +64,11 @@ const ContentPanel = component({
 	},
 
 	handleAddRow(event) {
-		AssetService.addRow(this.$value)
+		AssetService.addRow(this.$value.meta.id)
 	},
 
 	handleEdit(event) {
-		editSchema(this.$value)
+		editSchema(this.$value.meta.id)
 	}
 })
 
@@ -164,7 +162,7 @@ const HomeLayout = component({
 			componentVoid(Menu)
 
 			elementOpen("workspace")
-				componentVoid(ContentPanel, { $value: id })
+				componentVoid(ContentPanel, { bind: `assets/${id}` })
 				componentVoid(AssetPanel)
 			elementClose("workspace")
 		elementClose("layout")

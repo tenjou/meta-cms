@@ -39,6 +39,9 @@ input[type="checkbox"] {
 table td {
 	text-align: center;
 }
+table th {
+	padding: 4px;
+}
 table tr:hover {
 	background: #bbb;
 }

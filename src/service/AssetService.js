@@ -38,6 +38,9 @@ const addEnum = () => {
 
 const remove = (id) => {
     Commander.execute(new RemoveAssetCommand(id))
+    if(store.data.cache.assets.selected === id) {
+        document.location.hash = ""
+    }
 }
 
 const edit = (id) => {
