@@ -9,6 +9,10 @@ const SheetItem = component({
 		index: 0
 	},
 
+	mount() {
+		this.propsRemove = { onclick: this.handleRemove.bind(this) }
+	},
+
 	render() {
 		const schema = this.$schema
 
@@ -20,7 +24,7 @@ const SheetItem = component({
 			}
 
 			elementOpen("td")
-				elementOpen("button")
+				elementOpen("button", this.propsRemove)
 					text("Remove")
 				elementClose("button")
 			elementClose("td")
@@ -42,6 +46,10 @@ const SheetItem = component({
 				text(this.$value[key])
 				break
 		}
+	},
+
+	handleRemove(event) {
+		store.remove(this.bind)
 	}
 })
 
