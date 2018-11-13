@@ -67,7 +67,11 @@ const createItem = (data) => {
         }
     }
 
-    return { id: data.id++, key, type: "String", index: data.buffer.length }
+    return { 
+        id: data.id++, 
+        key, type: "String", 
+        index: data.buffer.length 
+    }
 }
 
 const prepareData = (schema) => {
@@ -161,4 +165,12 @@ const isKeyUnique = (schema, key) => {
     return true
 }
 
-export { create, createItem, prepareData, createDefaultValue, createRow, isKeyUnique }
+const moveBefore = (buffer, index, indexBefore) => {
+    const item = buffer.splice(index, 1)
+    buffer.splice(indexBefore, 0, item[0])
+    for(let n = 0; n < buffer.length; n++) {
+        buffer[n].index = n
+    }
+}
+
+export { create, createItem, prepareData, createDefaultValue, createRow, isKeyUnique, moveBefore }

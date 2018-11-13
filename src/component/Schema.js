@@ -7,146 +7,182 @@ import Select from "./Select"
 import Checkbox from "./Checkbox"
 
 const SchemaItem = component({
-    state: {
-        value: null,
-        schema: null
-    },
+	state: {
+		value: null,
+		schema: null,
+		index: -1,
+		onDrop: null
+	},
 
-    mount() {
-        this.handleChangeFunc = this.handleChange.bind(this)
-        this.propsRemove = { onclick: this.handleRemove.bind(this) }
-    },
+	mount() {
+		this.handleChangeFunc = this.handleChange.bind(this)
+		this.propsRemove = { onclick: this.handleRemove.bind(this) }
+	},
 
-    render() {
-        elementOpen("tr")
-            elementOpen("td")
-            elementClose("td")
+	render() {
+		const props = {
+			draggable: "true",
+			ondragstart: this.handleDrag.bind(this),
+			ondrop: this.handleDrop.bind(this),
+			ondragover: this.handleDragOver.bind(this)
+		}
+		const propsRow = {
+			style: {
+				width: `50%`
+			}
+		}
 
-            elementOpen("td")
-                componentVoid(TextInput, { bind: `${this.bind.value}/key` })
-            elementClose("td")
+		elementOpen("tr", props)
+			elementOpen("td")
+			elementClose("td")
 
-            elementOpen("td")
-                componentVoid(Select, { 
-                    bind: {
-                        value: `${this.bind.value}/type`,
-                        src: "column-types" 
-                    }
-                })
-            elementClose("td")
+			elementOpen("td", propsRow)
+				componentVoid(TextInput, { bind: `${this.bind.value}/key` })
+			elementClose("td")
 
-            elementOpen("td")
-                elementOpen("button", this.propsRemove)
-                    text("Remove")
-                elementClose("button")                        
-            elementClose("td")
-        elementClose("tr")
-    },
+			elementOpen("td", propsRow)
+				componentVoid(Select, { 
+					bind: {
+						value: `${this.bind.value}/type`,
+						src: "column-types" 
+					}
+				})
+			elementClose("td")
 
-    renderProperties() {
-        switch(this.$value.type) {
-            case "Number":
-                this.renderProperty("Default value", NumberInput, { bind: `${this.bind.value}/default` })
-                break
+			elementOpen("td")
+				elementOpen("button", this.propsRemove)
+					text("Remove")
+				elementClose("button")                        
+			elementClose("td")
+		elementClose("tr")
+	},
 
-            case "String":
-                this.renderProperty("Default value", TextInput, { bind: `${this.bind.value}/default` })
-                break
+	renderProperties() {
+		switch(this.$value.type) {
+			case "Number":
+				this.renderProperty("Default value", NumberInput, { bind: `${this.bind.value}/default` })
+				break
 
-            case "String":
-                this.renderProperty("Default value", Checkbox, { bind: `${this.bind.value}/default` })
-                break 
-        }
-    },
+			case "String":
+				this.renderProperty("Default value", TextInput, { bind: `${this.bind.value}/default` })
+				break
 
-    renderProperty(type, component, props) {
-        elementOpen("property")
-            elementOpen("name")
-                text(type)
-            elementClose("name")
+			case "String":
+				this.renderProperty("Default value", Checkbox, { bind: `${this.bind.value}/default` })
+				break 
+		}
+	},
 
-            elementOpen("value")
-                componentVoid(component, props)
-            elementClose("value")  
-        elementClose("property")
-    },
+	renderProperty(type, component, props) {
+		elementOpen("property")
+			elementOpen("name")
+				text(type)
+			elementClose("name")
 
-    handleChange(value) {
-        if(SchemaService.isKeyUnique(this.$schema, value)) {
-            return value
-        }
-        return this.$value.key
-    },
+			elementOpen("value")
+				componentVoid(component, props)
+			elementClose("value")  
+		elementClose("property")
+	},
 
-    handleRemove(event) {
-        store.remove(this.bind.value)
-    }
+	handleChange(value) {
+		if(SchemaService.isKeyUnique(this.$schema, value)) {
+			return value
+		}
+		return this.$value.key
+	},
+
+	handleRemove(event) {
+		store.remove(this.bind.value)
+	},
+
+	handleDrag(event) {
+		event.dataTransfer.setData("index", this.$index)
+	},
+
+	handleDrop(event) {
+		event.preventDefault()
+		this.$onDrop(event.dataTransfer.getData("index"), this.$index)
+	},
+
+	handleDragOver(event) {
+		event.preventDefault()
+	}
 })
 
 const Schema = component({
-    state: {
-        value: null,
-        buffer: null
-    },
+	state: {
+		value: null,
+		buffer: null
+	},
 
-    mount() {
-        this.handleAddFunc = this.handleAdd.bind(this)
-        this.handleApplyFunc = this.handleApply.bind(this)
-    },
+	mount() {
+		this.handleAddFunc = this.handleAdd.bind(this)
+		this.handleApplyFunc = this.handleApply.bind(this)
+		this.handleDropFunc = this.handleDrop.bind(this)
+	},
 
-    render() {
-        elementOpen("schema")
-            elementOpen("buttons")
-                elementOpen("button", { onclick: this.handleAddFunc })
-                    text("Add Column")
-                elementClose("button")
-            elementClose("buttons")
+	render() {
+		elementOpen("schema")
+			elementOpen("buttons")
+				elementOpen("button", { onclick: this.handleAddFunc })
+					text("Add Column")
+				elementClose("button")
+			elementClose("buttons")
 
-            elementOpen("table")
-                elementOpen("tr")
-                    elementOpen("th")
-                    elementClose("th")
+			elementOpen("table")
+				elementOpen("tr")
+					elementOpen("th")
+					elementClose("th")
 
-                    elementOpen("th")
-                        text("name")
-                    elementClose("th")
+					elementOpen("th")
+						text("name")
+					elementClose("th")
 
-                    elementOpen("th")
-                        text("type")
-                    elementClose("th")
-                    
-                    elementOpen("th")
-                        text("actions")
-                    elementClose("th")
-                elementClose("tr")
+					elementOpen("th")
+						text("type")
+					elementClose("th")
+					
+					elementOpen("th")
+						text("actions")
+					elementClose("th")
+				elementClose("tr")
 
-                const buffer = this.$buffer
-                for(let n = 0; n < buffer.length; n++) {
-                    componentVoid(SchemaItem, { 
-                        bind: {
-                            value: `${this.bind.buffer}/${n}`,
-                            schema: `assets/${this.$value.id}/meta/schema`
-                        } 
-                    })       
-                }   
-            elementClose("table")            
+				const buffer = this.$buffer
+				console.log(buffer)
+				for(let n = 0; n < buffer.length; n++) {
+					componentVoid(SchemaItem, { 
+						bind: {
+							value: `${this.bind.buffer}/${n}`,
+							schema: `assets/${this.$value.id}/meta/schema`
+						},
+						$index: n,
+						$onDrop: this.handleDropFunc
+					})       
+				}   
+			elementClose("table")            
 
-            elementOpen("buttons")
-                elementOpen("button", { onclick: this.handleApplyFunc })
-                    text("Apply")
-                elementClose("button")
-            elementClose("buttons")
-        elementClose("schema")
-    },
+			elementOpen("buttons")
+				elementOpen("button", { onclick: this.handleApplyFunc })
+					text("Apply")
+				elementClose("button")
+			elementClose("buttons")
+		elementClose("schema")
+	},
 
-    handleAdd(event) {
-        store.add(this.bind.buffer, SchemaService.createItem(this.$value.data))
-    },
+	handleAdd(event) {
+		store.add(this.bind.buffer, SchemaService.createItem(this.$value.data))
+	},
 
-    handleApply(event) {
-        SchemaService.create(this.$value.id, this.$value.data)
-        PopupService.closePopup()
-    }
+	handleApply(event) {
+		SchemaService.create(this.$value.id, this.$value.data)
+		PopupService.closePopup()
+	},
+
+	handleDrop(index, indexBefore) {
+		SchemaService.moveBefore(this.$buffer, index, indexBefore)
+		store.update(this.bind.buffer)
+	}
 })
 
 export default Schema

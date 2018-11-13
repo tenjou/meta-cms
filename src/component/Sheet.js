@@ -1,6 +1,7 @@
 import { component, componentVoid, elementOpen, elementClose, text, store } from "wabi"
 import Checkbox from "./Checkbox"
 import Word from "./Word"
+import NumberInput from "./NumberInput"
 
 const SheetItem = component({
 	state: {
@@ -38,6 +39,9 @@ const SheetItem = component({
 		switch(entry.type) {
 			case "String":
 				componentVoid(Word, props)
+				break
+			case "Number":
+				componentVoid(NumberInput, props)
 				break
 			case "Boolean":
 				componentVoid(Checkbox, props)
