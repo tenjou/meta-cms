@@ -149,7 +149,6 @@ const Schema = component({
 				elementClose("tr")
 
 				const buffer = this.$buffer
-				console.log(buffer)
 				for(let n = 0; n < buffer.length; n++) {
 					componentVoid(SchemaItem, { 
 						bind: {

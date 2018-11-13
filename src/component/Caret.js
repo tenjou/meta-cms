@@ -2,11 +2,17 @@ import { component, componentVoid, elementOpen, elementClose, text, store, eleme
 
 const Caret = component({
 	mount() {
-		
+		this.props = { onclick: this.handleChange.bind(this) }
 	},
 
 	render() {
-		elementOpen("caret")
+		elementOpen("caret", props)
+			if(this.$value) {
+				elementVoid("i", { class: "fas fa-caret-down" })
+			}
+			else {
+				elementVoid("i", { class: "fas fa-caret-right" })
+			}
 		elementClose("caret")
 	},
 
