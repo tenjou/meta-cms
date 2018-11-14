@@ -3,7 +3,8 @@ import { component, componentVoid, elementOpen, elementClose, text, store, eleme
 const Select = component({
     state: {
         value: null,
-        src: null
+        src: null,
+        onChange: null
     },
 
     mount() {
@@ -29,6 +30,9 @@ const Select = component({
 
     handleChange(event) {
         this.$value = event.srcElement.value
+        if(this.$onChange) {
+            this.$onChange(event.srcElement.value)
+        }
     }
 })
 

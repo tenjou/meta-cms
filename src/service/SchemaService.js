@@ -80,11 +80,24 @@ const prepareData = (schema) => {
     let id = 0
     for(let key in schema) {
         const entry = schema[key]
-        buffer.push({ id, key, type: entry.type, index }) 
+        const item = { id, key, type: entry.type, index, 
+            cache: { 
+                open: false 
+            } 
+        }
+        populateFromSchemaType(item, entry.type)
+        buffer.push(item) 
         index++
         id++
     }
     return { id, buffer }
+}
+
+const populateFromSchemaType = (item, type) => {
+    const typeSchema = store.data.types[type]
+    for(let key in typeSchema) {
+        item[key] = createDefaultValue(type, null, null)
+    }    
 }
 
 const modifyAsset_add = (data, value) => {
@@ -173,4 +186,16 @@ const moveBefore = (buffer, index, indexBefore) => {
     }
 }
 
-export { create, createItem, prepareData, createDefaultValue, createRow, isKeyUnique, moveBefore }
+const rebuildBufferItem = (item, type) => {
+    const itemNew = { 
+        id: item.id,
+        key: item.key,
+        type,
+        index: item.index,
+        cache: item.cache 
+    }
+    populateFromSchemaType(item, type)
+    return itemNew
+}
+
+export { create, createItem, prepareData, createDefaultValue, createRow, isKeyUnique, moveBefore, rebuildBufferItem }

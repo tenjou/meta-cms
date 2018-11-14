@@ -45,6 +45,9 @@ table th {
 table tr:hover {
 	background: #bbb;
 }
+table tr.open:hover {
+	background: none;
+}
 
 list {
 	flex: 1;
@@ -206,33 +209,9 @@ schema {
 schema list {
 	flex: 1;
 }
-schema list item {
-	margin: 1px;
-	padding: 3px;
-	line-height: 20px;
-	cursor: pointer;
-	border-bottom: 1px solid black;
-}
-schema list item:hover {
-	background: #bbb;
-}
-schema list item properties {
-	display: flex;
-	flex-direction: column;
-	flex: 1;
-}
-schema list item properties property {
-	display: flex;
-	margin: 2px;
-}
-schema list item properties property name {
-	flex: 0 0 90px;
-}
-schema list item properties property value {
-	flex: 1;
-}
-schema list item buttons {
-	margin-left: 10px;
+schema list item key {
+	flex: 0 0 80px;
+	text-align: left;
 }
 
 layout > export {

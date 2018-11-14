@@ -5,11 +5,13 @@ import TextInput from "./TextInput"
 import NumberInput from "./NumberInput"
 import Select from "./Select"
 import Checkbox from "./Checkbox"
+import Caret from "./Caret"
 
 const SchemaItem = component({
 	state: {
 		value: null,
 		schema: null,
+		cache: false,
 		index: -1,
 		onDrop: null
 	},
@@ -34,6 +36,7 @@ const SchemaItem = component({
 
 		elementOpen("tr", props)
 			elementOpen("td")
+				componentVoid(Caret, { bind: `${this.bind.cache}/open` })
 			elementClose("td")
 
 			elementOpen("td", propsRow)
@@ -45,7 +48,8 @@ const SchemaItem = component({
 					bind: {
 						value: `${this.bind.value}/type`,
 						src: "column-types" 
-					}
+					},
+					$onChange: this.handleChangeFunc
 				})
 			elementClose("td")
 
@@ -55,6 +59,43 @@ const SchemaItem = component({
 				elementClose("button")                        
 			elementClose("td")
 		elementClose("tr")
+
+		if(this.$cache.open) {
+			elementOpen("tr", { class: "open" })
+				elementOpen("td")
+				elementClose("td")
+
+				elementOpen("td", { colspan: 3 })
+					elementOpen("list")
+						this.renderType()
+					elementClose("list")
+				elementClose("td")
+			elementClose("tr")
+		}
+	},
+
+	renderType() {
+		const typeSchema = store.data.types[this.$value.type]
+		for(let key in typeSchema) {
+			const props = { bind: `${this.bind.value}/${key}` }
+
+			elementOpen("item")
+				elementOpen("key")
+					text(key)
+				elementClose("key")
+			
+				elementOpen("value")
+					switch(typeSchema[key]) {
+						case "Number":
+							componentVoid(NumberInput, props)
+							break
+						case "String":
+							componentVoid(TextInput, props)
+							break
+					}
+				elementClose("value")
+			elementClose("item")
+		}
 	},
 
 	renderProperties() {
@@ -86,10 +127,8 @@ const SchemaItem = component({
 	},
 
 	handleChange(value) {
-		if(SchemaService.isKeyUnique(this.$schema, value)) {
-			return value
-		}
-		return this.$value.key
+		const itemNew = SchemaService.rebuildBufferItem(this.$value, value)
+		store.set(this.bind.value, itemNew)
 	},
 
 	handleRemove(event) {
@@ -153,13 +192,14 @@ const Schema = component({
 					componentVoid(SchemaItem, { 
 						bind: {
 							value: `${this.bind.buffer}/${n}`,
-							schema: `assets/${this.$value.id}/meta/schema`
+							schema: `assets/${this.$value.id}/meta/schema`,
+							cache: `${this.bind.buffer}/${n}/cache`
 						},
 						$index: n,
 						$onDrop: this.handleDropFunc
 					})       
 				}   
-			elementClose("table")            
+			elementClose("table")	            
 
 			elementOpen("buttons")
 				elementOpen("button", { onclick: this.handleApplyFunc })
