@@ -42,7 +42,29 @@ store.set("state", {
 		minify: false
 	}
 })
-store.set("column-types", [ "Id", "String", "Number", "Float", "Boolean", "UUID", "Reference" ])
+
+store.set("types", {
+	Id: {},
+	String: {
+		default: "String"
+	},
+	Number: {
+		default: "Number",
+		min: "Number",
+		max: "Number"
+	},
+	Float: {
+		default: "Number",
+		min: "Number",
+		max: "Number"
+	},
+	Boolean: {
+		default: "Checkbox"
+	},
+	UUID: {},
+	Reference: {}
+})
+store.set("column-types", Object.keys(store.data.types))
 
 window.addEventListener("keydown", (event) => {
 	if(event.keyCode === 90 && event.ctrlKey) {
