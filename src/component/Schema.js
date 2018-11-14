@@ -92,6 +92,9 @@ const SchemaItem = component({
 						case "String":
 							componentVoid(TextInput, props)
 							break
+						case "Boolean":
+							componentVoid(Checkbox, props)
+							break
 					}
 				elementClose("value")
 			elementClose("item")

@@ -59,7 +59,7 @@ store.set("types", {
 		max: "Number"
 	},
 	Boolean: {
-		default: "Checkbox"
+		default: "Boolean"
 	},
 	UUID: {},
 	Reference: {}
