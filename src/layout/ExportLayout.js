@@ -1,4 +1,5 @@
 import { component, componentVoid, elementOpen, elementClose, text } from "wabi"
+import ExportService from "../service/ExportService"
 import Menu from "../component/Menu"
 import Popups from "../component/Popups"
 import Checkbox from "../component/Checkbox"
@@ -9,43 +10,42 @@ const ExportLayout = component({
 	},
 
 	render() {
-		const data = {
-			meta: store.data.meta,
-			assets: store.data.assets
-		}
+		const data = ExportService.create(this.$value)
 
 		elementOpen("layout")
 			componentVoid(Menu)
-
 				elementOpen("export")
 					elementOpen("toolbar")
 						elementOpen("list")
-							elementOpen("item")
-								elementOpen("key")
-									text("Minify")
-								elementClose("key")
-
-								elementOpen("value")
-									componentVoid(Checkbox, { bind: "state/export/minify" })
-								elementClose("value")
-							elementClose("item")
+							this.renderCheckbox("minify")
+							this.renderCheckbox("production")
+							if(this.$value.production) {
+								this.renderCheckbox("named")
+							}
 						elementClose("list")
 					elementClose("toolbar")
 
 					elementOpen("panel")
 						elementOpen("pre")
-							if(this.$value.minify) {
-								text(JSON.stringify(data))
-							}
-							else {
-								text(JSON.stringify(data, null, "\t"))
-							}
+							text(data)
 						elementClose("pre")
 					elementClose("panel")
 				elementClose("export")
 		elementClose("layout")
 
 		componentVoid(Popups)
+	},
+
+	renderCheckbox(key) {
+		elementOpen("item")
+			elementOpen("key")
+				text(key)
+			elementClose("key")
+
+			elementOpen("value")
+				componentVoid(Checkbox, { bind: `state/export/${key}` })
+			elementClose("value")
+		elementClose("item")
 	}
 })
 

@@ -39,7 +39,9 @@ store.set("state", {
 	popup: null,
 	menu: "",
 	export: {
-		minify: false
+		minify: false,
+		production: false,
+		named: false
 	}
 })
 

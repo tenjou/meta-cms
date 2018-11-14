@@ -219,6 +219,9 @@ layout > export {
 	flex-direction: column;
     flex: 1;	
 }
+export list item key {
+	flex: 0 0 80px;
+}
 
 pre {
 	flex: 1;
