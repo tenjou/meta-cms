@@ -250,3 +250,10 @@ pre {
 list.assets item a {
 	padding: 2px;
 }
+
+caret {
+	display: block;
+	width: 20px;
+	text-align: center;
+	cursor: pointer;
+}
