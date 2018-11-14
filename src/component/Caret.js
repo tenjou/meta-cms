@@ -6,7 +6,7 @@ const Caret = component({
 	},
 
 	render() {
-		elementOpen("caret", props)
+		elementOpen("caret", this.props)
 			if(this.$value) {
 				elementVoid("i", { class: "fas fa-caret-down" })
 			}
@@ -17,7 +17,7 @@ const Caret = component({
 	},
 
 	handleChange(event) {
-		this.$value = event.srcElement.value
+		this.$value = !this.$value
 	}
 })
 
