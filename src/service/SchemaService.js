@@ -67,10 +67,21 @@ const createItem = (data) => {
         }
     }
 
-    return { 
+    const item = { 
         id: data.id++, 
-        key, type: "String", 
-        index: data.buffer.length 
+        key, 
+        type: "String", 
+        index: data.buffer.length,
+        cache: createCache()
+    }
+    populateFromSchemaType(item)
+
+    return item
+}
+
+const createCache = () => {
+    return { 
+        open: false
     }
 }
 
@@ -80,12 +91,8 @@ const prepareData = (schema) => {
     let id = 0
     for(let key in schema) {
         const entry = schema[key]
-        const item = { id, key, type: entry.type, index, 
-            cache: { 
-                open: false 
-            } 
-        }
-        populateFromSchemaType(item, entry.type)
+        const item = { id, key, type: entry.type, index, cache: createCache() }
+        populateFromSchemaType(item)
         buffer.push(item) 
         index++
         id++
@@ -93,7 +100,8 @@ const prepareData = (schema) => {
     return { id, buffer }
 }
 
-const populateFromSchemaType = (item, type) => {
+const populateFromSchemaType = (item) => {
+    const type = item.type
     const typeSchema = store.data.types[type]
     for(let key in typeSchema) {
         switch(key) {
@@ -216,7 +224,7 @@ const rebuildBufferItem = (item, type) => {
         index: item.index,
         cache: item.cache 
     }
-    populateFromSchemaType(item, type)
+    populateFromSchemaType(item)
     return itemNew
 }
 
