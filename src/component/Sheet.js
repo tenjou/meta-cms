@@ -1,4 +1,4 @@
-import { component, componentVoid, elementOpen, elementClose, text, store } from "wabi"
+import { component, componentVoid, elementOpen, elementClose, elementVoid, text, store } from "wabi"
 import Checkbox from "./Checkbox"
 import Word from "./Word"
 import NumberInput from "./NumberInput"
@@ -17,19 +17,19 @@ const SheetItem = component({
 	render() {
 		const schema = this.$schema
 
-		elementOpen("tr")
+		elementOpen("row")
 			for(let key in schema) {
-				elementOpen("td")
+				elementOpen("field")
 					this.renderValue(key)
-				elementClose("td")
+				elementClose("field")
 			}
 
-			elementOpen("td")
+			elementOpen("field")
 				elementOpen("button", this.propsRemove)
 					text("Remove")
 				elementClose("button")
-			elementClose("td")
-		elementClose("tr")
+			elementClose("field")
+		elementClose("row")
 	},
 
 	renderValue(key) {
@@ -67,29 +67,23 @@ const Sheet = component({
 		const schema = this.$schema
 		const items = this.$value
 		const schemaBuffer = Object.keys(schema)
-		const cellStyle = {
-			style: {
-				width: `${100 / schemaBuffer.length}%`
-			}
-		}
 
-		elementOpen("table")
-			elementOpen("tr")
+		elementOpen("sheet")
+			elementOpen("head")
 				for(let n = 0; n < schemaBuffer.length; n++) {
 					const key = schemaBuffer[n]
-					elementOpen("th", cellStyle)
+					elementOpen("field")
 						text(key)
-					elementClose("th")
+					elementClose("field")
 				}	
 				
-				elementOpen("th")
-				elementClose("th")				
-			elementClose("tr")
+				elementVoid("field")			
+			elementClose("head")
 
 			for(let n = 0; n < items.length; n++) {
 				componentVoid(SheetItem, { bind: `${this.bind.value}/${n}`, $schema: schema, $index: n })
 			}
-		elementClose("table")
+		elementClose("sheet")
 	}
 })
 

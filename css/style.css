@@ -36,9 +36,6 @@ input[type="checkbox"] {
 	height: auto;
 }
 
-table td {
-	text-align: center;
-}
 table th {
 	padding: 4px;
 }
@@ -47,6 +44,25 @@ table tr:hover {
 }
 table tr.open:hover {
 	background: none;
+}
+td input, sheet input {
+	background: none;
+	border: none;
+}
+td word {
+	display: block;	
+	height: 100%;
+}
+
+container {
+	width: 100%;
+	height: 100%;
+	border: 10px solid black;
+}
+full {
+	width: 100%;
+	height: 100%;
+	border: 10px solid red;
 }
 
 list {
@@ -140,30 +156,40 @@ panel header name {
 
 sheet {
 	display: flex;
-}
-
-sheet {
-	display: flex;
 	flex-direction: column;
 	flex: 1;
 }
-sheet header {
-	display: flex;
+sheet field { 
 	flex: 1;
-	padding: 2px 2px 4px 9px;    
+	padding: 2px;
+	margin: 1px;
+	background: #bfbebe;
 }
-sheet header item {
-	flex: 1;
+sheet head {
+    display: flex;
+    text-align: center;
+    font-weight: 600;	
 }
-sheet content {
+sheet head field {
+	background: black;
+	color: white;
+	margin: 1px;
+	padding: 1px;
+}
+sheet row {
 	display: flex;
-	flex-direction: column;
+	flex-direction: row;
+	cursor: text;
 }
-sheet content item {
-	display: flex;
+sheet row:hover field {
+	background-color: #aaa;
 }
-sheet content item field {
-	flex: 1;    
+sheet word {
+	display: block;
+	height: 100%;
+}
+sheet input {
+	height: 100%;
 }
 
 back {

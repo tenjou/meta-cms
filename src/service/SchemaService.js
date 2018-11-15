@@ -49,8 +49,6 @@ const create = (id, data) => {
         }
     }
 
-    console.log(schemaNew)
-
     asset.meta.schema = schemaNew
     store.update(`assets/${id}/meta`)
     store.update(`assets/${id}/data`)
