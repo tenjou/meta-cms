@@ -22,7 +22,7 @@ const NumberInput = component({
     },
 
     handleChange(event) {
-        this.$value = event.srcElement.value
+        this.$value = parseInt(event.srcElement.value)
     }
 })
 
