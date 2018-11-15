@@ -92,7 +92,7 @@ const Asset = component({
 
 		elementOpen("item", props)
 			elementOpen("a", propsA)
-				text(meta.name)
+				componentVoid(Word, { bind: `${this.bind}/name` })
 			elementClose("a")
 
 			elementOpen("buttons")

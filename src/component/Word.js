@@ -44,8 +44,6 @@ const Word = component({
 	},
 
 	handleClick(event) {
-		event.preventDefault()
-
 		if(event.detail % 2) {}
 		else {
 			event.stopPropagation()
@@ -96,7 +94,7 @@ const Word = component({
 	},
 
 	handleBlur(domEvent) {
-		const newValue = domEvent.target.innerHTML
+		const newValue = domEvent.target.innerText.replace(/^\s+|\s+$/g, "").replace(/<\/?[^>]+(>|$)/g, "")
 
 		if(newValue) {
 			if(this.$onchange) {

@@ -151,7 +151,7 @@ panel header name {
     font-size: 10px;
     font-weight: bold;
     text-transform: uppercase;
-    color: #777;	
+    color: #000;	
 }
 
 sheet {
@@ -187,6 +187,7 @@ sheet row:hover field {
 sheet word {
 	display: block;
 	height: 100%;
+	word-break: break-word;
 }
 sheet input {
 	height: 100%;
