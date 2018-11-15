@@ -101,34 +101,6 @@ const SchemaItem = component({
 		}
 	},
 
-	renderProperties() {
-		switch(this.$value.type) {
-			case "Number":
-				this.renderProperty("Default value", NumberInput, { bind: `${this.bind.value}/default` })
-				break
-
-			case "String":
-				this.renderProperty("Default value", TextInput, { bind: `${this.bind.value}/default` })
-				break
-
-			case "String":
-				this.renderProperty("Default value", Checkbox, { bind: `${this.bind.value}/default` })
-				break 
-		}
-	},
-
-	renderProperty(type, component, props) {
-		elementOpen("property")
-			elementOpen("name")
-				text(type)
-			elementClose("name")
-
-			elementOpen("value")
-				componentVoid(component, props)
-			elementClose("value")  
-		elementClose("property")
-	},
-
 	handleChange(value) {
 		const itemNew = SchemaService.rebuildBufferItem(this.$value, value)
 		store.set(this.bind.value, itemNew)

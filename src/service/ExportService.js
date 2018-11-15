@@ -8,7 +8,7 @@ const create = (options) => {
     return JSON.stringify(data, null, "\t")    
 }
 
-const createProject = (named) => {
+const createProject = () => {
     const data = {
         meta: store.data.meta,
         assets: store.data.assets

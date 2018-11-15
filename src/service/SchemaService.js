@@ -19,16 +19,18 @@ const create = (id, data) => {
         const itemPrev = hashes[item.id]
         if(itemPrev !== undefined) {
             itemsFromPrev++
-            schemaNew[item.key] = { type: item.type }
+            
             if(item.key !== itemPrev.key) { 
                 modifyAsset_rename(asset.data, itemPrev.key, item.key)
             }
             if(item.type !== itemPrev.type) {
                 modifyAsset_type(asset.data, item.key, item.type)
             }
+
+            schemaNew[item.key] = populateFromSchemaType({ type: item.type }, item)
         }
         else {
-            schemaNew[item.key] = { type: item.type }
+            schemaNew[item.key] = populateFromSchemaType({ type: item.type }, item)
             modifyAsset_add(asset.data, item)
         }
     }
@@ -46,6 +48,8 @@ const create = (id, data) => {
             modifyAsset_remove(asset.data, entry.key)
         }
     }
+
+    console.log(schemaNew)
 
     asset.meta.schema = schemaNew
     store.update(`assets/${id}/meta`)
@@ -92,7 +96,7 @@ const prepareData = (schema) => {
     for(let key in schema) {
         const entry = schema[key]
         const item = { id, key, type: entry.type, index, cache: createCache() }
-        populateFromSchemaType(item)
+        populateFromSchemaType(item, entry)
         buffer.push(item) 
         index++
         id++
@@ -100,26 +104,35 @@ const prepareData = (schema) => {
     return { id, buffer }
 }
 
-const populateFromSchemaType = (item) => {
+const populateFromSchemaType = (item, copy = null) => {
     const type = item.type
     const typeSchema = store.data.types[type]
+    
     for(let key in typeSchema) {
+        if(copy) {
+            const value = copy[key]
+            if(value !== undefined) {
+                item[key] = value
+                continue
+            }
+        }
+
         switch(key) {
             case "min": {
                 if(type === "Float") {
-                    item[key] = Number.MIN_VALUE
+                    item.min = Number.MIN_VALUE
                 }
                 else {
-                    item[key] = Number.MIN_SAFE_INTEGER
+                    item.min = Number.MIN_SAFE_INTEGER
                 }
             } break
 
             case "max": {
                 if(type === "Float") {
-                    item[key] = Number.MAX_VALUE
+                    item.max = Number.MAX_VALUE
                 }
                 else {
-                    item[key] = Number.MAX_SAFE_INTEGER
+                    item.max = Number.MAX_SAFE_INTEGER
                 }
             } break
             
@@ -127,7 +140,9 @@ const populateFromSchemaType = (item) => {
                 item[key] = createDefaultValue(type, null, null)
                 break
         }
-    }    
+    }   
+    
+    return item
 }
 
 const modifyAsset_add = (data, value) => {
@@ -194,7 +209,7 @@ const createRow = (asset) => {
     const schema = asset.meta.schema
     for(let key in schema) {
         const item = schema[key]
-        row[key] = createDefaultValue(item.type, asset.data, key)
+        row[key] = (item.default !== undefined) ? item.default : createDefaultValue(item.type, asset.data, key)
     }    
     return row
 }
