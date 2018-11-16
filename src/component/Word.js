@@ -94,7 +94,7 @@ const Word = component({
 	},
 
 	handleBlur(domEvent) {
-		const newValue = domEvent.target.innerText.replace(/^\s+|\s+$/g, "").replace(/<\/?[^>]+(>|$)/g, "")
+		const newValue = domEvent.target.innerText.replace(/^\s+|\s+$/g, "").replace(/<\/?[^>]+(>|$)/g, "").replace(/\n/, "")
 
 		if(newValue) {
 			if(this.$onchange) {
