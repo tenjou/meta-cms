@@ -24,14 +24,14 @@ const create = (id, data) => {
                 modifyAsset_rename(asset.data, itemPrev.key, item.key)
             }
             if(item.type !== itemPrev.type) {
-                modifyAsset_type(asset.data, item.key, item.type)
+                modifyAsset_type(asset.data, item)
             }
 
             schemaNew[item.key] = populateFromSchemaType({ type: item.type }, item)
         }
         else {
             schemaNew[item.key] = populateFromSchemaType({ type: item.type }, item)
-            modifyAsset_add(asset.data, item)
+            modifyAsset_type(asset.data, item)
         }
     }
 
@@ -143,17 +143,10 @@ const populateFromSchemaType = (item, copy = null) => {
     return item
 }
 
-const modifyAsset_add = (data, value) => {
+const modifyAsset_type = (data, schemaItem) => {
     for(let n = 0; n < data.length; n++) {
         const item = data[n]
-        item[value.key] = createDefaultValue(value.type, data, value.key)
-    }
-}
-
-const modifyAsset_type = (data, key, type) => {
-    for(let n = 0; n < data.length; n++) {
-        const item = data[n]
-        item[key] = createDefaultValue(type, data, key)
+        item[schemaItem.key] = (schemaItem.default !== undefined) ? schemaItem.default : createDefaultValue(schemaItem.type, data, schemaItem.key)
     }
 }
 
@@ -237,7 +230,7 @@ const rebuildBufferItem = (item, type) => {
         index: item.index,
         cache: item.cache 
     }
-    populateFromSchemaType(item)
+    populateFromSchemaType(itemNew)
     return itemNew
 }
 
