@@ -65,7 +65,7 @@ const Word = component({
 		if((keyCode > 47 && keyCode < 58) || 
 		   (keyCode > 64 && keyCode < 91) || 
 		   (keyCode > 96 && keyCode < 123) || 
-		   keyCode === 95 || keyCode === 189 || keyCode === 190 || keyCode === 32)
+		   keyCode === 95 || keyCode === 189 || keyCode === 190 || keyCode === 32 || keyCode === 191)
 		{
 			return
 		}
