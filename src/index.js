@@ -40,6 +40,7 @@ store.set("state", {
 	menu: "",
 	export: {
 		minify: false,
+		dictionary: false,
 		production: false,
 		named: false
 	}

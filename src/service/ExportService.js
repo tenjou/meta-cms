@@ -1,7 +1,7 @@
 import { store } from "wabi"
 
 const create = (options) => {
-    const data = options.production ? createProduction(options.named) : createProject()
+    const data = options.production ? createProduction(options.named, options.dictionary) : createProject()
     if(options.minify) {
         return JSON.stringify(data)
     }
@@ -16,7 +16,7 @@ const createProject = () => {
     return data
 }
 
-const createProduction = (named) => {
+const createProduction = (named, dictionary) => {
     const assets = store.data.assets
     const data = {
         meta: store.data.meta,
@@ -24,11 +24,22 @@ const createProduction = (named) => {
     }
     for(let key in assets) {
         const asset = assets[key]
+        let buffer = asset.data
+
+        if(dictionary) {
+            const dataDictionary = {}
+            for(let n = 0; n < buffer.length; n++) {
+                const item = buffer[n]
+                dataDictionary[item.name] = item
+            }
+            buffer = dataDictionary
+        }        
+
         if(named) {
-            data.assets[asset.meta.name] = asset.data
+            data.assets[asset.meta.name] = buffer
         }
         else {
-            data.assets[key] = asset.data
+            data.assets[key] = buffer
         }
     }
     return data
