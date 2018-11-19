@@ -45,7 +45,9 @@ table tr:hover {
 table tr.open:hover {
 	background: none;
 }
-td input, sheet input {
+td input, 
+sheet input,
+sheet select {
 	background: none;
 	border: none;
 }

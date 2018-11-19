@@ -77,6 +77,7 @@ const SchemaItem = component({
 	renderType() {
 		const typeSchema = store.data.types[this.$value.type]
 		for(let key in typeSchema) {
+			const entry = typeSchema[key]
 			const props = { bind: `${this.bind.value}/${key}` }
 
 			elementOpen("item")
@@ -85,7 +86,7 @@ const SchemaItem = component({
 				elementClose("key")
 			
 				elementOpen("value")
-					switch(typeSchema[key]) {
+					switch(entry.type) {
 						case "Number":
 							componentVoid(NumberInput, props)
 							break

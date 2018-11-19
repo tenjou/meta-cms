@@ -2,6 +2,7 @@ import { component, componentVoid, elementOpen, elementClose, elementVoid, text,
 import Checkbox from "./Checkbox"
 import Word from "./Word"
 import NumberInput from "./NumberInput"
+import Select from "./Select"
 
 const SheetItem = component({
 	state: {
@@ -45,6 +46,12 @@ const SheetItem = component({
 				break
 			case "Boolean":
 				componentVoid(Checkbox, props)
+				break
+			case "Reference":
+				componentVoid(Select, { 
+					bind: `${this.bind}/${key}`,
+					$src: [ "a", "b" ]
+				})
 				break
 			default: 
 				text(this.$value[key])

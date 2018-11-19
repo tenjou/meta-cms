@@ -35,6 +35,8 @@ else {
 	store.set("meta", createMeta())
 }
 
+
+
 store.set("state", {
 	popup: null,
 	menu: "",
@@ -47,22 +49,51 @@ store.set("state", {
 })
 
 store.set("types", {
-	Id: {},
+	Id: {
+		numeric: {
+			type: "Boolean",
+			value: true
+		}
+	},
 	String: {
-		default: "String"
+		default: {
+			type: "String",
+			value: "Key"
+		}
 	},
 	Number: {
-		default: "Number",
-		min: "Number",
-		max: "Number"
+		default: {
+			type: "Number",
+			value: 0
+		},
+		min: {
+			type: "Number",
+			value: Number.MIN_SAFE_INTEGER
+		},
+		max: {
+			type: "Number",
+			value: Number.MAX_SAFE_INTEGER
+		}
 	},
 	Float: {
-		default: "Number",
-		min: "Number",
-		max: "Number"
+		default: {
+			type: "Number",
+			value: 0.0
+		},
+		min: {
+			type: "Number",
+			value: Number.MIN_VALUE
+		},
+		max: {
+			type: "Number",
+			value: Number.MAX_VALUE
+		}
 	},
 	Boolean: {
-		default: "Boolean"
+		default: {
+			type: "Boolean",
+			value: false
+		}
 	},
 	UUID: {},
 	Reference: {}

@@ -107,37 +107,16 @@ const populateFromSchemaType = (item, copy = null) => {
     const typeSchema = store.data.types[type]
     
     for(let key in typeSchema) {
+        const entry = typeSchema[key]
         if(copy) {
-            const value = copy[key]
+            const value = copy[entry.type]
             if(value !== undefined) {
-                item[key] = value
+                item[entry.type] = value
                 continue
             }
         }
 
-        switch(key) {
-            case "min": {
-                if(type === "Float") {
-                    item.min = Number.MIN_VALUE
-                }
-                else {
-                    item.min = Number.MIN_SAFE_INTEGER
-                }
-            } break
-
-            case "max": {
-                if(type === "Float") {
-                    item.max = Number.MAX_VALUE
-                }
-                else {
-                    item.max = Number.MAX_SAFE_INTEGER
-                }
-            } break
-            
-            default:
-                item[key] = createDefaultValue(type, null, null)
-                break
-        }
+        item[key] = (entry.value !== undefined) ? entry.value : createDefaultValue(type, null, null)
     }   
     
     return item
