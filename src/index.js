@@ -60,7 +60,6 @@ store.set("state", {
 })
 
 store.set("types", {
-	ID: {},
 	UID: {},
 	GUID: {},
 	String: {

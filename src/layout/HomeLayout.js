@@ -86,9 +86,8 @@ const Asset = component({
 			class: (store.data.cache.assets.selected === meta.id) ? "active" : "",
 		}
 		const propsA = { 
-			href: `#assets/${meta.id}`, 
 			onclick: this.handleClickFunc,
-			"data-key": meta.id
+			"data-id": meta.id
 		}
 
 		elementOpen("item", props)
@@ -113,7 +112,10 @@ const Asset = component({
 	},
 
 	handleClick(event) {
-		store.set("cache/assets/selected", event.currentTarget.dataset.key)
+		const id = event.currentTarget.dataset.id
+		SchemaService.updateBuffer(store.data.assets[id]) 
+		store.set("cache/assets/selected", id)
+		location.hash = `assets/${id}`
 	}
 })
 

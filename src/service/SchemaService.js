@@ -145,32 +145,19 @@ const modifyAsset_remove = (data, key) => {
 
 const createDefaultValue = (schemaItem, data, key) => {
     switch(schemaItem.type) {
-        case "ID": {
-            let id = 1
-            for(;;) {
-                for(let n = 0; n < data.length; n++) {
-                    const item = data[n]
-                    if(item[key] === id) {
-                        id++
-                    }
-                }
-                break
-            }
-            return id
-        }
-
         case "UID": {
-            let id = 1
-            for(;;) {
-                for(let n = 0; n < data.length; n++) {
-                    const item = data[n]
-                    if(item[key] === id) {
-                        id++
-                    }
-                }
-                break
-            }
-            return id
+            return "uid"
+            // let id = 1
+            // for(;;) {
+            //     for(let n = 0; n < data.length; n++) {
+            //         const item = data[n]
+            //         if(item[key] === id) {
+            //             id++
+            //         }
+            //     }
+            //     break
+            // }
+            // return id
         }
             
         case "GUID":
@@ -257,7 +244,6 @@ const unloadBuffer = (asset) => {
 
 const updateBuffer = (asset) => {
     loadBuffer(asset)
-    console.log(store.data.buffers[asset.meta.id])
 }
 
 export { create, createItem, prepareData, createDefaultValue, createRow, isKeyUnique, moveBefore, rebuildBufferItem,
