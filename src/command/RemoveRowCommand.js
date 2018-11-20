@@ -1,18 +1,13 @@
 import { store } from "wabi"
 import SchemaService from "../service/SchemaService"
 
-class AddRowCommand {
+class RemoveRowCommand {
     constructor(asset, data) {
         this.asset = asset
         this.data = data
     }
 
     execute() {
-        store.add(`assets/${this.asset.meta.id}/data`, this.data)
-        SchemaService.updateBuffer(this.asset)
-    }
-
-    undo() {
         const index = this.asset.data.indexOf(this.data)
         if(index !== -1) {
             this.asset.data.splice(index, 1)
@@ -20,6 +15,11 @@ class AddRowCommand {
             SchemaService.updateBuffer(this.asset)
         }
     }
+
+    undo() {
+        store.add(`assets/${this.asset.meta.id}/data`, this.data)
+        SchemaService.updateBuffer(this.asset)
+    }
 }
 
-export default AddRowCommand
+export default RemoveRowCommand

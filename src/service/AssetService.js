@@ -19,14 +19,6 @@ const tryRemove = (id) => {
     }
 }
 
-const add = (path, asset) => {
-
-}
-
-const remove = (path, asset) => {
-
-}
-
 const create = (type, schema = {}) => {
     const asset = {
         meta: {
@@ -52,7 +44,7 @@ const edit = (id) => {
 const addRow = (id) => {
     const asset = store.get(`assets/${id}`)
     const row = SchemaService.createRow(asset)
-    Commander.execute(new AddRowCommand(`assets/${id}/data`, row))
+    Commander.execute(new AddRowCommand(asset, row))
 }
 
 export { tryAdd, create, createSheet, tryRemove, edit, addRow }

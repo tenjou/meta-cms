@@ -3,12 +3,15 @@ import Checkbox from "./Checkbox"
 import Word from "./Word"
 import NumberInput from "./NumberInput"
 import Select from "./Select"
+import Commander from "../Commander"
+import RemoveRowCommand from "../command/RemoveRowCommand"
 
 const SheetItem = component({
 	state: {
 		value: null,
 		schema: null,
-		index: 0
+		asset: null, 
+		index: -1
 	},
 
 	mount() {
@@ -48,7 +51,6 @@ const SheetItem = component({
 				componentVoid(Checkbox, props)
 				break
 			case "Reference":
-			console.log(entry)
 				componentVoid(Select, { 
 					bind: `${this.bind}/${key}`,
 					$src: store.data.buffers.a00712b8dbde477f829def7bcea4942c
@@ -61,19 +63,20 @@ const SheetItem = component({
 	},
 
 	handleRemove(event) {
-		store.remove(this.bind)
-	}
+		Commander.execute(new RemoveRowCommand(this.$asset, this.$value))
+	}	
 })
 
 const Sheet = component({
 	state: {
 		value: null,
+		data: null,
 		schema: null
 	},
 
 	render() {
+		const items = this.$data
 		const schema = this.$schema
-		const items = this.$value
 		const schemaBuffer = Object.keys(schema)
 
 		elementOpen("sheet")
@@ -89,7 +92,12 @@ const Sheet = component({
 			elementClose("head")
 
 			for(let n = 0; n < items.length; n++) {
-				componentVoid(SheetItem, { bind: `${this.bind.value}/${n}`, $schema: schema, $index: n })
+				componentVoid(SheetItem, { 
+					bind: `${this.bind.data}/${n}`, 
+					$schema: schema, 
+					$asset: this.$value,
+					$index: n
+				})
 			}
 		elementClose("sheet")
 	}

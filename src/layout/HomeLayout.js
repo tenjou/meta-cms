@@ -54,7 +54,8 @@ const ContentPanel = component({
 				elementOpen("content")
 					componentVoid(Sheet, {
 						bind: {
-							value: `${this.bind}/data`,
+							value: this.bind,
+							data: `${this.bind}/data`,
 							schema: `${this.bind}/meta/schema`
 						}	
 					})

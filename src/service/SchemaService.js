@@ -255,5 +255,10 @@ const unloadBuffer = (asset) => {
     store.remove(`buffers/${asset.meta.id}`)
 }
 
+const updateBuffer = (asset) => {
+    loadBuffer(asset)
+    console.log(store.data.buffers[asset.meta.id])
+}
+
 export { create, createItem, prepareData, createDefaultValue, createRow, isKeyUnique, moveBefore, rebuildBufferItem,
-    loadBuffer, unloadBuffer }
+    loadBuffer, unloadBuffer, updateBuffer }
