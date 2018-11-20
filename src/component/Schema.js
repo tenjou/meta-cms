@@ -96,6 +96,12 @@ const SchemaItem = component({
 						case "Boolean":
 							componentVoid(Checkbox, props)
 							break
+						case "Select":
+							componentVoid(Select, { 
+								bind: `${this.bind.value}/${key}`, 
+								$src: Object.keys(store.get(entry.src)) 
+							})
+							break
 					}
 				elementClose("value")
 			elementClose("item")

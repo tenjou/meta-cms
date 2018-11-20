@@ -103,8 +103,7 @@ const prepareData = (schema) => {
 }
 
 const populateFromSchemaType = (item, copy = null) => {
-    const type = item.type
-    const typeSchema = store.data.types[type]
+    const typeSchema = store.data.types[item.type]
     
     for(let key in typeSchema) {
         const entry = typeSchema[key]
@@ -116,7 +115,7 @@ const populateFromSchemaType = (item, copy = null) => {
             }
         }
 
-        item[key] = (entry.value !== undefined) ? entry.value : createDefaultValue(type, null, null)
+        item[key] = (entry.value !== undefined) ? entry.value : createDefaultValue(item, null, null)
     }   
     
     return item
@@ -125,7 +124,7 @@ const populateFromSchemaType = (item, copy = null) => {
 const modifyAsset_type = (data, schemaItem) => {
     for(let n = 0; n < data.length; n++) {
         const item = data[n]
-        item[schemaItem.key] = (schemaItem.default !== undefined) ? schemaItem.default : createDefaultValue(schemaItem.type, data, schemaItem.key)
+        item[schemaItem.key] = (schemaItem.default !== undefined) ? schemaItem.default : createDefaultValue(schemaItem, data, schemaItem.key)
     }
 }
 
@@ -144,9 +143,9 @@ const modifyAsset_remove = (data, key) => {
     }
 }
 
-const createDefaultValue = (type, data, key) => {
-    switch(type) {
-        case "Id":
+const createDefaultValue = (schemaItem, data, key) => {
+    switch(schemaItem.type) {
+        case "ID": {
             let id = 1
             for(;;) {
                 for(let n = 0; n < data.length; n++) {
@@ -158,7 +157,23 @@ const createDefaultValue = (type, data, key) => {
                 break
             }
             return id
-        case "UUID":
+        }
+
+        case "UID": {
+            let id = 1
+            for(;;) {
+                for(let n = 0; n < data.length; n++) {
+                    const item = data[n]
+                    if(item[key] === id) {
+                        id++
+                    }
+                }
+                break
+            }
+            return id
+        }
+            
+        case "GUID":
             return Utils.uuid4()
         case "String":
             return "Key"
@@ -179,7 +194,7 @@ const createRow = (asset) => {
     const schema = asset.meta.schema
     for(let key in schema) {
         const item = schema[key]
-        row[key] = (item.default !== undefined) ? item.default : createDefaultValue(item.type, asset.data, key)
+        row[key] = (item.default !== undefined) ? item.default : createDefaultValue(item, asset.data, key)
     }    
     return row
 }
@@ -213,4 +228,32 @@ const rebuildBufferItem = (item, type) => {
     return itemNew
 }
 
-export { create, createItem, prepareData, createDefaultValue, createRow, isKeyUnique, moveBefore, rebuildBufferItem }
+const loadBuffer = (asset) => {
+    const schema = asset.meta.schema
+    let idKey = null
+
+    for(let key in schema) {
+        const entry = schema[key]
+        if(entry.type === "UID" || entry.type === "GUID") {
+            idKey = key
+            break
+        }
+    }
+
+    if(idKey) {
+        const data = asset.data
+        const buffer = new Array(data.length)
+        for(let n = 0; n < data.length; n++) {
+            const item = data[n]
+            buffer[n] = item[idKey]
+        }
+        store.set(`buffers/${asset.meta.id}`, buffer)
+    }
+}
+
+const unloadBuffer = (asset) => {
+    store.remove(`buffers/${asset.meta.id}`)
+}
+
+export { create, createItem, prepareData, createDefaultValue, createRow, isKeyUnique, moveBefore, rebuildBufferItem,
+    loadBuffer, unloadBuffer }

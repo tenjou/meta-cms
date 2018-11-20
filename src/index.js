@@ -1,6 +1,7 @@
 import { store, route } from "wabi"
 import HomeLayout from "./layout/HomeLayout"
 import ExportLayout from "./layout/ExportLayout"
+import SchemaService from "./service/SchemaService"
 import Commander from "./Commander"
 
 const createMeta = () => {
@@ -35,7 +36,17 @@ else {
 	store.set("meta", createMeta())
 }
 
+store.set("buffers", {})
 
+const loadBuffers = () => {
+	const assets = store.data.assets
+	for(let key in assets) {
+		const asset = assets[key]
+		SchemaService.loadBuffer(asset)
+	}
+}
+
+loadBuffers()
 
 store.set("state", {
 	popup: null,
@@ -49,12 +60,9 @@ store.set("state", {
 })
 
 store.set("types", {
-	Id: {
-		numeric: {
-			type: "Boolean",
-			value: true
-		}
-	},
+	ID: {},
+	UID: {},
+	GUID: {},
 	String: {
 		default: {
 			type: "String",
@@ -95,8 +103,12 @@ store.set("types", {
 			value: false
 		}
 	},
-	UUID: {},
-	Reference: {}
+	Reference: {
+		default: {
+			type: "Select",
+			src: "buffers"
+		}
+	}
 })
 store.set("column-types", Object.keys(store.data.types))
 

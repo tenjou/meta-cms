@@ -104,7 +104,7 @@ const Asset = component({
 	},
 
 	handleRemove(event) {
-		AssetService.remove(this.$value.id)
+		AssetService.tryRemove(this.$value.id)
 	},
 
 	handleEdit(event) {
@@ -150,7 +150,7 @@ const AssetPanel = component({
 	},
 
 	handleAddAsset(event) {
-		AssetService.addSheet()
+		AssetService.createSheet()
 	}
 })
 

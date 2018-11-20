@@ -48,9 +48,10 @@ const SheetItem = component({
 				componentVoid(Checkbox, props)
 				break
 			case "Reference":
+			console.log(entry)
 				componentVoid(Select, { 
 					bind: `${this.bind}/${key}`,
-					$src: [ "a", "b" ]
+					$src: store.data.buffers.a00712b8dbde477f829def7bcea4942c
 				})
 				break
 			default: 

@@ -7,9 +7,24 @@ import RemoveAssetCommand from "../command/RemoveAssetCommand"
 import Commander from "../Commander"
 import Utils from "../Utils"
 
-const add = (type, schema) => {
+const tryAdd = (type, schema) => {
     const asset = create(type, schema)
     Commander.execute(new AddAssetCommand(asset))
+}
+
+const tryRemove = (id) => {
+    Commander.execute(new RemoveAssetCommand(id))
+    if(store.data.cache.assets.selected === id) {
+        document.location.hash = ""
+    }
+}
+
+const add = (path, asset) => {
+
+}
+
+const remove = (path, asset) => {
+
 }
 
 const create = (type, schema = {}) => {
@@ -25,23 +40,10 @@ const create = (type, schema = {}) => {
     return asset
 }
 
-const addSheet = () => {
-    add("Sheet")
+const createSheet = () => {
+    tryAdd("Sheet")
 }
 
-const addEnum = () => {
-    add("Enum", {
-        Key: { type: "String" },
-        Value: { type: "Id" }
-    })
-}
-
-const remove = (id) => {
-    Commander.execute(new RemoveAssetCommand(id))
-    if(store.data.cache.assets.selected === id) {
-        document.location.hash = ""
-    }
-}
 
 const edit = (id) => {
 
@@ -53,8 +55,4 @@ const addRow = (id) => {
     Commander.execute(new AddRowCommand(`assets/${id}/data`, row))
 }
 
-const removeField = (id, path) => {
-
-}
-
-export { add, create, addSheet, addEnum, remove, edit, addRow }
+export { tryAdd, create, createSheet, tryRemove, edit, addRow }
