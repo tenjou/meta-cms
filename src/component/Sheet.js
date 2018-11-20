@@ -42,6 +42,7 @@ const SheetItem = component({
 
 		switch(entry.type) {
 			case "String":
+			case "UID":
 				componentVoid(Word, props)
 				break
 			case "Number":
