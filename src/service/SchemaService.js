@@ -216,6 +216,9 @@ const rebuildBufferItem = (item, type) => {
 }
 
 const loadBuffer = (asset) => {
+    if(!asset) {
+        return
+    }
     const schema = asset.meta.schema
     let idKey = null
 
