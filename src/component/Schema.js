@@ -90,6 +90,9 @@ const SchemaItem = component({
 						case "Number":
 							componentVoid(NumberInput, props)
 							break
+						case "Float":
+							componentVoid(NumberInput, props)
+							break							
 						case "String":
 							componentVoid(TextInput, props)
 							break

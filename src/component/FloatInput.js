@@ -1,10 +1,11 @@
 import { component, componentVoid, elementOpen, elementClose, text, store, elementVoid } from "wabi"
 
-const NumberInput = component({
+const FloatInput = component({
     state: {
         value: 0,
-        min: Number.MIN_SAFE_INTEGER,
-        max: Number.MAX_SAFE_INTEGER
+        step: 0.01,
+        min: Number.MIN_VALUE,
+        max: Number.MAX_VALUE
     },
 
     mount() {
@@ -16,14 +17,15 @@ const NumberInput = component({
             type: "Number",
             min: this.$min,
             max: this.$max,
+            step: this.$step,
             onchange: this.handleChangeFunc,
         }).element
         element.value = this.$value
     },
 
     handleChange(event) {
-        this.$value = parseInt(event.srcElement.value)
+        this.$value = parseFloat(event.srcElement.value)
     }
 })
 
-export default NumberInput
+export default FloatInput

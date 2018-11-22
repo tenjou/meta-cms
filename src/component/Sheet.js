@@ -2,6 +2,7 @@ import { component, componentVoid, elementOpen, elementClose, elementVoid, text,
 import Checkbox from "./Checkbox"
 import Word from "./Word"
 import NumberInput from "./NumberInput"
+import FloatInput from "./FloatInput"
 import Select from "./Select"
 import Commander from "../Commander"
 import RemoveRowCommand from "../command/RemoveRowCommand"
@@ -37,19 +38,30 @@ const SheetItem = component({
 	},
 
 	renderValue(key) {
-		const entry = this.$schema[key]
-		const props = { bind: `${this.bind}/${key}` }
+		const entry = this.$schema[key] 
 
 		switch(entry.type) {
 			case "String":
 			case "UID":
-				componentVoid(Word, props)
+				componentVoid(Word, { bind: `${this.bind}/${key}` })
 				break
 			case "Number":
-				componentVoid(NumberInput, props)
+				componentVoid(NumberInput, {
+					bind: `${this.bind}/${key}`,
+					$min: entry.min,
+					$max: entry.max
+				})
 				break
+			case "Float":
+				componentVoid(FloatInput, {
+					bind: `${this.bind}/${key}`,
+					$min: entry.min,
+					$max: entry.max,
+					$step: entry.step
+				})
+				break				
 			case "Boolean":
-				componentVoid(Checkbox, props)
+				componentVoid(Checkbox, { bind: `${this.bind}/${key}` })
 				break
 			case "Reference":
 				componentVoid(Select, { 

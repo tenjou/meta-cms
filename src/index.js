@@ -94,7 +94,11 @@ store.set("types", {
 		max: {
 			type: "Number",
 			value: Number.MAX_VALUE
-		}
+		},
+		step: {
+			type: "Number",
+			value: 0.01
+		}		
 	},
 	Boolean: {
 		default: {
