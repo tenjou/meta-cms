@@ -13,7 +13,7 @@ const Select = component({
 
     render() {
         const options = this.$src
-        if(!this.$value) {
+        if(!this.$value || (options.length === 1 && options[0] !== this.$value)) {
             this.$value = options[0]
         }
 
