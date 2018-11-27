@@ -49,6 +49,8 @@ const create = (id, data) => {
         }
     }
 
+    console.log(schemaNew)
+
     asset.meta.schema = schemaNew
     store.update(`assets/${id}/meta`)
     store.update(`assets/${id}/data`)
@@ -104,20 +106,20 @@ const prepareData = (schema) => {
 
 const populateFromSchemaType = (item, copy = null) => {
     const typeSchema = store.data.types[item.type]
-    
+
     for(let key in typeSchema) {
         const entry = typeSchema[key]
         if(copy) {
-            const value = copy[entry.type]
+            const value = copy[key]
             if(value !== undefined) {
-                item[entry.type] = value
+                item[key] = value
                 continue
             }
         }
 
         item[key] = (entry.value !== undefined) ? entry.value : createDefaultValue(item, null, null)
-    }   
-    
+    } 
+  
     return item
 }
 

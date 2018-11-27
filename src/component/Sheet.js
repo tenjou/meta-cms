@@ -66,7 +66,7 @@ const SheetItem = component({
 			case "Reference":
 				componentVoid(Select, { 
 					bind: `${this.bind}/${key}`,
-					$src: store.data.buffers.a00712b8dbde477f829def7bcea4942c
+					$src: store.data.buffers[entry.sheet]
 				})
 				break
 			default: 
