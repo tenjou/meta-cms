@@ -177,6 +177,9 @@ sheet head field {
 	color: white;
 	margin: 1px;
 	padding: 1px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 sheet row {
 	display: flex;
