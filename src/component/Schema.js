@@ -111,7 +111,7 @@ const SchemaItem = component({
 						case "Sheet":
 							componentVoid(Select, { 
 								bind: `${this.bind.value}/${key}`, 
-								$src: Object.keys(store.data.buffers)
+								$src: SchemaService.getNamedBuffers()
 							})
 							break													
 					}

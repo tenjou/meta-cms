@@ -1,6 +1,8 @@
 import { store } from "wabi"
 import Utils from "../Utils"
 
+const sortKey = (a, b) => { return a.key.localeCompare(b.key) }
+
 const create = (id, data) => {
     const schemaNew = {}
     let itemsFromPrev = 0
@@ -251,5 +253,15 @@ const updateBuffer = (asset) => {
     loadBuffer(asset)
 }
 
+const getNamedBuffers = () => {
+    const named = []
+    const buffers = store.data.buffers
+    for(let key in buffers) {
+        const asset = store.data.assets[key]
+        named.push({ key: asset.meta.name, value: asset.meta.id })
+    }
+    return named
+}
+
 export { create, createItem, prepareData, createDefaultValue, createRow, isKeyUnique, moveBefore, rebuildBufferItem,
-    loadBuffer, unloadBuffer, updateBuffer }
+    loadBuffer, unloadBuffer, updateBuffer, getNamedBuffers }
