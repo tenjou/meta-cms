@@ -1,4 +1,4 @@
-import { component, componentVoid, elementOpen, elementClose, text, store, element } from "wabi"
+import { component, componentVoid, elementOpen, elementClose, text, store, element, elementVoid } from "wabi"
 
 const Select = component({
     state: {
@@ -13,6 +13,10 @@ const Select = component({
 
     render() {
         const options = this.$src
+        if(!options) { 
+            elementVoid("select")
+            return 
+        }
 
         elementOpen("select", this.props)
             if(options.length > 0) {
