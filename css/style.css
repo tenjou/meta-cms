@@ -166,6 +166,9 @@ sheet field {
 	padding: 2px;
 	margin: 1px;
 	background: #bfbebe;
+	white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;	
 }
 sheet head {
     display: flex;
