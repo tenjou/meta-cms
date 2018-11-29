@@ -115,6 +115,14 @@ store.set("types", {
 			src: "buffers",
 			lookup: "sheet"
 		}		
+	},
+	Type: {
+		default: {
+			type: "Select"
+		},
+		schema: {
+			type: "Schema"
+		}
 	}
 })
 store.set("column-types", Object.keys(store.data.types))
