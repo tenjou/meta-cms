@@ -119,7 +119,7 @@ const populateFromSchemaType = (item, copy = null) => {
             }
         }
 
-        item[key] = (entry.value !== undefined) ? entry.value : createDefaultValue(item, null, null)
+        item[key] = (entry.value !== undefined) ? entry.value : createDefaultValue(entry, null, null)
     } 
   
     return item
@@ -174,8 +174,8 @@ const createDefaultValue = (schemaItem, data, key) => {
             return 0.0
         case "Boolean":
             return false
-        case "Reference":
-            return null
+        case "Schema":
+            return []
     }
     return null
 }
