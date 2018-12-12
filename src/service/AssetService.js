@@ -19,7 +19,10 @@ const tryRemove = (id) => {
     }
 }
 
-const create = (type, schema = {}) => {
+const create = (type, schema) => {
+    if(!schema) {
+        schema = SchemaService.createSchema()
+    }
     const asset = {
         meta: {
             id: Utils.uuid4(),
@@ -35,7 +38,6 @@ const create = (type, schema = {}) => {
 const createSheet = () => {
     tryAdd("Sheet")
 }
-
 
 const edit = (id) => {
 

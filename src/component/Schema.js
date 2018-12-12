@@ -6,6 +6,56 @@ import NumberInput from "./NumberInput"
 import Select from "./Select"
 import Checkbox from "./Checkbox"
 import Caret from "./Caret"
+import Word from "./Word"
+
+const SchemaBuilder = component({
+	mount() {
+		this.propsAdd = { onclick: this.handleAdd.bind(this) }
+		this.propsRemove = { onclick: this.handleRemove.bind(this) }
+	},
+
+	render() {
+		const list = this.$value
+
+		elementOpen("builder")
+			elementOpen("button", this.propsAdd)
+				text("Add")
+			elementClose("button")
+
+			elementOpen("list")
+				for(let n = 0; n < list.length; n++) {
+					elementOpen("item")
+						elementOpen("type")
+							componentVoid(Word, { bind: `${this.bind}/${n}/type` })
+
+							elementOpen("button")
+								text("Remove")
+							elementClose("button")
+						elementClose("type")
+
+						componentVoid(Schema, { 
+							bind: {
+								value: `${this.bind}/${n}`,
+								buffer: `${this.bind}/${n}/data/buffer`,
+							},
+							$child: true
+						})
+					elementClose("item")
+				}
+			elementClose("list")
+		elementClose("builder")
+	},
+
+	handleAdd(event) {
+		const data = SchemaService.prepareData()
+		this.$value.push({ type: "Type", data })
+		this.updateAll()
+	},
+
+	handleRemove(event) {
+
+	}
+})
 
 const SchemaItem = component({
 	state: {
@@ -81,10 +131,12 @@ const SchemaItem = component({
 			const props = { bind: `${this.bind.value}/${key}` }
 
 			elementOpen("item")
-				elementOpen("key")
-					text(key)
-				elementClose("key")
-			
+				if(entry.type !== "Schema") {
+					elementOpen("key")
+						text(key)
+					elementClose("key")
+				}
+
 				elementOpen("value")
 					switch(entry.type) {
 						case "Number":
@@ -113,7 +165,11 @@ const SchemaItem = component({
 								bind: `${this.bind.value}/${key}`, 
 								$src: SchemaService.getNamedBuffers()
 							})
-							break													
+							break	
+							
+						case "Schema":
+							componentVoid(SchemaBuilder, { bind: `${this.bind.value}/${key}` })
+							break
 					}
 				elementClose("value")
 			elementClose("item")
@@ -146,7 +202,8 @@ const SchemaItem = component({
 const Schema = component({
 	state: {
 		value: null,
-		buffer: null
+		buffer: null,
+		child: false
 	},
 
 	mount() {
@@ -195,11 +252,13 @@ const Schema = component({
 				}   
 			elementClose("table")	            
 
-			elementOpen("buttons")
-				elementOpen("button", { onclick: this.handleApplyFunc })
-					text("Apply")
-				elementClose("button")
-			elementClose("buttons")
+			if(!this.$child) {
+				elementOpen("buttons")
+					elementOpen("button", { onclick: this.handleApplyFunc })
+						text("Apply")
+					elementClose("button")
+				elementClose("buttons")
+			}
 		elementClose("schema")
 	},
 

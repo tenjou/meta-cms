@@ -20,12 +20,12 @@ const SheetItem = component({
 	},
 
 	render() {
-		const schema = this.$schema
+		const schema = this.$schema.buffer
 
 		elementOpen("row")
-			for(let key in schema) {
+			for(let n = 0; n < schema.length; n++) {
 				elementOpen("field")
-					this.renderValue(key)
+					this.renderValue(schema[n])
 				elementClose("field")
 			}
 
@@ -37,8 +37,8 @@ const SheetItem = component({
 		elementClose("row")
 	},
 
-	renderValue(key) {
-		const entry = this.$schema[key] 
+	renderValue(entry) {
+		const key = entry.key
 
 		switch(entry.type) {
 			case "String":
@@ -69,6 +69,15 @@ const SheetItem = component({
 					$src: store.data.buffers[entry.sheet]
 				})
 				break
+			case "Type":
+				componentVoid(Select, { 
+					bind: `${this.bind}/${key}`,
+					$src: this.$schema.types,
+					$onChange: () => {
+						console.log("rebuild")
+					}
+				})
+				break
 			default: 
 				text(this.$value[key])
 				break
@@ -90,14 +99,13 @@ const Sheet = component({
 	render() {
 		const items = this.$data
 		const schema = this.$schema
-		const schemaBuffer = Object.keys(schema)
+		const schemaBuffer = schema.buffer
 
 		elementOpen("sheet")
 			elementOpen("head")
 				for(let n = 0; n < schemaBuffer.length; n++) {
-					const key = schemaBuffer[n]
 					elementOpen("field")
-						text(key)
+						text(schemaBuffer[n].key)
 					elementClose("field")
 				}	
 				

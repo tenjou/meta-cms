@@ -117,9 +117,6 @@ store.set("types", {
 		}		
 	},
 	Type: {
-		default: {
-			type: "Select"
-		},
 		schema: {
 			type: "Schema"
 		}

@@ -9,16 +9,41 @@ const create = (id, data) => {
 
     const asset = store.get(`assets/${id}`)
     const buffer = data.buffer
-	const bufferPrev = prepareData(asset.meta.schema).buffer
+    const bufferPrev = asset.meta.schema.buffer
+    
 	const hashes = {}
 	for(let n = 0; n < bufferPrev.length; n++) {
 		const item = bufferPrev[n]
 		hashes[item.id] = item
-	}    
+    }    
+    
+    let types = null
 
     for(let n = 0; n < buffer.length; n++) {
         const item = buffer[n]
         const itemPrev = hashes[item.id]
+
+        if(item.type === "Type") {
+            const schemas = item.schema
+            types = []
+
+            for(let n = 0; n < schemas.length; n++) {
+                const item = schemas[n]
+                types.push(item.type)
+            }
+
+    //         const typeBuffer = {}
+    //         console.log(schemas)
+            // for(let n = 0; n < schemas.length; n++) {
+            //     const item = schemas[n]
+            //     const data = item.data
+            //     for(let m = 0; m < data.length; m++) {
+            //         const dataItem = data[m]
+            //         console.log(dataItem)
+            //     }
+            // }    
+        }
+
         if(itemPrev !== undefined) {
             itemsFromPrev++
             
@@ -51,11 +76,12 @@ const create = (id, data) => {
         }
     }
 
-    console.log(schemaNew)
-
-    asset.meta.schema = schemaNew
+    asset.meta.schema.types = types
+    asset.meta.schema.buffer = cleanupBuffer(buffer)
     store.update(`assets/${id}/meta`)
     store.update(`assets/${id}/data`)
+
+    console.log(asset.meta.schema)
 }
 
 const createItem = (data) => {
@@ -85,23 +111,33 @@ const createItem = (data) => {
     return item
 }
 
+const cleanupBuffer = (buffer) => {
+    for(let n = 0; n < buffer.length; n++) {
+        const item = buffer[n]
+        delete item.cache
+        delete item.index
+    }
+    return buffer
+}
+
 const createCache = () => {
     return { 
         open: false
     }
 }
 
-const prepareData = (schema) => {
-    const buffer = []
-    let index = 0
-    let id = 0
-    for(let key in schema) {
-        const entry = schema[key]
-        const item = { id, key, type: entry.type, index, cache: createCache() }
-        populateFromSchemaType(item, entry)
-        buffer.push(item) 
-        index++
-        id++
+const createSchema = () => {
+    return { complex: false, types: null, buffer: [] }   
+}
+
+const prepareData = (schema = null) => {
+    const buffer = schema ? Utils.cloneObj(schema.buffer) : []
+    const id = buffer.length
+    for(let n = 0; n < buffer.length; n++) {
+        const item = buffer[n]
+        item.id = n
+        item.index = n
+        item.cache = createCache()
     }
     return { id, buffer }
 }
@@ -149,21 +185,8 @@ const modifyAsset_remove = (data, key) => {
 
 const createDefaultValue = (schemaItem, data, key) => {
     switch(schemaItem.type) {
-        case "UID": {
-            return "uid"
-            // let id = 1
-            // for(;;) {
-            //     for(let n = 0; n < data.length; n++) {
-            //         const item = data[n]
-            //         if(item[key] === id) {
-            //             id++
-            //         }
-            //     }
-            //     break
-            // }
-            // return id
-        }
-            
+        case "UID":
+            return "uid"            
         case "GUID":
             return Utils.uuid4()
         case "String":
@@ -182,10 +205,10 @@ const createDefaultValue = (schemaItem, data, key) => {
 
 const createRow = (asset) => {
     const row = {}
-    const schema = asset.meta.schema
-    for(let key in schema) {
-        const item = schema[key]
-        row[key] = (item.default !== undefined) ? item.default : createDefaultValue(item, asset.data, key)
+    const schema = asset.meta.schema.buffer
+    for(let n = 0; n < schema.length; n++) {
+        const item = schema[n]
+        row[item.key] = (item.default !== undefined) ? item.default : createDefaultValue(item, asset.data, item.key)
     }    
     return row
 }
@@ -263,5 +286,5 @@ const getNamedBuffers = () => {
     return named
 }
 
-export { create, createItem, prepareData, createDefaultValue, createRow, isKeyUnique, moveBefore, rebuildBufferItem,
+export { create, createItem, createSchema, prepareData, createDefaultValue, createRow, isKeyUnique, moveBefore, rebuildBufferItem,
     loadBuffer, unloadBuffer, updateBuffer, getNamedBuffers }
