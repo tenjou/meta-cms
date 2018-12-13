@@ -263,7 +263,7 @@ const Schema = component({
 	},
 
 	handleAdd(event) {
-		store.add(this.bind.buffer, SchemaService.createItem(this.$value.data))
+		store.add(this.bind.buffer, SchemaService.createItem(this.$value.data, this.$child))
 	},
 
 	handleApply(event) {

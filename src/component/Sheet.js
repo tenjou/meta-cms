@@ -4,6 +4,7 @@ import Word from "./Word"
 import NumberInput from "./NumberInput"
 import FloatInput from "./FloatInput"
 import Select from "./Select"
+import SchemaService from "../service/SchemaService"
 import Commander from "../Commander"
 import RemoveRowCommand from "../command/RemoveRowCommand"
 
@@ -74,7 +75,7 @@ const SheetItem = component({
 					bind: `${this.bind}/${key}`,
 					$src: this.$schema.types,
 					$onChange: () => {
-						console.log("rebuild")
+						SchemaService.rebuildRow(this.bind, this.$schema)
 					}
 				})
 				break
