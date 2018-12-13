@@ -18,6 +18,7 @@ const create = (id, data) => {
     }    
     
     let types = null
+    let typeIndex = null
 
     for(let n = 0; n < buffer.length; n++) {
         const item = buffer[n]
@@ -26,6 +27,7 @@ const create = (id, data) => {
         if(item.type === "Type") {
             const schemas = item.schema
             types = []
+            typeIndex = n
 
             for(let n = 0; n < schemas.length; n++) {
                 const item = schemas[n]
@@ -76,16 +78,16 @@ const create = (id, data) => {
         }
     }
 
+    asset.meta.schema.complex = (types) ? true : false
+    asset.meta.schema.typeIndex = typeIndex
     asset.meta.schema.types = types
     asset.meta.schema.buffer = cleanupBuffer(buffer)
     store.update(`assets/${id}/meta`)
     store.update(`assets/${id}/data`)
-
-    console.log(asset.meta.schema)
 }
 
-const createItem = (data) => {
-    const keyBase = "column"
+const createItem = (data, property = false) => {
+    const keyBase = property ? "property" : "column"
     let keyIndex = data.id
     let key = `${keyBase}_${keyIndex}`
 
@@ -127,7 +129,7 @@ const createCache = () => {
 }
 
 const createSchema = () => {
-    return { complex: false, types: null, buffer: [] }   
+    return { complex: false, typeIndex: 0, types: null, buffer: [] }   
 }
 
 const prepareData = (schema = null) => {
@@ -138,6 +140,13 @@ const prepareData = (schema = null) => {
         item.id = n
         item.index = n
         item.cache = createCache()
+        if(item.type === "Type") {
+            const buffer = item.schema
+            for(let n = 0; n < buffer.length; n++) {
+                const entry = buffer[n]
+                entry.data = prepareData(entry.data)
+            }
+        }
     }
     return { id, buffer }
 }
@@ -213,6 +222,15 @@ const createRow = (asset) => {
     return row
 }
 
+const rebuildRow = (path, schema) => {
+    const row = store.get(path)
+    const entry = schema.buffer[schema.typeIndex]
+    const typeIndex = schema.types.indexOf(row[entry.key])
+    const type = entry.schema[typeIndex]
+    
+    console.log(type)
+}
+
 const isKeyUnique = (schema, key) => {
     for(let schemaKey in schema) {
         if(schemaKey === key) {
@@ -286,5 +304,5 @@ const getNamedBuffers = () => {
     return named
 }
 
-export { create, createItem, createSchema, prepareData, createDefaultValue, createRow, isKeyUnique, moveBefore, rebuildBufferItem,
+export { create, createItem, createSchema, prepareData, createDefaultValue, createRow, isKeyUnique, moveBefore, rebuildBufferItem, rebuildRow,
     loadBuffer, unloadBuffer, updateBuffer, getNamedBuffers }
