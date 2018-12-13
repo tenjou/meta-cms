@@ -212,23 +212,36 @@ const createDefaultValue = (schemaItem, data, key) => {
     return null
 }
 
-const createRow = (asset) => {
+const createRow = (data, schema) => {
     const row = {}
-    const schema = asset.meta.schema.buffer
-    for(let n = 0; n < schema.length; n++) {
-        const item = schema[n]
-        row[item.key] = (item.default !== undefined) ? item.default : createDefaultValue(item, asset.data, item.key)
+    const buffer = schema.buffer
+    for(let n = 0; n < buffer.length; n++) {
+        const item = buffer[n]
+        if(data[item.key] !== undefined) {
+            row[item.key] = data[item.key]
+        }
+        else {
+            row[item.key] = (item.default !== undefined) ? item.default : createDefaultValue(item, data, item.key)
+        }
     }    
     return row
 }
 
 const rebuildRow = (path, schema) => {
-    const row = store.get(path)
+    const data = store.get(path)
     const entry = schema.buffer[schema.typeIndex]
-    const typeIndex = schema.types.indexOf(row[entry.key])
+    const typeIndex = schema.types.indexOf(data[entry.key])
     const type = entry.schema[typeIndex]
     
-    console.log(type)
+    const row = createRow(data, schema)
+
+    const buffer = type.data.buffer
+    for(let n = 0; n < buffer.length; n++) {
+        const item = buffer[n]
+        row[item.key] = (item.default !== undefined) ? item.default : createDefaultValue(item, data, item.key)
+    }  
+
+    store.set(path, row)
 }
 
 const isKeyUnique = (schema, key) => {
