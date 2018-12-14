@@ -1,4 +1,5 @@
 import { component, componentVoid, elementOpen, elementClose, elementVoid, text, store } from "wabi"
+import Caret from "./Caret"
 import Checkbox from "./Checkbox"
 import Word from "./Word"
 import NumberInput from "./NumberInput"
@@ -7,6 +8,8 @@ import Select from "./Select"
 import SchemaService from "../service/SchemaService"
 import Commander from "../Commander"
 import RemoveRowCommand from "../command/RemoveRowCommand"
+
+const propsCaret = { class: "caret" }
 
 const SheetItem = component({
 	state: {
@@ -24,6 +27,10 @@ const SheetItem = component({
 		const schema = this.$schema.buffer
 
 		elementOpen("row")
+			elementOpen("field", propsCaret)
+				componentVoid(Caret, { bind: `${this.bind}/__cache/open` })
+			elementClose("field")
+
 			for(let n = 0; n < schema.length; n++) {
 				elementOpen("field")
 					this.renderValue(schema[n])
@@ -104,6 +111,11 @@ const Sheet = component({
 
 		elementOpen("sheet")
 			elementOpen("head")
+				if(schema.complex) {
+					elementOpen("field", propsCaret)
+					elementClose("field")
+				}
+
 				for(let n = 0; n < schemaBuffer.length; n++) {
 					elementOpen("field")
 						text(schemaBuffer[n].key)

@@ -184,6 +184,13 @@ sheet head field {
     overflow: hidden;
     text-overflow: ellipsis;
 }
+sheet field.caret {
+	background: none;
+	flex: 0 0 20px;
+}
+sheet field.caret:hover {
+	background: none;
+}
 sheet row {
 	display: flex;
 	flex-direction: row;
