@@ -224,6 +224,7 @@ const createRow = (data, schema) => {
             row[item.key] = (item.default !== undefined) ? item.default : createDefaultValue(item, data, item.key)
         }
     }    
+    row.__cache = { open: false }
     return row
 }
 
