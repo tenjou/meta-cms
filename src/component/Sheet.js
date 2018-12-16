@@ -11,9 +11,20 @@ import RemoveRowCommand from "../command/RemoveRowCommand"
 
 const propsCaret = { class: "caret" }
 
+const findSchema = (schema, type) => {
+	for(let n = 0; n < schema.length; n++) {
+		const entry = schema[n]
+		if(entry.type === type) {
+			return entry.data.buffer
+		}
+	}
+	return null
+}
+
 const SheetItem = component({
 	state: {
 		value: null,
+		cache: null,
 		schema: null,
 		asset: null, 
 		index: -1
@@ -24,16 +35,19 @@ const SheetItem = component({
 	},
 
 	render() {
-		const schema = this.$schema.buffer
+		const schema = this.$schema
+		const schemaBuffer = schema.buffer
 
 		elementOpen("row")
-			elementOpen("field", propsCaret)
-				componentVoid(Caret, { bind: `${this.bind}/__cache/open` })
-			elementClose("field")
+			if(schema.props) {
+				elementOpen("field", propsCaret)
+					componentVoid(Caret, { bind: `${this.bind.value}/__cache/open` })
+				elementClose("field")
+			}
 
-			for(let n = 0; n < schema.length; n++) {
+			for(let n = 0; n < schemaBuffer.length; n++) {
 				elementOpen("field")
-					this.renderValue(schema[n])
+					this.renderValue(schemaBuffer[n])
 				elementClose("field")
 			}
 
@@ -43,6 +57,33 @@ const SheetItem = component({
 				elementClose("button")
 			elementClose("field")
 		elementClose("row")
+
+		if(this.$cache.open) {
+			const props = schema.props
+
+			elementOpen("properties")
+				for(let n = 0; n < props.length; n++) {
+					const entry = schemaBuffer[props[n]]
+
+					if(entry.type === "Type") {
+						const type = this.$value[entry.key]
+						const typeBuffer = findSchema(entry.schema, type)
+						for(let n = 0; n < typeBuffer.length; n++) {
+							const entry = typeBuffer[n]
+							elementOpen("property")
+								elementOpen("key")
+									text(entry.key)
+								elementClose("key")
+
+								elementOpen("value")
+									this.renderValue(entry)
+								elementClose("value")
+							elementClose("property")
+						}
+					}
+				}
+			elementClose("properties")
+		}
 	},
 
 	renderValue(entry) {
@@ -51,38 +92,38 @@ const SheetItem = component({
 		switch(entry.type) {
 			case "String":
 			case "UID":
-				componentVoid(Word, { bind: `${this.bind}/${key}` })
+				componentVoid(Word, { bind: `${this.bind.value}/${key}` })
 				break
 			case "Number":
 				componentVoid(NumberInput, {
-					bind: `${this.bind}/${key}`,
+					bind: `${this.bind.value}/${key}`,
 					$min: entry.min,
 					$max: entry.max
 				})
 				break
 			case "Float":
 				componentVoid(FloatInput, {
-					bind: `${this.bind}/${key}`,
+					bind: `${this.bind.value}/${key}`,
 					$min: entry.min,
 					$max: entry.max,
 					$step: entry.step
 				})
 				break				
 			case "Boolean":
-				componentVoid(Checkbox, { bind: `${this.bind}/${key}` })
+				componentVoid(Checkbox, { bind: `${this.bind.value}/${key}` })
 				break
 			case "Reference":
 				componentVoid(Select, { 
-					bind: `${this.bind}/${key}`,
+					bind: `${this.bind.value}/${key}`,
 					$src: store.data.buffers[entry.sheet]
 				})
 				break
 			case "Type":
 				componentVoid(Select, { 
-					bind: `${this.bind}/${key}`,
+					bind: `${this.bind.value}/${key}`,
 					$src: this.$schema.types,
 					$onChange: () => {
-						SchemaService.rebuildRow(this.bind, this.$schema)
+						SchemaService.rebuildRow(this.bind.value, this.$schema)
 					}
 				})
 				break
@@ -127,7 +168,10 @@ const Sheet = component({
 
 			for(let n = 0; n < items.length; n++) {
 				componentVoid(SheetItem, { 
-					bind: `${this.bind.data}/${n}`, 
+					bind: {
+						value: `${this.bind.data}/${n}`,
+						cache: `${this.bind.data}/${n}/__cache`
+					}, 
 					$schema: schema, 
 					$asset: this.$value,
 					$index: n

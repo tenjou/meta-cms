@@ -16,7 +16,8 @@ const create = (id, data) => {
 		const item = bufferPrev[n]
 		hashes[item.id] = item
     }    
-    
+
+    const props = []
     let types = null
     let typeIndex = null
 
@@ -28,22 +29,12 @@ const create = (id, data) => {
             const schemas = item.schema
             types = []
             typeIndex = n
+            props.push(n)
 
             for(let n = 0; n < schemas.length; n++) {
                 const item = schemas[n]
                 types.push(item.type)
             }
-
-    //         const typeBuffer = {}
-    //         console.log(schemas)
-            // for(let n = 0; n < schemas.length; n++) {
-            //     const item = schemas[n]
-            //     const data = item.data
-            //     for(let m = 0; m < data.length; m++) {
-            //         const dataItem = data[m]
-            //         console.log(dataItem)
-            //     }
-            // }    
         }
 
         if(itemPrev !== undefined) {
@@ -78,7 +69,7 @@ const create = (id, data) => {
         }
     }
 
-    asset.meta.schema.complex = (types) ? true : false
+    asset.meta.schema.props = (props.length > 0) ? props : null
     asset.meta.schema.typeIndex = typeIndex
     asset.meta.schema.types = types
     asset.meta.schema.buffer = cleanupBuffer(buffer)
@@ -129,7 +120,7 @@ const createCache = () => {
 }
 
 const createSchema = () => {
-    return { complex: false, typeIndex: 0, types: null, buffer: [] }   
+    return { props: null, typeIndex: 0, types: null, buffer: [] }   
 }
 
 const prepareData = (schema = null) => {
@@ -242,6 +233,7 @@ const rebuildRow = (path, schema) => {
         row[item.key] = (item.default !== undefined) ? item.default : createDefaultValue(item, data, item.key)
     }  
 
+    row.__cache = data.__cache
     store.set(path, row)
 }
 

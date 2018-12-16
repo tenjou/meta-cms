@@ -187,6 +187,7 @@ sheet head field {
 sheet field.caret {
 	background: none;
 	flex: 0 0 20px;
+	padding: 0px;
 }
 sheet field.caret:hover {
 	background: none;
@@ -206,6 +207,20 @@ sheet word {
 }
 sheet input {
 	height: 100%;
+}
+sheet properties {
+	display: flex;
+	flex-direction: column;
+}
+sheet properties property {
+	display: flex;
+}
+sheet properties property key {
+	flex: 0 0 150px;
+	margin-left: 25px;
+}
+sheet properties proeprty value {
+	flex: 1;
 }
 
 back {
