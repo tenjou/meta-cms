@@ -58,7 +58,7 @@ const SheetItem = component({
 			elementClose("field")
 		elementClose("row")
 
-		if(this.$cache.open) {
+		if(schema.props && this.$cache.open) {
 			const props = schema.props
 
 			elementOpen("properties")
@@ -152,7 +152,7 @@ const Sheet = component({
 
 		elementOpen("sheet")
 			elementOpen("head")
-				if(schema.complex) {
+				if(schema.props) {
 					elementOpen("field", propsCaret)
 					elementClose("field")
 				}

@@ -8,8 +8,9 @@ const create = (id, data) => {
     let itemsFromPrev = 0
 
     const asset = store.get(`assets/${id}`)
+    const schema = prepareData(asset.meta.schema)
     const buffer = data.buffer
-    const bufferPrev = asset.meta.schema.buffer
+    const bufferPrev = schema.buffer
     
 	const hashes = {}
 	for(let n = 0; n < bufferPrev.length; n++) {
@@ -19,7 +20,7 @@ const create = (id, data) => {
 
     const props = []
     let types = null
-    let typeIndex = null
+    let typeIndex = 0
 
     for(let n = 0; n < buffer.length; n++) {
         const item = buffer[n]
@@ -27,13 +28,24 @@ const create = (id, data) => {
 
         if(item.type === "Type") {
             const schemas = item.schema
+            const schemasPrev = itemPrev.schema
+            const typesPrev = {}
+
             types = []
             typeIndex = n
             props.push(n)
 
+            for(let n = 0; n < schemasPrev.length; n++) {
+                const item = schemasPrev[n]
+                typesPrev[item.id] = item
+            }
+
             for(let n = 0; n < schemas.length; n++) {
                 const item = schemas[n]
+                const itemPrev = typesPrev[item.id]
                 types.push(item.type)
+
+                
             }
         }
 
@@ -104,15 +116,6 @@ const createItem = (data, property = false) => {
     return item
 }
 
-const cleanupBuffer = (buffer) => {
-    for(let n = 0; n < buffer.length; n++) {
-        const item = buffer[n]
-        delete item.cache
-        delete item.index
-    }
-    return buffer
-}
-
 const createCache = () => {
     return { 
         open: false
@@ -135,11 +138,31 @@ const prepareData = (schema = null) => {
             const buffer = item.schema
             for(let n = 0; n < buffer.length; n++) {
                 const entry = buffer[n]
+                entry.id = n
+                entry.index = n
                 entry.data = prepareData(entry.data)
             }
         }
     }
     return { id, buffer }
+}
+
+const cleanupBuffer = (buffer) => {
+    for(let n = 0; n < buffer.length; n++) {
+        const item = buffer[n]
+        delete item.cache
+        delete item.index
+
+        if(item.type === "Type") {
+            const buffer = item.schema
+            for(let n = 0; n < buffer.length; n++) {
+                const entry = buffer[n]
+                delete entry.cache
+                delete entry.index
+            }
+        }
+    }
+    return buffer
 }
 
 const populateFromSchemaType = (item, copy = null) => {
@@ -270,11 +293,11 @@ const loadBuffer = (asset) => {
     if(!asset) {
         return
     }
-    const schema = asset.meta.schema
+    const schemaBuffer = asset.meta.schema.buffer
     let idKey = null
 
-    for(let key in schema) {
-        const entry = schema[key]
+    for(let key in schemaBuffer) {
+        const entry = schemaBuffer[key]
         if(entry.type === "UID" || entry.type === "GUID") {
             idKey = key
             break
