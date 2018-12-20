@@ -51,11 +51,12 @@ const create = (id, data) => {
 					types.push(schema.type)
 					typesMap[schema.type] = n
 
-					const buffer = schema.data.buffer
-					const bufferPrev = schemaPrev.data.buffer
-					for(let m = 0; m < buffer.length; m++) {
-						const property = buffer[m]
-						const propertyPrev = bufferPrev.find(src => src.id === property.id)
+					let propsHandled = 0
+					const properties = schema.data.buffer
+					const propertiesPrev = schemaPrev.data.buffer
+					for(let m = 0; m < properties.length; m++) {
+						const property = properties[m]
+						const propertyPrev = propertiesPrev.find(src => src.id === property.id)
 
 						if(propertyPrev !== undefined) {
 							if(property.key !== propertyPrev.key) {
@@ -63,7 +64,25 @@ const create = (id, data) => {
 							}
 							if(property.type !== propertyPrev.type) {
 								modifyAsset_type(asset.data, property, item.key, schema.type)
-							}							
+							}
+							propsHandled++							
+						}
+						else {
+							modifyAsset_type(asset.data, item, item.key, schema.type)
+						}
+
+						if(propsHandled !== propertiesPrev.length) {
+							loop:
+							for(let n = 0; n < propertiesPrev.length; n++) {
+								const entry = propertiesPrev[n]
+								for(let m = 0; m < properties.length; m++) {
+									const item = properties[m]
+									if(item.id === entry.id) {
+										continue loop
+									}
+								}
+								modifyAsset_remove(asset.data, entry.key, item.key, schema.type)
+							}
 						}
 					}
 				}
@@ -257,10 +276,20 @@ const modifyAsset_rename = (data, from, to, typeColumn = null, type = null) => {
 	}
 }
 
-const modifyAsset_remove = (data, key) => {
-	for(let n = 0; n < data.length; n++) {
-		const item = data[n]
-		delete item[key]
+const modifyAsset_remove = (data, key, typeColumn = null, type = null) => {
+	if(typeColumn) {
+		for(let n = 0; n < data.length; n++) {
+			const item = data[n]
+			if(item[typeColumn] === type) {
+				delete item[key]
+			}
+		}
+	}
+	else {
+		for(let n = 0; n < data.length; n++) {
+			const item = data[n]
+			delete item[key]
+		}		
 	}
 }
 
