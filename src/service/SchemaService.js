@@ -96,6 +96,7 @@ const create = (id, data) => {
 			if(item.type === "Type") {
 				const schemas = item.schema
 				props.push(n)
+				typeIndex = n
 
 				if(schemas.length > 0) {
 					types = new Array(schemas.length)
