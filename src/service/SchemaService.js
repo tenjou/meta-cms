@@ -68,7 +68,7 @@ const create = (id, data) => {
 							propsHandled++							
 						}
 						else {
-							modifyAsset_type(asset.data, item, item.key, schema.type)
+							modifyAsset_type(asset.data, property, item.key, schema.type)
 						}
 
 						if(propsHandled !== propertiesPrev.length) {
