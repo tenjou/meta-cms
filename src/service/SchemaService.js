@@ -70,6 +70,9 @@ const create = (id, data) => {
 							if(property.key !== propertyPrev.key) {
 								modifyAsset_rename(asset.data, propertyPrev.key, property.key, item.key, schema.type)
 							}
+							if(property.type !== propertyPrev.type) {
+								modifyAsset_type(asset.data, property, item.key, schema.type)
+							}							
 						}
 					}
 				}
@@ -228,10 +231,20 @@ const modifyAsset_rowType = (data, key, typeDef) => {
 	}
 }
 
-const modifyAsset_type = (data, schemaItem) => {
-	for(let n = 0; n < data.length; n++) {
-		const item = data[n]
-		item[schemaItem.key] = (schemaItem.default !== undefined) ? schemaItem.default : createDefaultValue(schemaItem, data, schemaItem.key)
+const modifyAsset_type = (data, schemaItem, typeColumn = null, type = null) => {
+	if(typeColumn) {
+		for(let n = 0; n < data.length; n++) {
+			const item = data[n]
+			if(item[typeColumn] === type) {
+				item[schemaItem.key] = (schemaItem.default !== undefined) ? schemaItem.default : createDefaultValue(schemaItem, data, schemaItem.key)
+			}
+		}	
+	}
+	else {
+		for(let n = 0; n < data.length; n++) {
+			const item = data[n]
+			item[schemaItem.key] = (schemaItem.default !== undefined) ? schemaItem.default : createDefaultValue(schemaItem, data, schemaItem.key)
+		}
 	}
 }
 
