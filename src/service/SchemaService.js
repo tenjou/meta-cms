@@ -51,6 +51,8 @@ const create = (id, data) => {
 					types.push(schema.type)
 					typesMap[schema.type] = n
 
+					if(!schemaPrev) { continue }
+
 					let propsHandled = 0
 					const properties = schema.data.buffer
 					const propertiesPrev = schemaPrev.data.buffer
