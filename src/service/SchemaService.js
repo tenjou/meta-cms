@@ -4,19 +4,12 @@ import Utils from "../Utils"
 const sortKey = (a, b) => { return a.key.localeCompare(b.key) }
 
 const create = (id, data) => {
-	const schemaNew = {}
 	let itemsFromPrev = 0
 
 	const asset = store.get(`assets/${id}`)
 	const schema = prepareData(asset.meta.schema)
 	const buffer = data.buffer
 	const bufferPrev = schema.buffer
-
-	const hashes = {}
-	for(let n = 0; n < bufferPrev.length; n++) {
-		const item = bufferPrev[n]
-		hashes[item.id] = item
-	}
 
 	const props = []
 	let types = null
@@ -25,7 +18,7 @@ const create = (id, data) => {
 
 	for(let n = 0; n < buffer.length; n++) {
 		const item = buffer[n]
-		const itemPrev = hashes[item.id]
+		const itemPrev = bufferPrev.find(src => src.id === item.id)
 
 		if(itemPrev !== undefined) {
 			itemsFromPrev++
@@ -36,8 +29,6 @@ const create = (id, data) => {
 			if(item.type !== itemPrev.type) {
 				modifyAsset_type(asset.data, item)
 			}
-
-			schemaNew[item.key] = populateFromSchemaType({ type: item.type }, item)
 
 			if(item.type === "Type") {
 				const schemas = item.schema
@@ -64,7 +55,7 @@ const create = (id, data) => {
 					const bufferPrev = schemaPrev.data.buffer
 					for(let m = 0; m < buffer.length; m++) {
 						const property = buffer[m]
-						const propertyPrev = bufferPrev[m]
+						const propertyPrev = bufferPrev.find(src => src.id === property.id)
 
 						if(propertyPrev !== undefined) {
 							if(property.key !== propertyPrev.key) {
@@ -79,7 +70,6 @@ const create = (id, data) => {
 			}
 		}
 		else {
-			schemaNew[item.key] = populateFromSchemaType({ type: item.type }, item)
 			modifyAsset_type(asset.data, item)
 
 			if(item.type === "Type") {
