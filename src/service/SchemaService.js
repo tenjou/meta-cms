@@ -330,11 +330,13 @@ const createRow = (data, schema) => {
 	}
 
 	const entry = buffer[schema.typeIndex]
-	const typeDefault = entry.schema[0]
-	const typeBuffer = typeDefault.data.buffer
-	for(let n = 0; n < typeBuffer.length; n++) {
-		const item = typeBuffer[n]
-		row[item.key] = (item.default !== undefined) ? item.default : createDefaultValue(item, data, item.key)
+	if(entry.schema.length > 0) {
+		const typeDefault = entry.schema[0]
+		const typeBuffer = typeDefault.data.buffer
+		for(let n = 0; n < typeBuffer.length; n++) {
+			const item = typeBuffer[n]
+			row[item.key] = (item.default !== undefined) ? item.default : createDefaultValue(item, data, item.key)
+		}
 	}
 
 	row.__cache = { open: false }

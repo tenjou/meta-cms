@@ -67,18 +67,20 @@ const SheetItem = component({
 
 					if(entry.type === "Type") {
 						const type = this.$value[entry.key]
-						const typeBuffer = findSchema(entry.schema, type)
-						for(let n = 0; n < typeBuffer.length; n++) {
-							const entry = typeBuffer[n]
-							elementOpen("property")
-								elementOpen("key")
-									text(entry.key)
-								elementClose("key")
-
-								elementOpen("value")
-									this.renderValue(entry)
-								elementClose("value")
-							elementClose("property")
+						if(type) {
+							const typeBuffer = findSchema(entry.schema, type)
+							for(let n = 0; n < typeBuffer.length; n++) {
+								const entry = typeBuffer[n]
+								elementOpen("property")
+									elementOpen("key")
+										text(entry.key)
+									elementClose("key")
+	
+									elementOpen("value")
+										this.renderValue(entry)
+									elementClose("value")
+								elementClose("property")
+							}
 						}
 					}
 				}
