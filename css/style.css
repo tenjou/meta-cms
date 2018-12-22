@@ -10,7 +10,8 @@ body {
 	height: 100%;
 	background-color: #ddd;
 	font-size: 12px;
-	font-family: "Open Sans"
+	font-family: "Open Sans";
+	tab-size: 4;
 }
 
 button {
