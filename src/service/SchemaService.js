@@ -156,7 +156,7 @@ const createItem = (data, property = false) => {
 		key,
 		type: "String",
 		index: data.buffer.length,
-		cache: createCache()
+		__cache: createCache()
 	}
 	populateFromSchemaType(item)
 
@@ -164,9 +164,7 @@ const createItem = (data, property = false) => {
 }
 
 const createCache = () => {
-	return {
-		open: false
-	}
+	return { open: false }
 }
 
 const createSchema = () => {
@@ -310,8 +308,11 @@ const createDefaultValue = (schemaItem, data, key) => {
 			return 0.0
 		case "Boolean":
 			return false
-		case "Schema":
+		case "List":
+		case "Type":
 			return []
+		case "Schema":
+			return { buffer: [], index: 0 }
 	}
 	return null
 }
@@ -384,7 +385,7 @@ const rebuildBufferItem = (item, type) => {
 		key: item.key,
 		type,
 		index: item.index,
-		cache: item.cache
+		__cache: item.cache
 	}
 	populateFromSchemaType(itemNew)
 	return itemNew

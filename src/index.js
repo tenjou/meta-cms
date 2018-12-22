@@ -118,6 +118,11 @@ store.set("types", {
 	},
 	Type: {
 		schema: {
+			type: "Type"
+		}
+	},
+	List: {
+		schema: {
 			type: "Schema"
 		}
 	}

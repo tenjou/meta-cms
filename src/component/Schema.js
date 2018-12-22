@@ -8,7 +8,7 @@ import Checkbox from "./Checkbox"
 import Caret from "./Caret"
 import Word from "./Word"
 
-const SchemaBuilder = component({
+const TypeBuilder = component({
 	mount() {
 		this.propsAdd = { onclick: this.handleAdd.bind(this) }
 		this.propsRemove = { onclick: this.handleRemove.bind(this) }
@@ -54,6 +54,20 @@ const SchemaBuilder = component({
 
 	handleRemove(event) {
 
+	}
+})
+
+const SchemaBuilder = component({
+	render() {
+		elementOpen("builder")
+		console.log(this.$value)
+			componentVoid(Schema, { 
+				bind: {
+					value: `${this.bind}`,
+					buffer: `${this.bind}/buffer`,
+				}
+			})		
+		elementClose("builder")
 	}
 })
 
@@ -131,7 +145,7 @@ const SchemaItem = component({
 			const props = { bind: `${this.bind.value}/${key}` }
 
 			elementOpen("item")
-				if(entry.type !== "Schema") {
+				if(entry.type !== "Type" && entry.type !== "List") {
 					elementOpen("key")
 						text(key)
 					elementClose("key")
@@ -166,6 +180,10 @@ const SchemaItem = component({
 								$src: SchemaService.getNamedBuffers()
 							})
 							break	
+
+						case "Type":
+							componentVoid(TypeBuilder, { bind: `${this.bind.value}/${key}` })
+							break
 							
 						case "Schema":
 							componentVoid(SchemaBuilder, { bind: `${this.bind.value}/${key}` })
@@ -244,7 +262,7 @@ const Schema = component({
 						bind: {
 							value: `${this.bind.buffer}/${n}`,
 							schema: `assets/${this.$value.id}/meta/schema`,
-							cache: `${this.bind.buffer}/${n}/cache`
+							cache: `${this.bind.buffer}/${n}/__cache`
 						},
 						$index: n,
 						$onDrop: this.handleDropFunc
