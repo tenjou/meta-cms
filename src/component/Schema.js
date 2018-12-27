@@ -36,6 +36,7 @@ const TypeBuilder = component({
 						componentVoid(Schema, { 
 							bind: {
 								value: `${this.bind}/${n}`,
+								schema: `${this.bind}/${n}/data`,
 								buffer: `${this.bind}/${n}/data/buffer`,
 							},
 							$child: true
@@ -60,10 +61,9 @@ const TypeBuilder = component({
 const SchemaBuilder = component({
 	render() {
 		elementOpen("builder")
-		console.log(this.$value)
 			componentVoid(Schema, { 
 				bind: {
-					value: `${this.bind}`,
+					schema: `${this.bind}`,
 					buffer: `${this.bind}/buffer`,
 				}
 			})		
@@ -74,7 +74,6 @@ const SchemaBuilder = component({
 const SchemaItem = component({
 	state: {
 		value: null,
-		schema: null,
 		cache: false,
 		index: -1,
 		onDrop: null
@@ -145,7 +144,7 @@ const SchemaItem = component({
 			const props = { bind: `${this.bind.value}/${key}` }
 
 			elementOpen("item")
-				if(entry.type !== "Type" && entry.type !== "List") {
+				if(entry.type !== "Type" && entry.type !== "Schema") {
 					elementOpen("key")
 						text(key)
 					elementClose("key")
@@ -220,8 +219,10 @@ const SchemaItem = component({
 const Schema = component({
 	state: {
 		value: null,
+		schema: null,
 		buffer: null,
-		child: false
+		child: false,
+		root: false
 	},
 
 	mount() {
@@ -261,7 +262,6 @@ const Schema = component({
 					componentVoid(SchemaItem, { 
 						bind: {
 							value: `${this.bind.buffer}/${n}`,
-							schema: `assets/${this.$value.id}/meta/schema`,
 							cache: `${this.bind.buffer}/${n}/__cache`
 						},
 						$index: n,
@@ -270,7 +270,7 @@ const Schema = component({
 				}   
 			elementClose("table")	            
 
-			if(!this.$child) {
+			if(this.$root) {
 				elementOpen("buttons")
 					elementOpen("button", { onclick: this.handleApplyFunc })
 						text("Apply")
@@ -281,7 +281,7 @@ const Schema = component({
 	},
 
 	handleAdd(event) {
-		store.add(this.bind.buffer, SchemaService.createItem(this.$value.data, this.$child))
+		store.add(this.bind.buffer, SchemaService.createItem(this.$schema, this.$child))
 	},
 
 	handleApply(event) {

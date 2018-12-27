@@ -39,7 +39,7 @@ const SheetItem = component({
 		const schemaBuffer = schema.buffer
 
 		elementOpen("row")
-			if(schema.props) {
+			if(schema.props.length > 0) {
 				elementOpen("field", propsCaret)
 					componentVoid(Caret, { bind: `${this.bind.value}/__cache/open` })
 				elementClose("field")
@@ -58,7 +58,7 @@ const SheetItem = component({
 			elementClose("field")
 		elementClose("row")
 
-		if(schema.props && this.$cache.open) {
+		if(schema.props.length > 0 && this.$cache.open) {
 			const props = schema.props
 
 			elementOpen("properties")
@@ -154,7 +154,7 @@ const Sheet = component({
 
 		elementOpen("sheet")
 			elementOpen("head")
-				if(schema.props) {
+				if(schema.props.length > 0) {
 					elementOpen("field", propsCaret)
 					elementClose("field")
 				}

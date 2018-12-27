@@ -23,7 +23,7 @@ const Popups = component({
 					elementClose("header")
 
 					elementOpen("content")
-						componentVoid(popup.component, popup.props)
+						popup.renderFunc()
 					elementClose("content")
 				elementClose("popup")
 			elementClose("back")	

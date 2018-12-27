@@ -1,10 +1,9 @@
 import { store } from "wabi"
 
-const openPopup = (title, component, props) => {
+const openPopup = (title, renderFunc) => {
     store.set("state/popup", {
         title,
-        component,
-        props
+        renderFunc
     })
 }
 

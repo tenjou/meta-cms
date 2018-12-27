@@ -14,7 +14,7 @@ const create = (id, data) => {
 	const props = []
 	let types = null
 	let typesMap = null
-	let typeIndex = 0
+	let typeIndex = -1
 
 	for(let n = 0; n < buffer.length; n++) {
 		const item = buffer[n]
@@ -30,85 +30,94 @@ const create = (id, data) => {
 				modifyAsset_type(asset.data, item)
 			}
 
-			if(item.type === "Type") {
-				const schemas = item.schema
-				const schemasPrev = itemPrev.schema
-				const typesPrev = {}
+			switch(item.type) {
+				case "Type": {
+					types = []
+					typesMap = {}
+					typeIndex = n
 
-				types = []
-				typesMap = {}
-				typeIndex = n
-				props.push(n)
+					const schemas = item.schema
+					const schemasPrev = itemPrev.schema
+					const typesPrev = {}
+					for(let n = 0; n < schemasPrev.length; n++) {
+						const item = schemasPrev[n]
+						typesPrev[item.id] = item
+					}
 
-				for(let n = 0; n < schemasPrev.length; n++) {
-					const item = schemasPrev[n]
-					typesPrev[item.id] = item
-				}
+					for(let n = 0; n < schemas.length; n++) {
+						const schema = schemas[n]
+						const schemaPrev = typesPrev[schema.id]
+						types.push(schema.type)
+						typesMap[schema.type] = n
 
-				for(let n = 0; n < schemas.length; n++) {
-					const schema = schemas[n]
-					const schemaPrev = typesPrev[schema.id]
-					types.push(schema.type)
-					typesMap[schema.type] = n
+						if(!schemaPrev) { continue }
 
-					if(!schemaPrev) { continue }
+						let propsHandled = 0
+						const properties = schema.data.buffer
+						const propertiesPrev = schemaPrev.data.buffer
+						for(let m = 0; m < properties.length; m++) {
+							const property = properties[m]
+							const propertyPrev = propertiesPrev.find(src => src.id === property.id)
 
-					let propsHandled = 0
-					const properties = schema.data.buffer
-					const propertiesPrev = schemaPrev.data.buffer
-					for(let m = 0; m < properties.length; m++) {
-						const property = properties[m]
-						const propertyPrev = propertiesPrev.find(src => src.id === property.id)
-
-						if(propertyPrev !== undefined) {
-							if(property.key !== propertyPrev.key) {
-								modifyAsset_rename(asset.data, propertyPrev.key, property.key, item.key, schema.type)
+							if(propertyPrev !== undefined) {
+								if(property.key !== propertyPrev.key) {
+									modifyAsset_rename(asset.data, propertyPrev.key, property.key, item.key, schema.type)
+								}
+								if(property.type !== propertyPrev.type) {
+									modifyAsset_type(asset.data, property, item.key, schema.type)
+								}
+								propsHandled++
 							}
-							if(property.type !== propertyPrev.type) {
+							else {
 								modifyAsset_type(asset.data, property, item.key, schema.type)
 							}
-							propsHandled++							
-						}
-						else {
-							modifyAsset_type(asset.data, property, item.key, schema.type)
-						}
 
-						if(propsHandled !== propertiesPrev.length) {
-							loop:
-							for(let n = 0; n < propertiesPrev.length; n++) {
-								const entry = propertiesPrev[n]
-								for(let m = 0; m < properties.length; m++) {
-									const item = properties[m]
-									if(item.id === entry.id) {
-										continue loop
+							if(propsHandled !== propertiesPrev.length) {
+								loop:
+								for(let n = 0; n < propertiesPrev.length; n++) {
+									const entry = propertiesPrev[n]
+									for(let m = 0; m < properties.length; m++) {
+										const item = properties[m]
+										if(item.id === entry.id) {
+											continue loop
+										}
 									}
+									modifyAsset_remove(asset.data, entry.key, item.key, schema.type)
 								}
-								modifyAsset_remove(asset.data, entry.key, item.key, schema.type)
 							}
 						}
 					}
-				}
+				} break
+
+				case "List": {
+					props.push(item.key)
+				} break
 			}
 		}
 		else {
 			modifyAsset_type(asset.data, item)
 
-			if(item.type === "Type") {
-				const schemas = item.schema
-				props.push(n)
-				typeIndex = n
+			switch(item.type) {
+				case "Type": {
+					typeIndex = n
 
-				if(schemas.length > 0) {
-					types = new Array(schemas.length)
-					typesMap = {}
-					for(let n = 0; n < schemas.length; n++) {
-						const item = schemas[n]
-						types[n] = item.type
-						typesMap[item.type] = n
+					const schemas = item.schema
+					if(schemas.length > 0) {
+						types = new Array(schemas.length)
+						typesMap = {}
+						for(let n = 0; n < schemas.length; n++) {
+							const item = schemas[n]
+							types[n] = item.type
+							typesMap[item.type] = n
+						}
+						const defaultType = schemas[0]
+						modifyAsset_rowType(asset.data, item.key, defaultType)
 					}
-					const defaultType = schemas[0]
-					modifyAsset_rowType(asset.data, item.key, defaultType)
-				}
+				} break
+
+				case "List": {
+					props.push(item.key)
+				} break
 			}
 		}
 	}
@@ -127,7 +136,7 @@ const create = (id, data) => {
 		}
 	}
 
-	asset.meta.schema.props = (props.length > 0) ? props : null
+	asset.meta.schema.props = props
 	asset.meta.schema.typeIndex = typeIndex
 	asset.meta.schema.types = types
 	asset.meta.schema.typesMap = typesMap
@@ -168,7 +177,7 @@ const createCache = () => {
 }
 
 const createSchema = () => {
-	return { props: null, typeIndex: 0, types: null, typesMap: null, buffer: [] }
+	return { typeIndex: 0, types: null, typesMap: null, buffer: [], props: [] }
 }
 
 const prepareData = (schema = null) => {
@@ -248,7 +257,7 @@ const modifyAsset_type = (data, schemaItem, typeColumn = null, type = null) => {
 			if(item[typeColumn] === type) {
 				item[schemaItem.key] = (schemaItem.default !== undefined) ? schemaItem.default : createDefaultValue(schemaItem, data, schemaItem.key)
 			}
-		}	
+		}
 	}
 	else {
 		for(let n = 0; n < data.length; n++) {
@@ -273,7 +282,7 @@ const modifyAsset_rename = (data, from, to, typeColumn = null, type = null) => {
 			const item = data[n]
 			item[to] = item[from]
 			delete item[from]
-		}		
+		}
 	}
 }
 
@@ -290,7 +299,7 @@ const modifyAsset_remove = (data, key, typeColumn = null, type = null) => {
 		for(let n = 0; n < data.length; n++) {
 			const item = data[n]
 			delete item[key]
-		}		
+		}
 	}
 }
 
@@ -312,7 +321,7 @@ const createDefaultValue = (schemaItem, data, key) => {
 		case "Type":
 			return []
 		case "Schema":
-			return { buffer: [], index: 0 }
+			return { buffer: [], id: 0 }
 	}
 	return null
 }
@@ -330,13 +339,15 @@ const createRow = (data, schema) => {
 		}
 	}
 
-	const entry = buffer[schema.typeIndex]
-	if(entry.schema.length > 0) {
-		const typeDefault = entry.schema[0]
-		const typeBuffer = typeDefault.data.buffer
-		for(let n = 0; n < typeBuffer.length; n++) {
-			const item = typeBuffer[n]
-			row[item.key] = (item.default !== undefined) ? item.default : createDefaultValue(item, data, item.key)
+	if(schema.typeIndex > -1) {
+		const entry = buffer[schema.typeIndex]
+		if(entry.schema.length > 0) {
+			const typeDefault = entry.schema[0]
+			const typeBuffer = typeDefault.data.buffer
+			for(let n = 0; n < typeBuffer.length; n++) {
+				const item = typeBuffer[n]
+				row[item.key] = (item.default !== undefined) ? item.default : createDefaultValue(item, data, item.key)
+			}
 		}
 	}
 
@@ -385,7 +396,7 @@ const rebuildBufferItem = (item, type) => {
 		key: item.key,
 		type,
 		index: item.index,
-		__cache: item.cache
+		__cache: item.__cache
 	}
 	populateFromSchemaType(itemNew)
 	return itemNew

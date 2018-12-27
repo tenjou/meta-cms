@@ -13,11 +13,15 @@ const editSchema = (id) => {
 	const data = SchemaService.prepareData(schema)
 	store.set("cache/schema", { id, data })
 
-	PopupService.openPopup("Edit schema", Schema, { 
-		bind: {
-			value: "cache/schema",
-			buffer: "cache/schema/data/buffer"
-		}
+	PopupService.openPopup("Edit schema", () => { 
+		componentVoid(Schema, {
+			bind: {
+				value: "cache/schema",
+				schema: "cache/schema/data",
+				buffer: "cache/schema/data/buffer"
+			},
+			$root: true
+		})
 	})
 }
 
