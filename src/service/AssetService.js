@@ -44,9 +44,10 @@ const edit = (id) => {
 }
 
 const addRow = (id) => {
-    const asset = store.get(`assets/${id}`)
+    const assetPath = `assets/${id}`
+    const asset = store.get(assetPath)
     const row = SchemaService.createRow(asset.data, asset.meta.schema)
-    Commander.execute(new AddRowCommand(asset, row))
+    Commander.execute(new AddRowCommand(`${assetPath}/data`, row))
 }
 
 export { tryAdd, create, createSheet, tryRemove, edit, addRow }

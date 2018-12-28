@@ -2,22 +2,23 @@ import { store } from "wabi"
 import SchemaService from "../service/SchemaService"
 
 class AddRowCommand {
-    constructor(asset, data) {
-        this.asset = asset
+    constructor(path, data) {
+        this.path = path
         this.data = data
     }
 
     execute() {
-        store.add(`assets/${this.asset.meta.id}/data`, this.data)
+        store.add(this.path, this.data)
         SchemaService.updateBuffer(this.asset)
     }
 
     undo() {
-        const index = this.asset.data.indexOf(this.data)
+        const asset = store.get(this.path)
+        const index = asset.indexOf(this.data)
         if(index !== -1) {
-            this.asset.data.splice(index, 1)
-            store.update(`assets/${this.asset.meta.id}/data`)
-            SchemaService.updateBuffer(this.asset)
+            this.asset.splice(index, 1)
+            store.update(this.path)
+            SchemaService.updateBuffer(asset)
         }
     }
 }

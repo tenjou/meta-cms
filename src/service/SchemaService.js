@@ -179,7 +179,7 @@ const createCache = () => {
 }
 
 const createSchema = () => {
-	return { typeIndex: 0, types: null, typesMap: null, buffer: [], props: [] }
+	return { typeIndex: -1, types: null, typesMap: null, buffer: [], props: [] }
 }
 
 const prepareData = (schema = null) => {

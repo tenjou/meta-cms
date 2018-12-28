@@ -7,6 +7,7 @@ import FloatInput from "./FloatInput"
 import Select from "./Select"
 import SchemaService from "../service/SchemaService"
 import Commander from "../Commander"
+import AddRowCommand from "../command/AddRowCommand"
 import RemoveRowCommand from "../command/RemoveRowCommand"
 
 const propsCaret = { class: "caret" }
@@ -20,6 +21,49 @@ const findSchema = (schema, type) => {
 	}
 	return null
 }
+
+const SheetList = component({
+	state: {
+		value: null,
+		key: null,
+		schema: null
+	},
+
+	mount() {
+		this.propsAdd = {
+			onclick: this.handleAdd.bind(this)
+		}
+	},
+
+	render() {
+		elementOpen("property")
+			elementOpen("key")
+				text(this.$key)
+			elementClose("key")
+
+			elementOpen("value")
+				elementOpen("button", this.propsAdd)
+					text("Add Row")
+				elementClose("button")
+			elementClose("value")
+		elementClose("property")
+
+		componentVoid(Sheet, {
+			bind: {
+				value: this.bind
+			},
+			$schema: this.$schema
+		})
+	},
+
+	handleAdd(event) {
+		const buffer = this.bind.split("/")
+		const assetPath = buffer.slice(0, buffer.length - 2).join("/")
+		const asset = store.get(assetPath)
+		const row = SchemaService.createRow(asset, this.$schema)
+		Commander.execute(new AddRowCommand(this.bind, row))
+	}	
+})
 
 const SheetItem = component({
 	state: {
@@ -86,29 +130,11 @@ const SheetItem = component({
 						}
 					}
 					else if(entry.type === "List") {
-						elementOpen("property")
-							elementOpen("key")
-								text(entry.key)
-							elementClose("key")
-
-							elementOpen("value")
-								elementOpen("button")
-									text("Add Row")
-								elementClose("button")
-							elementClose("value")
-						elementClose("property")
-
-						elementOpen("property")
-							elementOpen("key")
-							elementClose("key")
-
-							elementOpen("value")
-								componentVoid(Sheet, {
-									$value: this.$value[entry.key],
-									$schema: entry.schema
-								})
-							elementClose("value")
-						elementClose("property")
+						componentVoid(SheetList, {
+							bind: `${this.bind.value}/${entry.key}`,
+							$key: entry.key,
+							$schema: entry.schema
+						})
 					}
 				}
 			elementClose("properties")
@@ -164,9 +190,9 @@ const SheetItem = component({
 
 	handleRemove(event) {
 		const buffer = this.bind.value.split("/")
-		const path = buffer.slice(0, buffer.length - 2).join("/")
+		const path = buffer.slice(0, buffer.length - 1).join("/")
 		Commander.execute(new RemoveRowCommand(path, this.$value))
-	}	
+	}
 })
 
 const Sheet = component({

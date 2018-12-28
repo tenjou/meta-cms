@@ -223,6 +223,9 @@ sheet properties property key {
 sheet properties proeprty value {
 	flex: 1;
 }
+sheet sheet {
+	margin-left: 25px;
+}
 
 back {
 	display: flex;
