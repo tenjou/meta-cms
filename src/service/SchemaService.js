@@ -32,6 +32,7 @@ const create = (id, data) => {
 
 			switch(item.type) {
 				case "Type": {
+					props.push(n)
 					types = []
 					typesMap = {}
 					typeIndex = n
@@ -90,7 +91,7 @@ const create = (id, data) => {
 				} break
 
 				case "List": {
-					props.push(item.key)
+					props.push(n)
 				} break
 			}
 		}
@@ -99,6 +100,7 @@ const create = (id, data) => {
 
 			switch(item.type) {
 				case "Type": {
+					props.push(n)
 					typeIndex = n
 
 					const schemas = item.schema
@@ -116,7 +118,7 @@ const create = (id, data) => {
 				} break
 
 				case "List": {
-					props.push(item.key)
+					props.push(n)
 				} break
 			}
 		}
@@ -321,7 +323,7 @@ const createDefaultValue = (schemaItem, data, key) => {
 		case "Type":
 			return []
 		case "Schema":
-			return { buffer: [], id: 0 }
+			return createSchema()
 	}
 	return null
 }

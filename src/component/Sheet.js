@@ -26,7 +26,6 @@ const SheetItem = component({
 		value: null,
 		cache: null,
 		schema: null,
-		asset: null, 
 		index: -1
 	},
 
@@ -46,9 +45,12 @@ const SheetItem = component({
 			}
 
 			for(let n = 0; n < schemaBuffer.length; n++) {
-				elementOpen("field")
-					this.renderValue(schemaBuffer[n])
-				elementClose("field")
+				const entry = schemaBuffer[n]
+				if(entry.type !== "List") {
+					elementOpen("field")
+						this.renderValue(entry)
+					elementClose("field")
+				}
 			}
 
 			elementOpen("field")
@@ -82,6 +84,31 @@ const SheetItem = component({
 								elementClose("property")
 							}
 						}
+					}
+					else if(entry.type === "List") {
+						elementOpen("property")
+							elementOpen("key")
+								text(entry.key)
+							elementClose("key")
+
+							elementOpen("value")
+								elementOpen("button")
+									text("Add Row")
+								elementClose("button")
+							elementClose("value")
+						elementClose("property")
+
+						elementOpen("property")
+							elementOpen("key")
+							elementClose("key")
+
+							elementOpen("value")
+								componentVoid(Sheet, {
+									$value: this.$value[entry.key],
+									$schema: entry.schema
+								})
+							elementClose("value")
+						elementClose("property")
 					}
 				}
 			elementClose("properties")
@@ -136,19 +163,20 @@ const SheetItem = component({
 	},
 
 	handleRemove(event) {
-		Commander.execute(new RemoveRowCommand(this.$asset, this.$value))
+		const buffer = this.bind.value.split("/")
+		const path = buffer.slice(0, buffer.length - 2).join("/")
+		Commander.execute(new RemoveRowCommand(path, this.$value))
 	}	
 })
 
 const Sheet = component({
 	state: {
 		value: null,
-		data: null,
 		schema: null
 	},
 
 	render() {
-		const items = this.$data
+		const items = this.$value
 		const schema = this.$schema
 		const schemaBuffer = schema.buffer
 
@@ -160,22 +188,23 @@ const Sheet = component({
 				}
 
 				for(let n = 0; n < schemaBuffer.length; n++) {
-					elementOpen("field")
-						text(schemaBuffer[n].key)
-					elementClose("field")
+					const entry = schemaBuffer[n]
+					if(entry.type !== "List") {
+						elementOpen("field")
+							text(entry.key)
+						elementClose("field")
+					}
 				}	
-				
-				elementVoid("field")			
+				elementVoid("field")
 			elementClose("head")
 
 			for(let n = 0; n < items.length; n++) {
 				componentVoid(SheetItem, { 
 					bind: {
-						value: `${this.bind.data}/${n}`,
-						cache: `${this.bind.data}/${n}/__cache`
-					}, 
-					$schema: schema, 
-					$asset: this.$value,
+						value: `${this.bind.value}/${n}`,
+						cache: `${this.bind.value}/${n}/__cache`
+					},
+					$schema: schema,
 					$index: n
 				})
 			}

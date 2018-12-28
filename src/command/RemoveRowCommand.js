@@ -2,8 +2,8 @@ import { store } from "wabi"
 import SchemaService from "../service/SchemaService"
 
 class RemoveRowCommand {
-    constructor(asset, data) {
-        this.asset = asset
+    constructor(path, data) {
+        this.asset = store.get(path)
         this.data = data
     }
 
