@@ -142,7 +142,7 @@ const diff = (asset, schema, schemaPrev) => {
 
 				case "List":
 					props.push(n)
-					diffList(asset, entryItem, entryItemPrev)
+					diffList(asset, entryItem, emptySchemaCache)
 					break
 			}
 		}
@@ -480,6 +480,10 @@ const getNamedBuffers = () => {
 	}
 	return named
 }
+
+const emptySchemaCache = { 
+	schema: createSchemaCache() 
+} 
 
 export { apply, createItem, createSchemaCache, createDefaultValue, createRow, isKeyUnique, moveBefore, rebuildBufferItem, rebuildRow,
 	loadBuffer, unloadBuffer, updateBuffer, getNamedBuffers }
