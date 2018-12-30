@@ -57,15 +57,12 @@ const SheetList = component({
 	},
 
 	handleAdd(event) {
-		const buffer = this.bind.split("/")
-		const assetPath = buffer.slice(0, buffer.length - 2).join("/")
-		const asset = store.get(assetPath)
-		const row = SchemaService.createRow(asset, this.$schema)
+		const row = SchemaService.createRow(this.$value, this.$schema)
 		Commander.execute(new AddRowCommand(this.bind, row))
 	}	
 })
 
-const SheetItem = component({
+const SheetRow = component({
 	state: {
 		value: null,
 		cache: null,
@@ -79,8 +76,8 @@ const SheetItem = component({
 
 	render() {
 		const schema = this.$schema
-		const schemaBuffer = schema.buffer
-
+		const buffer = schema.buffer
+		
 		elementOpen("row")
 			if(schema.props.length > 0) {
 				elementOpen("field", propsCaret)
@@ -88,11 +85,11 @@ const SheetItem = component({
 				elementClose("field")
 			}
 
-			for(let n = 0; n < schemaBuffer.length; n++) {
-				const entry = schemaBuffer[n]
-				if(entry.type !== "List") {
+			for(let n = 0; n < buffer.length; n++) {
+				const entry = buffer[n]
+				if(entry.item.type !== "List") {
 					elementOpen("field")
-						this.renderValue(entry)
+						this.renderValue(entry.item)
 					elementClose("field")
 				}
 			}
@@ -109,10 +106,11 @@ const SheetItem = component({
 
 			elementOpen("properties")
 				for(let n = 0; n < props.length; n++) {
-					const entry = schemaBuffer[props[n]]
+					const entry = buffer[props[n]]
+					const entryItem = entry.item
 
-					if(entry.type === "Type") {
-						const type = this.$value[entry.key]
+					if(entryItem.type === "Type") {
+						const type = this.$value[entryItem.key]
 						if(type) {
 							const typeBuffer = findSchema(entry.schema, type)
 							for(let n = 0; n < typeBuffer.length; n++) {
@@ -129,11 +127,11 @@ const SheetItem = component({
 							}
 						}
 					}
-					else if(entry.type === "List") {
+					else if(entryItem.type === "List") {
 						componentVoid(SheetList, {
-							bind: `${this.bind.value}/${entry.key}`,
-							$key: entry.key,
-							$schema: entry.schema
+							bind: `${this.bind.value}/${entryItem.key}`,
+							$key: entryItem.key,
+							$schema: entryItem.schema
 						})
 					}
 				}
@@ -204,7 +202,7 @@ const Sheet = component({
 	render() {
 		const items = this.$value
 		const schema = this.$schema
-		const schemaBuffer = schema.buffer
+		const buffer = schema.buffer
 
 		elementOpen("sheet")
 			elementOpen("head")
@@ -213,11 +211,11 @@ const Sheet = component({
 					elementClose("field")
 				}
 
-				for(let n = 0; n < schemaBuffer.length; n++) {
-					const entry = schemaBuffer[n]
-					if(entry.type !== "List") {
+				for(let n = 0; n < buffer.length; n++) {
+					const entry = buffer[n]
+					if(entry.item.type !== "List") {
 						elementOpen("field")
-							text(entry.key)
+							text(entry.item.key)
 						elementClose("field")
 					}
 				}	
@@ -225,7 +223,7 @@ const Sheet = component({
 			elementClose("head")
 
 			for(let n = 0; n < items.length; n++) {
-				componentVoid(SheetItem, { 
+				componentVoid(SheetRow, { 
 					bind: {
 						value: `${this.bind.value}/${n}`,
 						cache: `${this.bind.value}/${n}/__cache`

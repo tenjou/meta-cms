@@ -1,44 +1,65 @@
 import { store } from "wabi"
 import Utils from "../Utils"
 
+function SchemaData(id, item, schema) {
+	this.id = id
+	this.index = id
+	this.item = item
+	this.data = null
+	this.schema = null
+	this.cache = createCache()
+}
+
 const sortKey = (a, b) => { return a.key.localeCompare(b.key) }
 
-const create = (id, data) => {
-	let itemsFromPrev = 0
+const apply = (id, schema) => {
+	const asset = store.get(`assets/${id}/data`)
+	const meta = store.get(`assets/${id}/meta`)
 
-	const asset = store.get(`assets/${id}`)
-	const schema = prepareData(asset.meta.schema)
-	const buffer = data.buffer
-	const bufferPrev = schema.buffer
+	const schemaPrev = createSchemaCache(meta.schema)
+	diff(asset, schema, schemaPrev)
+	meta.schema = populateSchema(schema)
+	meta.schemaCache = schema
+
+	store.update(`assets/${id}/data`)
+	store.update(`assets/${id}/meta`)
+}
+
+const diff = (asset, schema, schemaPrev) => {
+	const buffer = schema.buffer
+	const bufferPrev = schemaPrev.buffer
 
 	const props = []
+	let numEntriesPrev = 0
 	let types = null
 	let typesMap = null
 	let typeIndex = -1
 
 	for(let n = 0; n < buffer.length; n++) {
-		const item = buffer[n]
-		const itemPrev = bufferPrev.find(src => src.id === item.id)
+		const entry = buffer[n]
+		const entryItem = entry.item
+		const entryPrev = bufferPrev.find(src => src.id === entry.id)
+		
+		if(entryPrev !== undefined) {
+			const entryItemPrev = entryPrev.item
+			numEntriesPrev++
 
-		if(itemPrev !== undefined) {
-			itemsFromPrev++
-
-			if(item.key !== itemPrev.key) {
-				modifyAsset_rename(asset.data, itemPrev.key, item.key)
+			if(entryItem.key !== entryItemPrev.key) {
+				modifyAsset_rename(asset, entryItemPrev.key, entryItem.key)
 			}
-			if(item.type !== itemPrev.type) {
-				modifyAsset_type(asset.data, item)
+			if(entryItem.type !== entryItemPrev.type) {
+				modifyAsset_type(asset, entryItem)
 			}
 
-			switch(item.type) {
+			switch(entryItem.type) {
 				case "Type": {
 					props.push(n)
 					types = []
 					typesMap = {}
 					typeIndex = n
 
-					const schemas = item.schema
-					const schemasPrev = itemPrev.schema
+					const schemas = entryItem.schema
+					const schemasPrev = entryItemPrev.schema
 					const typesPrev = {}
 					for(let n = 0; n < schemasPrev.length; n++) {
 						const item = schemasPrev[n]
@@ -62,15 +83,15 @@ const create = (id, data) => {
 
 							if(propertyPrev !== undefined) {
 								if(property.key !== propertyPrev.key) {
-									modifyAsset_rename(asset.data, propertyPrev.key, property.key, item.key, schema.type)
+									modifyAsset_rename(asset, propertyPrev.key, property.key, entryItem.key, schema.type)
 								}
 								if(property.type !== propertyPrev.type) {
-									modifyAsset_type(asset.data, property, item.key, schema.type)
+									modifyAsset_type(asset, property, entryItem.key, schema.type)
 								}
 								propsHandled++
 							}
 							else {
-								modifyAsset_type(asset.data, property, item.key, schema.type)
+								modifyAsset_type(asset, property, entryItem.key, schema.type)
 							}
 
 							if(propsHandled !== propertiesPrev.length) {
@@ -83,7 +104,7 @@ const create = (id, data) => {
 											continue loop
 										}
 									}
-									modifyAsset_remove(asset.data, entry.key, item.key, schema.type)
+									modifyAsset_remove(asset, entry.key, entryItem.key, schema.type)
 								}
 							}
 						}
@@ -96,14 +117,14 @@ const create = (id, data) => {
 			}
 		}
 		else {
-			modifyAsset_type(asset.data, item)
+			modifyAsset_type(asset, entryItem)
 
-			switch(item.type) {
+			switch(entryItem.type) {
 				case "Type": {
 					props.push(n)
 					typeIndex = n
 
-					const schemas = item.schema
+					const schemas = entryItem.schema
 					if(schemas.length > 0) {
 						types = new Array(schemas.length)
 						typesMap = {}
@@ -113,7 +134,7 @@ const create = (id, data) => {
 							typesMap[item.type] = n
 						}
 						const defaultType = schemas[0]
-						modifyAsset_rowType(asset.data, item.key, defaultType)
+						modifyAsset_rowType(asset, entryItem.key, defaultType)
 					}
 				} break
 
@@ -124,27 +145,28 @@ const create = (id, data) => {
 		}
 	}
 
-	if(itemsFromPrev !== bufferPrev.length) {
+	if(numEntriesPrev !== bufferPrev.length) {
 		loop:
 		for(let n = 0; n < bufferPrev.length; n++) {
-			const entry = bufferPrev[n]
+			const entryPrev = bufferPrev[n]
 			for(let m = 0; m < buffer.length; m++) {
-				const item = buffer[m]
-				if(item.id === entry.id) {
+				const entry = buffer[m]
+				if(entry.id === entryPrev.id) {
 					continue loop
 				}
 			}
-			modifyAsset_remove(asset.data, entry.key)
+			modifyAsset_remove(asset, entryPrev.key)
 		}
 	}
 
-	asset.meta.schema.props = props
-	asset.meta.schema.typeIndex = typeIndex
-	asset.meta.schema.types = types
-	asset.meta.schema.typesMap = typesMap
-	asset.meta.schema.buffer = cleanupBuffer(buffer)
-	store.update(`assets/${id}/meta`)
-	store.update(`assets/${id}/data`)
+	schema.props = props
+	schema.typeIndex = typeIndex
+	schema.types = types
+	schema.typesMap = typesMap
+}
+
+const createCache = () => {
+	return { open: false }
 }
 
 const createItem = (data, property = false) => {
@@ -162,63 +184,78 @@ const createItem = (data, property = false) => {
 		}
 	}
 
-	const item = {
-		id: data.id++,
-		key,
-		type: "String",
-		index: data.buffer.length,
-		__cache: createCache()
-	}
+	const item = { key, type: "String" }
 	populateFromSchemaType(item)
 
-	return item
+	const itemData = new SchemaData(data.id++, item)
+	return itemData
 }
 
-const createCache = () => {
-	return { open: false }
+const rebuildBufferItem = (item, type) => {
+	const itemNew = {
+		key: item.key,
+		type
+	}
+	populateFromSchemaType(itemNew)
+	return itemNew
 }
 
-const createSchema = () => {
-	return { typeIndex: -1, types: null, typesMap: null, buffer: [], props: [] }
-}
+const createSchemaCache = (schema = null) => {
+	const schemaCache = { id: 0, typeIndex: -1, types: null, typesMap: null, buffer: [], props: [] }
+	if(!schema) {
+		return schemaCache
+	}
 
-const prepareData = (schema = null) => {
-	const buffer = schema ? Utils.cloneObj(schema.buffer) : []
-	const id = buffer.length
-	for(let n = 0; n < buffer.length; n++) {
-		const item = buffer[n]
-		item.id = n
-		item.index = n
-		item.cache = createCache()
-		if(item.type === "Type") {
-			const buffer = item.schema
-			for(let n = 0; n < buffer.length; n++) {
-				const entry = buffer[n]
-				entry.id = n
-				entry.index = n
-				entry.data = prepareData(entry.data)
-			}
+	const buffer = schemaCache.buffer
+	buffer.length = schema.length
+	schemaCache.id = schema.length
+
+	for(let n = 0; n < schema.length; n++) {
+		const item = schema[n]
+		const schemaData = new SchemaData(n, item)
+		buffer[n] = schemaData
+		
+		switch(item.type) {
+			case "Type":
+				break
+
+			case "List":
+				// schemaData.data = prepareData(item.schema)
+				break
 		}
 	}
-	return { id, buffer }
+	// const buffer = schema ? Utils.cloneObj(schema.buffer) : []
+	// const id = buffer.length
+	// for(let n = 0; n < buffer.length; n++) {
+	// 	const item = buffer[n]
+	// 	item.id = n
+	// 	item.index = n
+	// 	item.cache = createCache()
+	// 	if(item.type === "Type") {
+	// 		const buffer = item.schema
+	// 		for(let n = 0; n < buffer.length; n++) {
+	// 			const entry = buffer[n]
+	// 			entry.id = n
+	// 			entry.index = n
+	// 			entry.data = prepareData(entry.data)
+	// 		}
+	// 	}
+	// 	else if(item.type === "List") {
+	// 		item.buffer = prepareData(item.buffer)
+	// 	}
+	// }
+
+	return schemaCache
 }
 
-const cleanupBuffer = (buffer) => {
+const populateSchema = (schemaCache) => {
+	const buffer = schemaCache.buffer
+	const output = new Array(buffer.length)
 	for(let n = 0; n < buffer.length; n++) {
-		const item = buffer[n]
-		delete item.cache
-		delete item.index
-
-		if(item.type === "Type") {
-			const buffer = item.schema
-			for(let n = 0; n < buffer.length; n++) {
-				const entry = buffer[n]
-				delete entry.cache
-				delete entry.index
-			}
-		}
+		const entry = buffer[n]
+		output[n] = entry.item
 	}
-	return buffer
+	return output
 }
 
 const populateFromSchemaType = (item, copy = null) => {
@@ -323,7 +360,7 @@ const createDefaultValue = (schemaItem, data, key) => {
 		case "Type":
 			return []
 		case "Schema":
-			return createSchema()
+			return createSchemaCache()
 	}
 	return null
 }
@@ -331,8 +368,9 @@ const createDefaultValue = (schemaItem, data, key) => {
 const createRow = (data, schema) => {
 	const row = {}
 	const buffer = schema.buffer
+
 	for(let n = 0; n < buffer.length; n++) {
-		const item = buffer[n]
+		const item = buffer[n].item
 		if(data[item.key] !== undefined) {
 			row[item.key] = data[item.key]
 		}
@@ -342,7 +380,7 @@ const createRow = (data, schema) => {
 	}
 
 	if(schema.typeIndex > -1) {
-		const entry = buffer[schema.typeIndex]
+		const entry = buffer[schemaCache.typeIndex]
 		if(entry.schema.length > 0) {
 			const typeDefault = entry.schema[0]
 			const typeBuffer = typeDefault.data.buffer
@@ -353,7 +391,7 @@ const createRow = (data, schema) => {
 		}
 	}
 
-	row.__cache = { open: false }
+	row.__cache = createCache()
 	return row
 }
 
@@ -390,18 +428,6 @@ const moveBefore = (buffer, index, indexBefore) => {
 	for(let n = 0; n < buffer.length; n++) {
 		buffer[n].index = n
 	}
-}
-
-const rebuildBufferItem = (item, type) => {
-	const itemNew = {
-		id: item.id,
-		key: item.key,
-		type,
-		index: item.index,
-		__cache: item.__cache
-	}
-	populateFromSchemaType(itemNew)
-	return itemNew
 }
 
 const loadBuffer = (asset) => {
@@ -448,5 +474,5 @@ const getNamedBuffers = () => {
 	return named
 }
 
-export { create, createItem, createSchema, prepareData, createDefaultValue, createRow, isKeyUnique, moveBefore, rebuildBufferItem, rebuildRow,
+export { apply, createItem, createSchemaCache, createDefaultValue, createRow, isKeyUnique, moveBefore, rebuildBufferItem, rebuildRow,
 	loadBuffer, unloadBuffer, updateBuffer, getNamedBuffers }

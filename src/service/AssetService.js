@@ -19,16 +19,14 @@ const tryRemove = (id) => {
     }
 }
 
-const create = (type, schema) => {
-    if(!schema) {
-        schema = SchemaService.createSchema()
-    }
+const create = (type) => {
     const asset = {
         meta: {
             id: Utils.uuid4(),
             name: type,
             type,
-            schema
+            schema: [],
+            schemaCache: SchemaService.createSchemaCache()
         },
         data: []
     }
@@ -46,7 +44,7 @@ const edit = (id) => {
 const addRow = (id) => {
     const assetPath = `assets/${id}`
     const asset = store.get(assetPath)
-    const row = SchemaService.createRow(asset.data, asset.meta.schema)
+    const row = SchemaService.createRow(asset.data, asset.meta.schemaCache)
     Commander.execute(new AddRowCommand(`${assetPath}/data`, row))
 }
 

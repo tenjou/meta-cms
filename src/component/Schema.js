@@ -199,7 +199,9 @@ const SchemaItem = component({
 	},
 
 	handleRemove(event) {
-		store.remove(this.bind.value)
+		const buffer = this.bind.value.split("/")
+		const path = buffer.splice(0, buffer.length - 1).join("/")
+		store.remove(path)
 	},
 
 	handleDrag(event) {
@@ -261,8 +263,8 @@ const Schema = component({
 				for(let n = 0; n < buffer.length; n++) {
 					componentVoid(SchemaItem, { 
 						bind: {
-							value: `${this.bind.buffer}/${n}`,
-							cache: `${this.bind.buffer}/${n}/__cache`
+							value: `${this.bind.buffer}/${n}/item`,
+							cache: `${this.bind.buffer}/${n}/cache`
 						},
 						$index: n,
 						$onDrop: this.handleDropFunc
@@ -285,7 +287,7 @@ const Schema = component({
 	},
 
 	handleApply(event) {
-		SchemaService.create(this.$value.id, this.$value.data)
+		SchemaService.apply(this.$value.id, this.$value.schema)
 		PopupService.closePopup()
 	},
 

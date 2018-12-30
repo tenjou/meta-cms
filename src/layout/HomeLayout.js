@@ -7,18 +7,19 @@ import Popups from "../component/Popups"
 import Schema from "../component/Schema"
 import Word from "../component/Word"
 import Menu from "../component/Menu"
+import Utils from "../Utils"
 
 const editSchema = (id) => {
-	const schema = store.get(`assets/${id}/meta/schema`)
-	const data = SchemaService.prepareData(schema)
-	store.set("cache/schema", { id, data })
+	const meta = store.get(`assets/${id}/meta`)
+	const schema = SchemaService.createSchemaCache(Utils.cloneObj(meta.schema))
+	store.set("cache/schema", { id, schema })
 
 	PopupService.openPopup("Edit schema", () => { 
 		componentVoid(Schema, {
 			bind: {
 				value: "cache/schema",
-				schema: "cache/schema/data",
-				buffer: "cache/schema/data/buffer"
+				schema: "cache/schema/schema",
+				buffer: "cache/schema/schema/buffer"
 			},
 			$root: true
 		})
@@ -59,7 +60,7 @@ const ContentPanel = component({
 					componentVoid(Sheet, {
 						bind: {
 							value: `${this.bind}/data`,
-							schema: `${this.bind}/meta/schema`
+							schema: `${this.bind}/meta/schemaCache`
 						}	
 					})
 				elementClose("content")
