@@ -184,8 +184,9 @@ const createItem = (data, property = false) => {
 	let keyIndex = data.id
 	let key = `${keyBase}_${keyIndex}`
 
-	for(let n = 0; n < data.buffer.length; n++) {
-		const item = data.buffer[n]
+	const buffer = data.buffer
+	for(let n = 0; n < buffer.length; n++) {
+		const item = buffer[n].item
 		if(item.key === key) {
 			keyIndex++
 			key = `${keyBase}_${keyIndex}`
