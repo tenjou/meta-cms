@@ -13,14 +13,15 @@ function SchemaData(id, item, schema) {
 const sortKey = (a, b) => { return a.key.localeCompare(b.key) }
 
 const apply = (id, schema) => {
-	const asset = store.get(`assets/${id}/data`)
-	const meta = store.get(`assets/${id}/meta`)
+	const asset = store.get(`assets/${id}`)
+	const meta = asset.meta
 
 	const schemaPrev = createSchemaCache(meta.schema)
-	diff(asset, schema, schemaPrev)
+	diff(asset.data, schema, schemaPrev)
 	meta.schema = populateSchema(schema)
 	meta.schemaCache = schema
 
+	updateBuffer(asset)
 	store.update(`assets/${id}/data`)
 	store.update(`assets/${id}/meta`)
 }
@@ -431,16 +432,13 @@ const moveBefore = (buffer, index, indexBefore) => {
 }
 
 const loadBuffer = (asset) => {
-	if(!asset) {
-		return
-	}
-	const schemaBuffer = asset.meta.schema.buffer
+	const schema = asset.meta.schema
 	let idKey = null
 
-	for(let key in schemaBuffer) {
-		const entry = schemaBuffer[key]
+	for(let n = 0; n < schema.length; n++) {
+		const entry = schema[n]
 		if(entry.type === "UID" || entry.type === "GUID") {
-			idKey = key
+			idKey = entry.key
 			break
 		}
 	}
