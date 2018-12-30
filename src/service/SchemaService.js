@@ -112,9 +112,10 @@ const diff = (asset, schema, schemaPrev) => {
 					}
 				} break
 
-				case "List": {
+				case "List":
 					props.push(n)
-				} break
+					diffList(asset, entryItem, entryItemPrev)
+					break
 			}
 		}
 		else {
@@ -139,9 +140,10 @@ const diff = (asset, schema, schemaPrev) => {
 					}
 				} break
 
-				case "List": {
+				case "List":
 					props.push(n)
-				} break
+					diffList(asset, entryItem, entryItemPrev)
+					break
 			}
 		}
 	}
@@ -156,7 +158,7 @@ const diff = (asset, schema, schemaPrev) => {
 					continue loop
 				}
 			}
-			modifyAsset_remove(asset, entryPrev.key)
+			modifyAsset_remove(asset, entryPrev.item.key)
 		}
 	}
 
@@ -164,6 +166,13 @@ const diff = (asset, schema, schemaPrev) => {
 	schema.typeIndex = typeIndex
 	schema.types = types
 	schema.typesMap = typesMap
+}
+
+const diffList = (asset, entryItem, entryItemPrev) => {
+	for(let m = 0; m < asset.length; m++) {
+		const data = asset[m]
+		diff(data[entryItem.key], entryItem.schema, entryItemPrev.schema)
+	}
 }
 
 const createCache = () => {
