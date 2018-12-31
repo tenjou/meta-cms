@@ -131,7 +131,7 @@ const SheetRow = component({
 						componentVoid(SheetList, {
 							bind: `${this.bind.value}/${entryItem.key}`,
 							$key: entryItem.key,
-							$schema: entryItem.schema
+							$schema: entry.schema
 						})
 					}
 				}

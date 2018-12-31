@@ -36,8 +36,8 @@ const TypeBuilder = component({
 						componentVoid(Schema, { 
 							bind: {
 								value: `${this.bind}/${n}`,
-								schema: `${this.bind}/${n}/data`,
-								buffer: `${this.bind}/${n}/data/buffer`,
+								schema: `${this.bind}/${n}/schema`,
+								buffer: `${this.bind}/${n}/schema/buffer`,
 							},
 							$child: true
 						})
@@ -48,13 +48,13 @@ const TypeBuilder = component({
 	},
 
 	handleAdd(event) {
-		const data = SchemaService.prepareData()
-		this.$value.push({ type: "Type", data })
+		const schema = SchemaService.createSchemaCache()
+		this.$value.push({ type: "Type", schema })
 		this.updateAll()
 	},
 
 	handleRemove(event) {
-
+		
 	}
 })
 
@@ -74,7 +74,7 @@ const SchemaBuilder = component({
 const SchemaItem = component({
 	state: {
 		value: null,
-		cache: false,
+		cache: null,
 		index: -1,
 		onDrop: null
 	},
@@ -103,13 +103,13 @@ const SchemaItem = component({
 			elementClose("td")
 
 			elementOpen("td", propsRow)
-				componentVoid(TextInput, { bind: `${this.bind.value}/key` })
+				componentVoid(TextInput, { bind: `${this.bind.value}/item/key` })
 			elementClose("td")
 
 			elementOpen("td", propsRow)
 				componentVoid(Select, { 
 					bind: {
-						value: `${this.bind.value}/type`,
+						value: `${this.bind.value}/item/type`,
 						src: "column-types" 
 					},
 					$onChange: this.handleChangeFunc
@@ -138,10 +138,10 @@ const SchemaItem = component({
 	},
 
 	renderType() {
-		const typeSchema = store.data.types[this.$value.type]
+		const typeSchema = store.data.types[this.$value.item.type]
 		for(let key in typeSchema) {
 			const entry = typeSchema[key]
-			const props = { bind: `${this.bind.value}/${key}` }
+			const props = { bind: `${this.bind.value}/item/${key}` }
 
 			elementOpen("item")
 				if(entry.type !== "Type" && entry.type !== "Schema") {
@@ -168,24 +168,24 @@ const SchemaItem = component({
 						case "Select": {
 							const value = this.$value[entry.lookup]
 							componentVoid(Select, { 
-								bind: `${this.bind.value}/${key}`, 
+								bind: `${this.bind.value}/item/${key}`, 
 								$src: store.get(`buffers/${value}`)
 							})
 						} break	
 
 						case "Sheet":
 							componentVoid(Select, { 
-								bind: `${this.bind.value}/${key}`, 
+								bind: `${this.bind.value}/item/${key}`, 
 								$src: SchemaService.getNamedBuffers()
 							})
 							break	
 
 						case "Type":
-							componentVoid(TypeBuilder, { bind: `${this.bind.value}/${key}` })
+							componentVoid(TypeBuilder, props)
 							break
 							
 						case "Schema":
-							componentVoid(SchemaBuilder, { bind: `${this.bind.value}/${key}` })
+							componentVoid(SchemaBuilder, { bind: `${this.bind.value}/schema` })
 							break
 					}
 				elementClose("value")
@@ -194,14 +194,12 @@ const SchemaItem = component({
 	},
 
 	handleChange(value) {
-		const itemNew = SchemaService.rebuildBufferItem(this.$value, value)
-		store.set(this.bind.value, itemNew)
+		SchemaService.rebuildBufferItem(this.$value, value)
+		store.update(`${this.bind.value}/item`)
 	},
 
 	handleRemove(event) {
-		const buffer = this.bind.value.split("/")
-		const path = buffer.splice(0, buffer.length - 1).join("/")
-		store.remove(path)
+		store.remove(this.bind.value)
 	},
 
 	handleDrag(event) {
@@ -263,7 +261,7 @@ const Schema = component({
 				for(let n = 0; n < buffer.length; n++) {
 					componentVoid(SchemaItem, { 
 						bind: {
-							value: `${this.bind.buffer}/${n}/item`,
+							value: `${this.bind.buffer}/${n}`,
 							cache: `${this.bind.buffer}/${n}/cache`
 						},
 						$index: n,
