@@ -270,7 +270,7 @@ const createSchemaCache = (schema = null) => {
 }
 
 const populateSchema = (schemaCache) => {
-	const buffer = Utils.cloneObj(schemaCache.buffer)
+	const buffer = schemaCache.buffer
 	const output = new Array(buffer.length)
 	for(let n = 0; n < buffer.length; n++) {
 		const entry = buffer[n]

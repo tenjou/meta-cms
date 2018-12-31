@@ -1,4 +1,5 @@
 import { store } from "wabi"
+import Utils from "../Utils"
 
 const create = (options) => {
     const data = options.production ? createProduction(options.named, options.dictionary) : createProject()
@@ -14,16 +15,16 @@ const create = (options) => {
 
 const createProject = () => {
     const data = {
-        meta: store.data.meta,
-        assets: store.data.assets
+        meta: Utils.cloneObj(store.data.meta),
+        assets: Utils.cloneObj(store.data.assets)
     }
     return data
 }
 
 const createProduction = (named, dictionary) => {
-    const assets = store.data.assets
+    const assets = Utils.cloneObj(store.data.assets)
     const data = {
-        meta: store.data.meta,
+        meta: Utils.cloneObj(store.data.meta),
         assets: {}
     }
     for(let key in assets) {
