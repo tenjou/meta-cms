@@ -358,11 +358,21 @@ const modifyAsset_remove = (data, entry, typeColumn = null, type = null) => {
 	const item = entry.item
 	const key = item.key
 	if(typeColumn) {
-		for(let n = 0; n < data.length; n++) {
-			const item = data[n]
-			if(item[typeColumn] === type) {
-				removeAllProperties(item, entry, item[key])
-				delete item[key]
+		if(item.type === "Type") {
+			for(let n = 0; n < data.length; n++) {
+				const item = data[n]
+				if(item[typeColumn] === type) {
+					removeProperties(item, entry, item[key])
+					delete item[key]
+				}
+			}			
+		}
+		else {
+			for(let n = 0; n < data.length; n++) {
+				const item = data[n]
+				if(item[typeColumn] === type) {
+					delete item[key]
+				}
 			}
 		}
 	}
@@ -370,7 +380,7 @@ const modifyAsset_remove = (data, entry, typeColumn = null, type = null) => {
 		if(item.type === "Type") {
 			for(let n = 0; n < data.length; n++) {
 				const item = data[n]
-				removeAllProperties(item, entry, item[key])
+				removeProperties(item, entry, item[key])
 				delete item[key]
 			}
 		}
@@ -383,7 +393,7 @@ const modifyAsset_remove = (data, entry, typeColumn = null, type = null) => {
 	}
 }
 
-const removeAllProperties = (item, entry, type) => {
+const removeProperties = (item, entry, type) => {
 	const typeSchema = entry.schema.find(src => src.type === type)
 	const buffer = typeSchema.schema.buffer
 	for(let n = 0; n < buffer.length; n++) {
