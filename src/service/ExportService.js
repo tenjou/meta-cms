@@ -52,11 +52,14 @@ const cleanup = (data) => {
     const production = data.meta.export.production
     const assets = data.assets
     for(let key in assets) {
-        const asset = assets[key]
         if(production) {
-
+            const data = assets[key]
+            for(let n = 0; n < data.length; n++) {
+                cleanupAssetItem(data[n])
+            }
         }
         else {
+            const asset = assets[key]
             const data = asset.data
             for(let n = 0; n < data.length; n++) {
                 cleanupAssetItem(data[n])
