@@ -3,9 +3,7 @@ import Utils from "../Utils"
 
 const create = (options) => {
     const data = options.production ? createProduction(options.named, options.dictionary) : createProject()
-    data.meta.export = {
-        production: options.production
-    }
+    data.meta.export = store.data.cache.export
     cleanup(data)
     if(options.minify) {
         return JSON.stringify(data)

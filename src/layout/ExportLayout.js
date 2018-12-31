@@ -6,7 +6,7 @@ import Checkbox from "../component/Checkbox"
 
 const ExportLayout = component({
 	mount() {
-		this.bind = "state/export"
+		this.bind = "cache/export"
 	},
 
 	render() {
@@ -44,7 +44,7 @@ const ExportLayout = component({
 			elementClose("key")
 
 			elementOpen("value")
-				componentVoid(Checkbox, { bind: `state/export/${key}` })
+				componentVoid(Checkbox, { bind: `${this.bind}/${key}` })
 			elementClose("value")
 		elementClose("item")
 	}

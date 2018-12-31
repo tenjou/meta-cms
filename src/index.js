@@ -16,6 +16,11 @@ const createCache = () => {
 	return {
 		assets: {
 			selected: null
+		},
+		export: {
+			minify: false,
+			production: false,
+			named: false
 		}
 	}
 }
@@ -50,13 +55,7 @@ loadBuffers()
 
 store.set("state", {
 	popup: null,
-	menu: "",
-	export: {
-		minify: false,
-		dictionary: false,
-		production: false,
-		named: false
-	}
+	menu: ""
 })
 
 store.set("types", {
