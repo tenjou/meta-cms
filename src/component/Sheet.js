@@ -16,7 +16,7 @@ const findSchema = (schema, type) => {
 	for(let n = 0; n < schema.length; n++) {
 		const entry = schema[n]
 		if(entry.type === type) {
-			return entry.data.buffer
+			return entry.schema.buffer
 		}
 	}
 	return null
@@ -115,31 +115,32 @@ const SheetRow = component({
 							const typeBuffer = findSchema(entry.schema, type)
 							for(let n = 0; n < typeBuffer.length; n++) {
 								const entry = typeBuffer[n]
-								elementOpen("property")
-									elementOpen("key")
-										text(entry.key)
-									elementClose("key")
-	
-									elementOpen("value")
-										this.renderValue(entry)
-									elementClose("value")
-								elementClose("property")
+								if(entry.item.type === "List") {
+									this.renderValue(entry.item, entry.schema)
+								}
+								else {
+									elementOpen("property")
+										elementOpen("key")
+											text(entry.item.key)
+										elementClose("key")
+		
+										elementOpen("value")
+										this.renderValue(entry.item, entry.schema)
+										elementClose("value")
+									elementClose("property")
+								}
 							}
 						}
 					}
 					else if(entryItem.type === "List") {
-						componentVoid(SheetList, {
-							bind: `${this.bind.value}/${entryItem.key}`,
-							$key: entryItem.key,
-							$schema: entry.schema
-						})
+						this.renderValue(entryItem, entry.schema)
 					}
 				}
 			elementClose("properties")
 		}
 	},
 
-	renderValue(entry) {
+	renderValue(entry, schema) {
 		const key = entry.key
 
 		switch(entry.type) {
@@ -164,6 +165,13 @@ const SheetRow = component({
 				break				
 			case "Boolean":
 				componentVoid(Checkbox, { bind: `${this.bind.value}/${key}` })
+				break
+			case "List":
+				componentVoid(SheetList, {
+					bind: `${this.bind.value}/${entry.key}`,
+					$key: entry.key,
+					$schema: schema
+				})
 				break
 			case "Reference":
 				componentVoid(Select, { 

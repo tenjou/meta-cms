@@ -187,7 +187,7 @@ const SchemaItem = component({
 							break	
 
 						case "Type":
-							componentVoid(TypeBuilder, { bind: `${this.bind.item}/${key}` })
+							componentVoid(TypeBuilder, { bind: `${this.bind.value}/schema` })
 							break
 							
 						case "Schema":
