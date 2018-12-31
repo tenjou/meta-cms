@@ -425,7 +425,7 @@ const createDefaultValue = (schemaItem, data, key) => {
 	return null
 }
 
-const createRow = (data, schema) => {
+const createRow = (data, schema, typed = false) => {
 	const row = {}
 	const buffer = schema.buffer
 
@@ -439,7 +439,7 @@ const createRow = (data, schema) => {
 		}
 	}
 
-	if(schema.typeIndex > -1) {
+	if(schema.typeIndex > -1 && typed) {
 		const entry = buffer[schema.typeIndex]
 		if(entry.schema.length > 0) {
 			const typeDefault = entry.schema[0]
@@ -460,8 +460,8 @@ const rebuildRow = (path, schema) => {
 	const entry = schema.buffer[schema.typeIndex]
 	const typeIndex = schema.types.indexOf(data[entry.item.key])
 	const type = entry.schema[typeIndex]
-
-	const row = createRow(data, schema)
+	
+	const row = createRow(data, schema, false)
 
 	const buffer = type.schema.buffer
 	for(let n = 0; n < buffer.length; n++) {
