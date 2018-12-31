@@ -92,9 +92,17 @@ const diff = (asset, schema, schemaPrev) => {
 									modifyAsset_type(asset, property, entryItem.key, schema.type)
 								}
 								propsHandled++
+
+								if(property.type === "List") {
+									diffList(asset, propertyEntry, propertyEntryPrev)
+								}
 							}
 							else {
 								modifyAsset_type(asset, property, entryItem.key, schema.type)
+
+								if(property.type === "List") {
+									diffList(asset, propertyEntry, emptySchemaCache)
+								}								
 							}
 						}
 
@@ -460,7 +468,7 @@ const rebuildRow = (path, schema) => {
 	const entry = schema.buffer[schema.typeIndex]
 	const typeIndex = schema.types.indexOf(data[entry.item.key])
 	const type = entry.schema[typeIndex]
-	
+
 	const row = createRow(data, schema, false)
 
 	const buffer = type.schema.buffer

@@ -125,7 +125,7 @@ const SheetRow = component({
 										elementClose("key")
 		
 										elementOpen("value")
-										this.renderValue(entry.item, entry.schema)
+											this.renderValue(entry.item, entry.schema)
 										elementClose("value")
 									elementClose("property")
 								}
