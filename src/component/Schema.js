@@ -142,7 +142,6 @@ const SchemaItem = component({
 		const typeSchema = store.data.types[this.$value.item.type]
 		for(let key in typeSchema) {
 			const entry = typeSchema[key]
-			const props = { bind: `${this.bind.value}/item/${key}` }
 
 			elementOpen("item")
 				if(entry.type !== "Type" && entry.type !== "Schema") {
@@ -154,35 +153,35 @@ const SchemaItem = component({
 				elementOpen("value")
 					switch(entry.type) {
 						case "Number":
-							componentVoid(NumberInput, props)
+							componentVoid(NumberInput, { bind: `${this.bind.item}/${key}` })
 							break
 						case "Float":
-							componentVoid(NumberInput, props)
+							componentVoid(NumberInput, { bind: `${this.bind.item}/${key}` })
 							break							
 						case "String":
-							componentVoid(TextInput, props)
+							componentVoid(TextInput, { bind: `${this.bind.item}/${key}` })
 							break
 						case "Boolean":
-							componentVoid(Checkbox, props)
+							componentVoid(Checkbox, { bind: `${this.bind.item}/${key}` })
 							break
 
 						case "Select": {
-							const value = this.$value[entry.lookup]
+							const value = this.$item[entry.lookup]
 							componentVoid(Select, { 
-								bind: `${this.bind.value}/item/${key}`, 
+								bind: `${this.bind.item}/${key}`, 
 								$src: store.get(`buffers/${value}`)
 							})
 						} break	
 
 						case "Sheet":
 							componentVoid(Select, { 
-								bind: `${this.bind.value}/item/${key}`, 
+								bind: `${this.bind.item}/${key}`, 
 								$src: SchemaService.getNamedBuffers()
 							})
 							break	
 
 						case "Type":
-							componentVoid(TypeBuilder, props)
+							componentVoid(TypeBuilder, { bind: `${this.bind.item}/${key}` })
 							break
 							
 						case "Schema":
