@@ -11,7 +11,7 @@ import Word from "./Word"
 const TypeBuilder = component({
 	mount() {
 		this.propsAdd = { onclick: this.handleAdd.bind(this) }
-		this.propsRemove = { onclick: this.handleRemove.bind(this) }
+		this.handleRemoveFunc = this.handleRemove.bind(this)
 	},
 
 	render() {
@@ -25,13 +25,18 @@ const TypeBuilder = component({
 			elementOpen("list")
 				for(let n = 0; n < list.length; n++) {
 					elementOpen("item")
-						elementOpen("type")
-							componentVoid(Word, { bind: `${this.bind}/${n}/type` })
+						elementOpen("row")
+							elementOpen("name")
+								componentVoid(Word, { bind: `${this.bind}/${n}/type` })
+							elementClose("name")
 
-							elementOpen("button")
+							elementOpen("button", {
+								"data-index": n,
+								onclick: this.handleRemoveFunc
+							})
 								text("Remove")
-							elementClose("button")
-						elementClose("type")
+							elementClose("button")							
+						elementClose("row")
 
 						componentVoid(Schema, { 
 							bind: {
@@ -54,7 +59,8 @@ const TypeBuilder = component({
 	},
 
 	handleRemove(event) {
-		
+		const index = event.currentTarget.dataset.index
+		store.remove(`${this.bind}/${index}`)
 	}
 })
 

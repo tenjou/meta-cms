@@ -5,8 +5,7 @@ function SchemaData(id, item) {
 	this.id = id
 	this.index = id
 	this.item = item
-	this.data = null
-	this.schema = []
+	this.schema = null
 	this.cache = createCache()
 }
 
@@ -210,11 +209,16 @@ const rebuildBufferItem = (schemaCache, type) => {
 	populateFromSchemaType(itemNew)
 
 	schemaCache.item = itemNew
-	if(type === "List") {
-		schemaCache.schema = createSchemaCache()
-	}
-	else {
-		schemaCache.schema = null
+	switch(type) {
+		case "List":
+			schemaCache.schema = createSchemaCache()
+			break
+		case "Type":
+			schemaCache.schemas = []
+			break
+		default:
+			schemaCache.schema = null
+			break
 	}
 }
 
@@ -234,8 +238,9 @@ const createSchemaCache = (schema = null) => {
 		buffer[n] = entry
 		
 		switch(item.type) {
-			case "Type":
-				break
+			case "Type": {
+				entry.schema = []
+			} break
 
 			case "List":
 				entry.schema = createSchemaCache(item.schema)
@@ -278,6 +283,10 @@ const populateSchema = (schemaCache) => {
 			case "List":
 				item.schema = populateSchema(entry.schema)
 				break
+
+			case "Type": {
+				item.schema = []
+			} break
 		}
 	}
 	return output
