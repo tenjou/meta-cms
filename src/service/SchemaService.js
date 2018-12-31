@@ -108,7 +108,7 @@ const diff = (asset, schema, schemaPrev) => {
 										continue loop
 									}
 								}
-								modifyAsset_remove(asset, entry.key, entryItem.key, schema.type)
+								modifyAsset_remove(asset, entry, entryItem.key, schema.type)
 							}
 						}
 					}
@@ -160,7 +160,7 @@ const diff = (asset, schema, schemaPrev) => {
 					continue loop
 				}
 			}
-			modifyAsset_remove(asset, entryPrev.item.key)
+			modifyAsset_remove(asset, entryPrev)
 		}
 	}
 
@@ -354,20 +354,41 @@ const modifyAsset_rename = (data, from, to, typeColumn = null, type = null) => {
 	}
 }
 
-const modifyAsset_remove = (data, key, typeColumn = null, type = null) => {
+const modifyAsset_remove = (data, entry, typeColumn = null, type = null) => {
+	const item = entry.item
+	const key = item.key
 	if(typeColumn) {
 		for(let n = 0; n < data.length; n++) {
 			const item = data[n]
 			if(item[typeColumn] === type) {
+				removeAllProperties(item, entry, item[key])
 				delete item[key]
 			}
 		}
 	}
 	else {
-		for(let n = 0; n < data.length; n++) {
-			const item = data[n]
-			delete item[key]
+		if(item.type === "Type") {
+			for(let n = 0; n < data.length; n++) {
+				const item = data[n]
+				removeAllProperties(item, entry, item[key])
+				delete item[key]
+			}
 		}
+		else {
+			for(let n = 0; n < data.length; n++) {
+				const item = data[n]
+				delete item[key]
+			}
+		}
+	}
+}
+
+const removeAllProperties = (item, entry, type) => {
+	const typeSchema = entry.schema.find(src => src.type === type)
+	const buffer = typeSchema.schema.buffer
+	for(let n = 0; n < buffer.length; n++) {
+		const bufferItem = buffer[n].item
+		delete item[bufferItem.key]
 	}
 }
 
