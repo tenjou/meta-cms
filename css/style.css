@@ -67,6 +67,9 @@ full {
 	height: 100%;
 	border: 10px solid red;
 }
+row {
+	display: flex;
+}
 
 list {
 	flex: 1;
@@ -273,6 +276,9 @@ schema list {
 schema list item key {
 	flex: 0 0 80px;
 	text-align: left;
+}
+schema builder list item {
+	flex-direction: column;
 }
 
 layout > export {
