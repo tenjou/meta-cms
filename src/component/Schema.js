@@ -74,6 +74,7 @@ const SchemaBuilder = component({
 const SchemaItem = component({
 	state: {
 		value: null,
+		item: null,
 		cache: null,
 		index: -1,
 		onDrop: null
@@ -103,13 +104,13 @@ const SchemaItem = component({
 			elementClose("td")
 
 			elementOpen("td", propsRow)
-				componentVoid(TextInput, { bind: `${this.bind.value}/item/key` })
+				componentVoid(TextInput, { bind: `${this.bind.item}/key` })
 			elementClose("td")
 
 			elementOpen("td", propsRow)
 				componentVoid(Select, { 
 					bind: {
-						value: `${this.bind.value}/item/type`,
+						value: `${this.bind.item}/type`,
 						src: "column-types" 
 					},
 					$onChange: this.handleChangeFunc
@@ -262,6 +263,7 @@ const Schema = component({
 					componentVoid(SchemaItem, { 
 						bind: {
 							value: `${this.bind.buffer}/${n}`,
+							item: `${this.bind.buffer}/${n}/item`,
 							cache: `${this.bind.buffer}/${n}/cache`
 						},
 						$index: n,
