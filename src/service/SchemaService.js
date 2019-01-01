@@ -243,6 +243,8 @@ const createSchemaCache = (schema = null) => {
 	buffer.length = schema.length
 	schemaCache.id = schema.length
 
+	const props = []
+
 	for(let n = 0; n < schema.length; n++) {
 		const item = schema[n]
 		const entry = new SchemaData(n, item)
@@ -250,6 +252,7 @@ const createSchemaCache = (schema = null) => {
 		
 		switch(item.type) {
 			case "Type": {
+				props.push(n)
 				entry.schema = []
 				const schemas = item.schema
 				for(let key in schemas) {
@@ -261,10 +264,13 @@ const createSchemaCache = (schema = null) => {
 			} break
 
 			case "List":
+				props.push(n)
 				entry.schema = createSchemaCache(item.schema)
 				break
 		}
 	}
+
+	schemaCache.props = props
 
 	return schemaCache
 }
