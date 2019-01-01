@@ -3,8 +3,10 @@ import Utils from "../Utils"
 
 const create = (options) => {
     const data = options.production ? createProduction(options.named, options.dictionary) : createProject()
-    data.meta.export = store.data.cache.export
-    cleanup(data)
+    cleanup(data, options)
+    if(!options.production) {
+        data.meta.export = options
+    }
     if(options.minify) {
         return JSON.stringify(data)
     }
@@ -48,11 +50,10 @@ const createProduction = (named, dictionary) => {
     return data
 }
 
-const cleanup = (data) => {
-    const production = data.meta.export.production
+const cleanup = (data, options) => {
     const assets = data.assets
     for(let key in assets) {
-        if(production) {
+        if(options.production) {
             const data = assets[key]
             for(let n = 0; n < data.length; n++) {
                 cleanupAssetItem(data[n])
