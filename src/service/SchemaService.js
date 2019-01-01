@@ -71,6 +71,10 @@ const diff = (asset, schema, schemaPrev) => {
 
 						if(!schemaPrev) { continue }
 
+						if(schema.type !== schemaPrev.type) {
+							modifyAsset_typeRename(asset, entryItem.key, schema.type, schemaPrev.type)
+						}
+
 						let propsHandled = 0
 						const properties = schema.schema.buffer
 						const propertiesPrev = schemaPrev.schema.buffer
@@ -400,6 +404,15 @@ const modifyAsset_remove = (data, entry, typeColumn = null, type = null) => {
 				const item = data[n]
 				delete item[key]
 			}
+		}
+	}
+}
+
+const modifyAsset_typeRename = (asset, key, type, typePrev) => {
+	for(let n = 0; n < asset.length; n++) {
+		const item = asset[n]
+		if(item[key] === typePrev) {
+			item[key] = type
 		}
 	}
 }
