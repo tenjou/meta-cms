@@ -68,4 +68,24 @@ const cloneObj = (obj) => {
 	return result
 }
 
-export { uuid4, cloneObj }
+const readFile = (file, callback) => {
+	const reader = new FileReader()
+	reader.onload = (fileResult) => {
+		callback(fileResult.target.result)
+	}
+	reader.readAsText(file)
+}
+
+const dataURItoBlob = (dataURI, type) => {
+	const binary = atob(dataURI.split(",")[1])
+	const length = binary.length
+	const array = new Uint8Array(length)
+
+	for(let n = 0; n < length; n++) {
+		array[n] = binary.charCodeAt(n)
+	}
+
+	return new Blob([ array ], { type: type })
+}
+
+export { uuid4, cloneObj, readFile }
