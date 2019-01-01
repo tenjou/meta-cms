@@ -47,6 +47,7 @@ const handleChange = (event) => {
 	Utils.readFile(file, (json) => {
 		ImportService.load(json)
 	})
+	event.target.value = ""
 }
 
 export default Menu

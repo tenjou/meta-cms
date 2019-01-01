@@ -544,5 +544,5 @@ const emptySchemaCache = {
 	schema: createSchemaCache() 
 } 
 
-export { apply, createItem, createSchemaCache, createDefaultValue, createRow, isKeyUnique, moveBefore, rebuildBufferItem, rebuildRow,
+export { apply, createItem, createCache, createSchemaCache, createDefaultValue, createRow, isKeyUnique, moveBefore, rebuildBufferItem, rebuildRow,
 	loadBuffer, unloadBuffer, updateBuffer, getNamedBuffers }

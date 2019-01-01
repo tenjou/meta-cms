@@ -23,4 +23,8 @@ const redo = () => {
     command.execute()
 }
 
-export { execute, undo, redo }
+const flush = () => {
+    history.length = 0
+}
+
+export { execute, undo, redo, flush }
