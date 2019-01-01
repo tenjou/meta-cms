@@ -32,7 +32,6 @@ const diff = (asset, schema, schemaPrev) => {
 	const props = []
 	let numEntriesPrev = 0
 	let types = null
-	let typesMap = null
 	let typeIndex = -1
 
 	for(let n = 0; n < buffer.length; n++) {
@@ -55,7 +54,6 @@ const diff = (asset, schema, schemaPrev) => {
 				case "Type": {
 					props.push(n)
 					types = []
-					typesMap = {}
 					typeIndex = n
 
 					const schemas = entry.schema
@@ -70,7 +68,6 @@ const diff = (asset, schema, schemaPrev) => {
 						const schema = schemas[n]
 						const schemaPrev = typesPrev[schema.id]
 						types.push(schema.type)
-						typesMap[schema.type] = n
 
 						if(!schemaPrev) { continue }
 
@@ -139,11 +136,9 @@ const diff = (asset, schema, schemaPrev) => {
 					const schemas = entry.schema
 					if(schemas.length > 0) {
 						types = new Array(schemas.length)
-						typesMap = {}
 						for(let n = 0; n < schemas.length; n++) {
 							const schema = schemas[n]
 							types[n] = schema.type
-							typesMap[schema.type] = n
 						}
 						const defaultType = schemas[0]
 						modifyAsset_rowType(asset, entryItem.key, defaultType)
@@ -175,7 +170,6 @@ const diff = (asset, schema, schemaPrev) => {
 	schema.props = props
 	schema.typeIndex = typeIndex
 	schema.types = types
-	schema.typesMap = typesMap
 }
 
 const diffList = (asset, entry, entryPrev) => {
@@ -234,16 +228,16 @@ const rebuildBufferItem = (schemaCache, type) => {
 }
 
 const createSchemaCache = (schema = null) => {
-	const schemaCache = { id: 0, typeIndex: -1, types: null, typesMap: null, buffer: [], props: [] }
+	const schemaCache = { id: 0, typeIndex: -1, types: null, buffer: [], props: [] }
 	if(!schema) {
 		return schemaCache
 	}
 
+	let typeId = 0
+	const props = []
+	const types = []	
 	const buffer = schemaCache.buffer
 	buffer.length = schema.length
-	schemaCache.id = schema.length
-
-	const props = []
 
 	for(let n = 0; n < schema.length; n++) {
 		const item = schema[n]
@@ -257,6 +251,7 @@ const createSchemaCache = (schema = null) => {
 				const schemas = item.schema
 				for(let key in schemas) {
 					entry.schema.push({ 
+						id: typeId++,
 						type: key, 
 						schema: createSchemaCache(schemas[key])
 					})
@@ -270,7 +265,9 @@ const createSchemaCache = (schema = null) => {
 		}
 	}
 
+	schemaCache.id = schema.length
 	schemaCache.props = props
+	schemaCache.types = types
 
 	return schemaCache
 }
@@ -462,6 +459,7 @@ const createRow = (data, schema, typed = false) => {
 				const item = typeBuffer[n].item
 				row[item.key] = (item.default !== undefined) ? item.default : createDefaultValue(item, data, item.key)
 			}
+			row[entry.item.key] = typeDefault.type
 		}
 	}
 
