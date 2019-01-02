@@ -159,6 +159,9 @@ panel header name {
     text-transform: uppercase;
     color: #000;	
 }
+panel content {
+	overflow-y: auto;
+}
 
 sheet {
 	display: flex;
