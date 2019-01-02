@@ -2,10 +2,10 @@ import { store } from "wabi"
 import Utils from "../Utils"
 
 const create = (options) => {
-    const data = options.production ? createProduction(options.named, options.dictionary) : createProject()
-    cleanup(data, options)
+    const data = options.production ? createProduction(options.named) : createProject()
     if(!options.production) {
         data.meta.export = options
+        cleanup(data, options)
     }
     if(options.minify) {
         return JSON.stringify(data)
@@ -21,7 +21,7 @@ const createProject = () => {
     return data
 }
 
-const createProduction = (named, dictionary) => {
+const createProduction = (named) => {
     const assets = Utils.cloneObj(store.data.assets)
     const data = {
         meta: Utils.cloneObj(store.data.meta),
@@ -29,13 +29,26 @@ const createProduction = (named, dictionary) => {
     }
     for(let key in assets) {
         const asset = assets[key]
+        const schema = asset.meta.schema
+
+        let dictionaryKey = null
+        for(let n = 0; n < schema.length; n++) {
+            const entry = schema[n]
+            if(entry.type === "UID") {
+                dictionaryKey = entry.key
+                break
+            }
+        }
+
         let buffer = asset.data
 
-        if(dictionary) {
+        if(dictionaryKey) {
             const dataDictionary = {}
             for(let n = 0; n < buffer.length; n++) {
                 const item = buffer[n]
-                dataDictionary[item.name] = item
+                dataDictionary[item[dictionaryKey]] = item
+                delete item[dictionaryKey]
+                cleanupAssetItem(item)
             }
             buffer = dataDictionary
         }        

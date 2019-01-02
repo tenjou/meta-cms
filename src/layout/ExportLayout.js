@@ -21,7 +21,6 @@ const ExportLayout = component({
 							this.renderCheckbox("production")
 							if(this.$value.production) {
 								this.renderCheckbox("named")
-								this.renderCheckbox("dictionary")
 							}
 						elementClose("list")
 					elementClose("toolbar")

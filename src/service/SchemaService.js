@@ -238,8 +238,8 @@ const createSchemaCache = (schema = null) => {
 	}
 
 	let typeId = 0
+	let types = []	
 	const props = []
-	const types = []	
 	const buffer = schemaCache.buffer
 	buffer.length = schema.length
 
@@ -251,6 +251,7 @@ const createSchemaCache = (schema = null) => {
 		switch(item.type) {
 			case "Type": {
 				props.push(n)
+				types = Object.keys(item.schema)
 				entry.schema = []
 				const schemas = item.schema
 				for(let key in schemas) {
