@@ -47,7 +47,6 @@ const createProduction = (named) => {
             for(let n = 0; n < buffer.length; n++) {
                 const item = buffer[n]
                 dataDictionary[item[dictionaryKey]] = item
-                delete item[dictionaryKey]
                 cleanupAssetItem(item)
             }
             buffer = dataDictionary
