@@ -9,7 +9,7 @@ function SchemaData(id, item) {
 	this.cache = createCache()
 }
 
-const sortKey = (a, b) => { return a.key.localeCompare(b.key) }
+const sortKey = (a, b) => { return a.localeCompare(b) }
 
 const apply = (id, schema) => {
 	const asset = store.get(`assets/${id}`)
@@ -535,6 +535,7 @@ const loadBuffer = (asset) => {
 			const item = data[n]
 			buffer[n] = item[idKey]
 		}
+		buffer.sort(sortKey)
 		store.set(`buffers/${asset.meta.id}`, buffer)
 	}
 }
