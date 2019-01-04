@@ -160,6 +160,7 @@ panel header name {
     color: #000;	
 }
 panel content {
+	overflow-x: hidden;
 	overflow-y: auto;
 }
 
