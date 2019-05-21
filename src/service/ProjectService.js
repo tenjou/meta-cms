@@ -13,7 +13,16 @@ const create = () => {
 			created: Date.now(),
 		},
 		assets: {},
-		cache: {}
+		cache: {
+			assets: {
+				selected: null
+			},
+			export: {
+				minify: false,
+				production: false,
+				named: false
+			}
+		}
 	}
 	FileSystem.createDirectory(data.meta.id, (error, path) => {
 		if(error) {
@@ -77,6 +86,19 @@ const load = (id) => {
 	})
 }
 
+const unload = () => {
+	if(!activeProject) {
+		return
+	}
+	FileSystem.write("db.json", JSON.stringify(activeProject), (error, json) => {
+		if(error) {
+			console.error(error)
+			return
+		}
+		activeProject = null
+	})
+}
+
 const fetch = () => {
 	store.set("state/project/loading", true)
 
@@ -109,12 +131,18 @@ const fetchLocal = (data, onDone) => {
 			const projectDbFile = `${item.name}/db.json`
 			numToLoad++
 
-			FileSystem.read(projectDbFile, (error, data) => {
+			FileSystem.read(projectDbFile, (error, json) => {
 				if(error) {
 					console.warn("(Project.fetchLocal) Error while reading project db file:", projectDbFile)
 				}
 				else {
-					projects[item.name] = JSON.parse(data)
+					try {
+						const data = JSON.parse(json)
+						projects[item.name] = data
+					}
+					catch(error) {
+
+					}
 				}
 
 				numToLoad--
@@ -149,4 +177,4 @@ const createPopupClose = () => {
 	store.set("state/project/create", null)
 }
 
-export { create, remove, rename, open, load, fetch, createPopupShow, createPopupClose }
+export { create, remove, rename, open, load, unload, fetch, createPopupShow, createPopupClose }

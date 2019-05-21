@@ -185,7 +185,9 @@ const start = () => {
 		const projectId = data[0][1]
 		ProjectService.load(projectId)
 	})	
-	route("/", ProjectLayout)
+	route("/", ProjectLayout, (data) => {
+		ProjectService.unload()
+	})
 	// route(/#assets\/([0-9a-z]*)/, HomeLayout, (data) => {
 	// 	const assetId = data[0][1]
 	// 	const asset = store.get(`assets/${assetId}`)
@@ -200,6 +202,10 @@ const start = () => {
 	// route("#export", ExportLayout, () => {
 	// 	store.set("state/menu", "export")
 	// })
+
+	window.onbeforeunload = () => {
+		ProjectService.unload()
+	}
 }
 
 init()
