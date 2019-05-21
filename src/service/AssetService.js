@@ -7,6 +7,11 @@ import RemoveAssetCommand from "../command/RemoveAssetCommand"
 import Commander from "../Commander"
 import Utils from "../Utils"
 
+const open = (id) => {
+	store.set("cache/assets/selected", id)
+	location.hash = `${store.data.meta.id}/assets/${id}`
+}
+
 const tryAdd = (type, schema) => {
     const asset = create(type, schema)
     Commander.execute(new AddAssetCommand(asset))
@@ -48,4 +53,4 @@ const addRow = (id) => {
     Commander.execute(new AddRowCommand(`${assetPath}/data`, row, true))
 }
 
-export { tryAdd, create, createSheet, tryRemove, edit, addRow }
+export { open, tryAdd, create, createSheet, tryRemove, edit, addRow }

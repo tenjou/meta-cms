@@ -95,14 +95,14 @@ const diff = (asset, schema, schemaPrev) => {
 								propsHandled++
 
 								if(property.type === "List") {
-									diffList(asset, propertyEntry, propertyEntryPrev)
+									diffList(asset, propertyEntry, propertyEntryPrev, schema.type)
 								}
 							}
 							else {
 								modifyAsset_type(asset, property, entryItem.key, schema.type)
 
 								if(property.type === "List") {
-									diffList(asset, propertyEntry, emptySchemaCache)
+									diffList(asset, propertyEntry, emptySchemaCache, schema.type)
 								}								
 							}
 						}
@@ -176,10 +176,20 @@ const diff = (asset, schema, schemaPrev) => {
 	schema.types = types
 }
 
-const diffList = (asset, entry, entryPrev) => {
-	for(let m = 0; m < asset.length; m++) {
-		const data = asset[m]
-		diff(data[entry.item.key], entry.schema, entryPrev.schema)
+const diffList = (asset, entry, entryPrev, type = null) => {
+	if(type) {
+		for(let m = 0; m < asset.length; m++) {
+			const data = asset[m]
+			if(data.type === type) {
+				diff(data[entry.item.key], entry.schema, entryPrev.schema)
+			}
+		}	
+	}
+	else {
+		for(let m = 0; m < asset.length; m++) {
+			const data = asset[m]
+			diff(data[entry.item.key], entry.schema, entryPrev.schema)
+		}		
 	}
 }
 

@@ -88,4 +88,11 @@ const dataURItoBlob = (dataURI, type) => {
 	return new Blob([ array ], { type: type })
 }
 
-export { uuid4, cloneObj, readFile }
+const hasItems = (obj) => {
+	for(let key in obj) {
+		return true
+	}
+	return false
+}
+
+export { uuid4, cloneObj, readFile, hasItems }

@@ -1,7 +1,11 @@
-import { store, route } from "wabi"
+import { store, route, clearRoutes } from "wabi"
+import ProjectLayout from "./layout/ProjectLayout"
+import LoadingLayout from "./layout/LoadingLayout"
 import HomeLayout from "./layout/HomeLayout"
 import ExportLayout from "./layout/ExportLayout"
 import SchemaService from "./service/SchemaService"
+import ProjectService from "./service/ProjectService"
+import FileSystem from "./fs/FileSystem"
 import Commander from "./Commander"
 
 const createMeta = () => {
@@ -55,7 +59,10 @@ loadBuffers()
 
 store.set("state", {
 	popup: null,
-	menu: ""
+	menu: "",
+	project: {
+		name: ""
+	}
 })
 
 store.set("types", {
@@ -97,7 +104,7 @@ store.set("types", {
 		step: {
 			type: "Number",
 			value: 0.01
-		}		
+		}
 	},
 	Boolean: {
 		default: {
@@ -124,9 +131,21 @@ store.set("types", {
 		schema: {
 			type: "Schema"
 		}
+	},
+	Enum: {
+		options: {
+			type: "Enum"
+		}
 	}
 })
 store.set("column-types", Object.keys(store.data.types))
+store.set("state", {
+	project: {
+		data: [],
+		loading: false,
+		create: null
+	}
+})
 
 window.addEventListener("keydown", (event) => {
 	if(event.keyCode === 90 && event.ctrlKey) {
@@ -139,32 +158,50 @@ window.addEventListener("keydown", (event) => {
 	}
 })
 
-route(/#assets\/([0-9a-z]*)/, HomeLayout, (data) => {
-	const assetId = data[0][1]
-	const asset = store.get(`assets/${assetId}`)
-	if(!asset) {
-		document.location.hash = ""
-		return
-	}
-	store.set("state/menu", "")
-	store.set("cache/assets/selected", assetId)
-	return { $value: data[0][1] }
-})
-route("#export", ExportLayout, () => {
-	store.set("state/menu", "export")
-})
-route("/", HomeLayout, () => {
-	const assetId = store.data.cache.assets.selected
-	const asset = store.get(`assets/${assetId}`)
-	if(asset) {
-		document.location.hash = `#assets/${assetId}`
-	}
-})
 
-window.onbeforeunload = () => {
-	localStorage.setItem("meta", JSON.stringify(store.data.meta))
-	localStorage.setItem("assets", JSON.stringify(store.data.assets))
-	localStorage.setItem("cache", JSON.stringify(store.data.cache))
+// route("/", HomeLayout, () => {
+// 	const assetId = store.data.cache.assets.selected
+// 	const asset = store.get(`assets/${assetId}`)
+// 	if(asset) {
+// 		document.location.hash = `#assets/${assetId}`
+// 	}
+// })
+// 
+
+const init = () => {
+	route("", LoadingLayout, null, null, () => {
+		FileSystem.init(() => {
+			start()
+		},
+		(error) => {
+			console.log(error)
+		})
+	})
 }
+
+const start = () => {
+	clearRoutes()
+	route(/\/#([0-9a-z]*)/, HomeLayout, (data) => {
+		const projectId = data[0][1]
+		ProjectService.load(projectId)
+	})	
+	route("/", ProjectLayout)
+	// route(/#assets\/([0-9a-z]*)/, HomeLayout, (data) => {
+	// 	const assetId = data[0][1]
+	// 	const asset = store.get(`assets/${assetId}`)
+	// 	if(!asset) {
+	// 		document.location.hash = ""
+	// 		return
+	// 	}
+	// 	store.set("state/menu", "")
+	// 	store.set("cache/assets/selected", assetId)
+	// 	return { $value: data[0][1] }
+	// })
+	// route("#export", ExportLayout, () => {
+	// 	store.set("state/menu", "export")
+	// })
+}
+
+init()
 
 window.store = store

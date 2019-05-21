@@ -77,6 +77,16 @@ const SchemaBuilder = component({
 	}
 })
 
+const EnumBuilder = component({
+	render() {
+		elementOpen("builder")
+			elementOpen("button")
+				text("Add")
+			elementClose("button")
+		elementClose("builder")
+	}
+})
+
 const SchemaItem = component({
 	state: {
 		value: null,
@@ -192,6 +202,10 @@ const SchemaItem = component({
 							
 						case "Schema":
 							componentVoid(SchemaBuilder, { bind: `${this.bind.value}/schema` })
+							break
+
+						case "Enum":
+							componentVoid(EnumBuilder, { bind: `${this.bind.item}/${key}` })
 							break
 					}
 				elementClose("value")

@@ -70,6 +70,10 @@ const Word = component({
 			return
 		}
 
+		if(keyCode === 187 || keyCode === 189) {
+			return
+		}
+
 		// Backspace || Delete
 		if(keyCode === 8 || keyCode == 46) {
 			return
@@ -96,14 +100,14 @@ const Word = component({
 	handleBlur(domEvent) {
 		const newValue = domEvent.target.innerText.replace(/^\s+|\s+$/g, "").replace(/<\/?[^>]+(>|$)/g, "").replace(/\n/, "")
 
-		if(newValue) {
+		// if(newValue) {
 			if(this.$onchange) {
 				this.$value = this.$onchange(newValue)
 			}
 			else {
 				this.$value = newValue
 			}
-		}
+		// }
 
 		this.word.scrollLeft = 0
 		this.$editing = false

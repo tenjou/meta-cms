@@ -36,7 +36,7 @@ const ContentPanel = component({
 		elementOpen("panel")
 			if(!this.$value) {
 				elementOpen("info")
-					text("No asset selected")
+					text("Nothing Selected")
 				elementClose("info")
 			}
 			else {
@@ -120,8 +120,7 @@ const Asset = component({
 		if(idPrev) {
 			SchemaService.updateBuffer(store.data.assets[idPrev]) 
 		}
-		store.set("cache/assets/selected", id)
-		location.hash = `assets/${id}`
+		AssetService.open(id)
 	}
 })
 
@@ -142,7 +141,7 @@ const AssetPanel = component({
 
 				elementOpen("buttons")
 					elementOpen("button", { onclick: this.handleAddAssetFunc })
-						elementVoid("i", { class: "fas fa-plus-circle" })
+						elementVoid("i", { class: "fas fa-plus" })
 					elementClose("button")				
 				elementClose("buttons")				
 			elementClose("header")
