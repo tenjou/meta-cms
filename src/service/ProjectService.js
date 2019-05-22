@@ -68,34 +68,74 @@ const rename = (id, name) => {
 }
 
 const open = (id) => {
-	location.hash = `${id}`
+	if(activeProject) {
+		if(activeProject.meta.id === projectId) {
+			return
+		}
+	}
+	location.hash = id
+	load()
 }
 
-const load = (id) => {
-	FileSystem.read(`${id}/db.json`, (error, json) => {
-		if(error) {
-			console.error(error)
-			return
-		}		
-		
-		activeProject = JSON.parse(json)
-		store.set("meta", activeProject.meta)
-		store.set("assets", activeProject.assets)
-		store.set("cache", activeProject.cache)
-		FileSystem.rootDirectory = id
-	})
+const load = (onLoad) => {
+	store.set("state/project/loading", true)
+
+	const url = document.location.hash.slice(1)
+	const segments = url.split("/")
+	if(url.length > 0) {
+		const projectId = segments[0]
+		const assetId = (segments.length > 1) ? segments[1] : null
+		if(activeProject) {
+			if(activeProject.meta.id === projectId) {
+				return
+			}
+			unload()
+		}
+
+		FileSystem.read(`${projectId}/db.json`, (error, json) => {
+			if(error) {
+				console.error(error)
+				return
+			}	
+			
+			const data = JSON.parse(json)
+			store.set("meta", data.meta)
+			store.set("assets", data.assets)
+			store.set("cache", data.cache)
+			activeProject = data
+
+			if(assetId) {
+				const asset = store.get(`assets/${assetId}`)
+				if(asset) {
+					document.location.hash = `${projectId}/${assetId}`
+					store.set("cache/assets/selected", assetId)
+				}	
+			}			
+
+			store.set("state/project/loading", false)
+		})
+	}
+	else {
+		document.location.hash = ""
+		store.set("state/project/loading", false)
+	}
 }
 
 const unload = () => {
+	save()
+	activeProject = null
+}
+
+const save = () => {
 	if(!activeProject) {
 		return
 	}
-	FileSystem.write("db.json", JSON.stringify(activeProject), (error, json) => {
+	FileSystem.write(`${activeProject.meta.id}/db.json`, JSON.stringify(activeProject), (error, json) => {
+		console.log("saved")
 		if(error) {
 			console.error(error)
 			return
 		}
-		activeProject = null
 	})
 }
 
@@ -103,7 +143,6 @@ const fetch = () => {
 	store.set("state/project/loading", true)
 
 	if(!window.electron) {
-		FileSystem.rootDirectory = ""
 		FileSystem.readDirectory("", (error, data) => {
 			if(error) {
 				console.error("(Project.fetch) Error while reading root directory")
@@ -177,4 +216,4 @@ const createPopupClose = () => {
 	store.set("state/project/create", null)
 }
 
-export { create, remove, rename, open, load, unload, fetch, createPopupShow, createPopupClose }
+export { create, remove, rename, open, load, unload, save, fetch, createPopupShow, createPopupClose }

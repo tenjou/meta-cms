@@ -9,7 +9,7 @@ import Utils from "../Utils"
 
 const open = (id) => {
 	store.set("cache/assets/selected", id)
-	location.hash = `${store.data.meta.id}/assets/${id}`
+	location.hash = `${store.data.meta.id}/${id}`
 }
 
 const tryAdd = (type, schema) => {
@@ -20,7 +20,7 @@ const tryAdd = (type, schema) => {
 const tryRemove = (id) => {
     Commander.execute(new RemoveAssetCommand(id))
     if(store.data.cache.assets.selected === id) {
-        document.location.hash = ""
+        document.location.hash = store.data.meta.id
     }
 }
 

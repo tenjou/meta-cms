@@ -8,42 +8,42 @@ import ProjectService from "./service/ProjectService"
 import FileSystem from "./fs/FileSystem"
 import Commander from "./Commander"
 
-const createMeta = () => {
-	return {
-		name: "Project",
-		version: 1,
-		created: Date.now()
-	}
-}
+// const createMeta = () => {
+// 	return {
+// 		name: "Project",
+// 		version: 1,
+// 		created: Date.now()
+// 	}
+// }
 
-const createCache = () => {
-	return {
-		assets: {
-			selected: null
-		},
-		export: {
-			minify: false,
-			production: false,
-			named: false
-		}
-	}
-}
+// const createCache = () => {
+// 	return {
+// 		assets: {
+// 			selected: null
+// 		},
+// 		export: {
+// 			minify: false,
+// 			production: false,
+// 			named: false
+// 		}
+// 	}
+// }
 
-const assets = localStorage.getItem("assets")
-if(assets) {
-	store.set("assets", JSON.parse(assets))
+// const assets = localStorage.getItem("assets")
+// if(assets) {
+// 	store.set("assets", JSON.parse(assets))
 	
-	const meta = localStorage.getItem("meta")
-	store.set("meta", meta ? JSON.parse(meta) : createMeta())
+// 	const meta = localStorage.getItem("meta")
+// 	store.set("meta", meta ? JSON.parse(meta) : createMeta())
 
-	const cache = localStorage.getItem("cache")
-	store.set("cache", cache ? JSON.parse(cache) : createCache())
-}
-else {
-	store.set("assets", {})
-	store.set("cache", createCache())
-	store.set("meta", createMeta())
-}
+// 	const cache = localStorage.getItem("cache")
+// 	store.set("cache", cache ? JSON.parse(cache) : createCache())
+// }
+// else {
+// 	store.set("assets", {})
+// 	store.set("cache", createCache())
+// 	store.set("meta", createMeta())
+// }
 
 store.set("buffers", {})
 
@@ -171,7 +171,7 @@ window.addEventListener("keydown", (event) => {
 const init = () => {
 	route("", LoadingLayout, null, null, () => {
 		FileSystem.init(() => {
-			start()
+			load()
 		},
 		(error) => {
 			console.log(error)
@@ -179,18 +179,23 @@ const init = () => {
 	})
 }
 
-const start = () => {
+const load = () => {
 	clearRoutes()
-	route(/\/#([0-9a-z]*)/, HomeLayout, (data) => {
-		const projectId = data[0][1]
-		ProjectService.load(projectId)
-	})	
+	route(/\/#([0-9a-z]*)\/([0-9a-z]*)/, HomeLayout, (data) => {})		
+	route(/\/#([0-9a-z]*)/, HomeLayout, (data) => {})	
 	route("/", ProjectLayout, (data) => {
 		ProjectService.unload()
 	})
+
+	ProjectService.load()
+
 	// route(/#assets\/([0-9a-z]*)/, HomeLayout, (data) => {
 	// 	const assetId = data[0][1]
 	// 	const asset = store.get(`assets/${assetId}`)
+	// 	if(!asset) {
+	// 		document.location.hash = ""
+	// 		return
+	// 	}	// 	const asset = store.get(`assets/${assetId}`)
 	// 	if(!asset) {
 	// 		document.location.hash = ""
 	// 		return
@@ -206,6 +211,10 @@ const start = () => {
 	window.onbeforeunload = () => {
 		ProjectService.unload()
 	}
+	store.addProxy("", (payload) => {
+		store.handle(payload)
+		ProjectService.save()
+	})
 }
 
 init()

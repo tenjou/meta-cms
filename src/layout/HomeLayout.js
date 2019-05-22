@@ -1,4 +1,5 @@
 import { component, componentVoid, elementOpen, elementClose, elementVoid, text } from "wabi"
+import LoadingLayout from "./LoadingLayout"
 import AssetService from "../service/AssetService"
 import PopupService from "../service/PopupService"
 import SchemaService from "../service/SchemaService"
@@ -100,7 +101,7 @@ const Asset = component({
 
 			elementOpen("buttons")
 				elementOpen("button", { onclick: this.handleRemoveFunc })
-					text("Remove")
+					elementVoid("i", { class: "fas fa-times" })
 				elementClose("button")			
 			elementClose("buttons")
 		elementClose("item")
@@ -133,7 +134,7 @@ const AssetPanel = component({
 	render() {
 		const assets = this.$value
 
-		elementOpen("panel", { style: "flex: 200px 0 0;" })
+		elementOpen("panel", { style: "flex: 240px 0 0;", class: "side" })
 			elementOpen("header")
 				elementOpen("name")
 					text("Assets")
@@ -163,19 +164,35 @@ const AssetPanel = component({
 })
 
 const HomeLayout = component({
+	state: {
+		value: null,
+		loading: false
+	},
+
+	mount() {
+		this.bind = {
+			loading: "state/project/loading"
+		}
+	},
+
 	render() {	
-		const id = this.$value
+		if(this.$loading) {
+			componentVoid(LoadingLayout)
+		}
+		else {
+			const id = this.$value
 		
-		elementOpen("layout")
-			componentVoid(Menu)
-
-			elementOpen("workspace")
-				componentVoid(ContentPanel, { bind: `assets/${id}` })
-				componentVoid(AssetPanel)
-			elementClose("workspace")
-		elementClose("layout")
-
-		componentVoid(Popups)
+			elementOpen("layout")
+				componentVoid(Menu)
+	
+				elementOpen("workspace")
+					componentVoid(ContentPanel, { bind: `assets/${id}` })
+					componentVoid(AssetPanel)
+				elementClose("workspace")
+			elementClose("layout")
+	
+			componentVoid(Popups)
+		}
 	}
 })
 
