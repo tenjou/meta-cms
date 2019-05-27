@@ -11,6 +11,7 @@ import AddRowCommand from "../command/AddRowCommand"
 import RemoveRowCommand from "../command/RemoveRowCommand"
 
 const propsCaret = { class: "caret" }
+const propsFieldButton = { class: "button" }
 
 const findSchema = (schema, type) => {
 	for(let n = 0; n < schema.length; n++) {
@@ -94,9 +95,9 @@ const SheetRow = component({
 				}
 			}
 
-			elementOpen("field")
+			elementOpen("field", propsFieldButton)
 				elementOpen("button", this.propsRemove)
-					text("Remove")
+					elementVoid("i", { class: "fas fa-times" })
 				elementClose("button")
 			elementClose("field")
 		elementClose("row")
@@ -227,19 +228,22 @@ const Sheet = component({
 						elementClose("field")
 					}
 				}	
-				elementVoid("field")
+				
+				elementVoid("field", propsFieldButton)
 			elementClose("head")
 
-			for(let n = 0; n < items.length; n++) {
-				componentVoid(SheetRow, { 
-					bind: {
-						value: `${this.bind.value}/${n}`,
-						cache: `${this.bind.value}/${n}/__cache`
-					},
-					$schema: schema,
-					$index: n
-				})
-			}
+			elementOpen("content")
+				for(let n = 0; n < items.length; n++) {
+					componentVoid(SheetRow, { 
+						bind: {
+							value: `${this.bind.value}/${n}`,
+							cache: `${this.bind.value}/${n}/__cache`
+						},
+						$schema: schema,
+						$index: n
+					})
+				}
+			elementClose("content")
 		elementClose("sheet")
 	}
 })

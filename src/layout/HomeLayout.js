@@ -48,11 +48,11 @@ const ContentPanel = component({
 
 					elementOpen("buttons")
 						elementOpen("button", { onclick: this.handleAddRowFunc })
-							text("Add Row")
+							elementVoid("i", { class: "fas fa-plus" })
 						elementClose("button")		
 						
 						elementOpen("button", { onclick: this.handleEditFunc })
-							text("Edit")
+							elementVoid("i", { class: "fas fa-pen" })
 						elementClose("button")							
 					elementClose("buttons")
 				elementClose("header")
@@ -165,12 +165,13 @@ const AssetPanel = component({
 
 const HomeLayout = component({
 	state: {
-		value: null,
+		assetId: null,
 		loading: false
 	},
 
 	mount() {
 		this.bind = {
+			assetId: "cache/assets/selected",
 			loading: "state/project/loading"
 		}
 	},
@@ -180,7 +181,7 @@ const HomeLayout = component({
 			componentVoid(LoadingLayout)
 		}
 		else {
-			const id = this.$value
+			const id = this.$assetId
 		
 			elementOpen("layout")
 				componentVoid(Menu)

@@ -1,4 +1,4 @@
-import { component, componentVoid, elementOpen, elementClose, text } from "wabi"
+import { component, componentVoid, elementOpen, elementClose, text, elementVoid } from "wabi"
 import PopupService from "../service/PopupService"
 
 const Popups = component({
@@ -11,21 +11,21 @@ const Popups = component({
 		const popup = this.$value
 		if(popup) {
 			elementOpen("back")
-				elementOpen("popup")
+				elementOpen("window")
 					elementOpen("header")
-						elementOpen("title")
+						elementOpen("name")
 							text(popup.title)
-						elementClose("title")
+						elementClose("name")
 
 						elementOpen("button", { onclick: this.handleCloseFunc })
-							text("close")
+							elementVoid("i", { class: "fas fa-times" })
 						elementClose("button")
 					elementClose("header")
 
 					elementOpen("content")
 						popup.renderFunc()
 					elementClose("content")
-				elementClose("popup")
+				elementClose("window")
 			elementClose("back")	
 		}
 	},

@@ -293,7 +293,7 @@ const Schema = component({
 
 			if(this.$root) {
 				elementOpen("buttons")
-					elementOpen("button", { onclick: this.handleApplyFunc })
+					elementOpen("button", { class: "green", onclick: this.handleApplyFunc })
 						text("Apply")
 					elementClose("button")
 				elementClose("buttons")

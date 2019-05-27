@@ -249,13 +249,13 @@ panel {
     display: flex;
     flex-direction: column;
     flex: 1;
-	background: linear-gradient(to bottom, #333, #2a2a2a);
+	/* background: linear-gradient(to bottom, #333, #2a2a2a); */
+	background: linear-gradient(to bottom, #404040, #3c3b3b);
     height: 100%;
     box-sizing: border-box;
 }
 panel.side {
 	border-left: 1px solid #0000006b;
-    background: linear-gradient(to bottom, #404040, #3c3b3b);
 }
 panel header {
 	display: flex;
@@ -275,6 +275,9 @@ panel header name {
     text-transform: uppercase;	
 }
 panel content {
+	position: relative;
+	display: block;
+	height: 100%;
 	overflow-x: hidden;
 	overflow-y: auto;
 }
@@ -291,18 +294,28 @@ panel info {
 }
 
 sheet {
-	display: flex;
-	flex-direction: column;
-	flex: 1;
+	display: block;
+	position: relative;
+	height: 100%;
+	border-top: 1px dashed black;
+	box-sizing: border-box;
 }
 sheet field { 
 	flex: 1;
-	padding: 2px;
-	margin: 1px;
-	background: #bfbebe;
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;	
+    padding: 6px;
+    padding-left: 6px;
+    background: #cecece;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: #2e1a13;
+    font-weight: 600;
+}
+sheet field.button {
+	flex: 0 0 32px;
+}
+sheet field.button button {
+	color: #afa9a7;
 }
 sheet head {
 	display: flex;
@@ -310,13 +323,15 @@ sheet head {
 	font-weight: 600;	
 }
 sheet head field {
-	background: black;
-	color: white;
-	margin: 1px;
-	padding: 1px;
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
+    background: #171717;
+    color: #fff;
+    padding: 5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+sheet > content {
+	height: calc(100% - 27px);
 }
 sheet field.caret {
 	background: none;
@@ -330,9 +345,10 @@ sheet row {
 	display: flex;
 	flex-direction: row;
 	cursor: text;
+	border-bottom: 1px solid #b7b7b7;
 }
 sheet row:hover field {
-	background-color: #aaa;
+	background-color: #ededed;
 }
 sheet word {
 	display: block;
