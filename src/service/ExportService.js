@@ -50,7 +50,16 @@ const createProduction = (named) => {
                 cleanupAssetItem(item)
             }
             buffer = dataDictionary
-        }        
+		}      
+		else {
+            const dataArray = new Array(buffer.length)
+            for(let n = 0; n < buffer.length; n++) {
+                const item = buffer[n]
+                dataArray[n] = item
+                cleanupAssetItem(item)
+            }
+            buffer = dataArray
+		}  
 
         if(named) {
             data.assets[asset.meta.name] = buffer
