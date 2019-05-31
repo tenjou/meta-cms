@@ -1,4 +1,4 @@
-import { component, componentVoid, elementOpen, elementClose, text, store, element } from "wabi"
+import { component, componentVoid, elementOpen, elementClose, elementVoid, text, store, element } from "wabi"
 import SchemaService from "../service/SchemaService"
 import PopupService from "../service/PopupService"
 import TextInput from "./TextInput"
@@ -114,16 +114,16 @@ const SchemaItem = component({
 			}
 		}
 
-		elementOpen("tr", props)
-			elementOpen("td")
+		elementOpen("row", props)
+			elementOpen("field")
 				componentVoid(Caret, { bind: `${this.bind.cache}/open` })
-			elementClose("td")
+			elementClose("field")
 
-			elementOpen("td", propsRow)
+			elementOpen("field", propsRow)
 				componentVoid(TextInput, { bind: `${this.bind.item}/key` })
-			elementClose("td")
+			elementClose("field")
 
-			elementOpen("td", propsRow)
+			elementOpen("field", propsRow)
 				componentVoid(Select, { 
 					bind: {
 						value: `${this.bind.item}/type`,
@@ -131,26 +131,25 @@ const SchemaItem = component({
 					},
 					$onChange: this.handleChangeFunc
 				})
-			elementClose("td")
+			elementClose("field")
 
-			elementOpen("td")
+			elementOpen("field")
 				elementOpen("button", this.propsRemove)
-					text("Remove")
+					elementVoid("i", { class: "fas fa-times" })
 				elementClose("button")                        
-			elementClose("td")
-		elementClose("tr")
+			elementClose("field")
+		elementClose("row")
 
 		if(this.$cache.open) {
-			elementOpen("tr", { class: "open" })
-				elementOpen("td")
-				elementClose("td")
+			elementOpen("properties", { class: "open" })
+				elementVoid("field")
 
-				elementOpen("td", { colspan: 3 })
+				elementOpen("field")
 					elementOpen("list")
 						this.renderType()
 					elementClose("list")
-				elementClose("td")
-			elementClose("tr")
+				elementClose("field")
+			elementClose("properties")
 		}
 	},
 
@@ -259,37 +258,36 @@ const Schema = component({
 				elementClose("button")
 			elementClose("buttons")
 
-			elementOpen("table")
-				elementOpen("tr")
-					elementOpen("th")
-					elementClose("th")
+			elementOpen("sheet")
+				elementOpen("head")
+					elementVoid("field", { class: "button" })
 
-					elementOpen("th")
+					elementOpen("field")
 						text("name")
-					elementClose("th")
+					elementClose("field")
 
-					elementOpen("th")
+					elementOpen("field")
 						text("type")
-					elementClose("th")
+					elementClose("field")
 					
-					elementOpen("th")
-						text("actions")
-					elementClose("th")
-				elementClose("tr")
+					elementVoid("field", { class: "button" })					
+				elementClose("head")
 
-				const buffer = this.$buffer
-				for(let n = 0; n < buffer.length; n++) {
-					componentVoid(SchemaItem, { 
-						bind: {
-							value: `${this.bind.buffer}/${n}`,
-							item: `${this.bind.buffer}/${n}/item`,
-							cache: `${this.bind.buffer}/${n}/cache`
-						},
-						$index: n,
-						$onDrop: this.handleDropFunc
-					})       
-				}   
-			elementClose("table")	            
+				elementOpen("content")
+					const buffer = this.$buffer
+					for(let n = 0; n < buffer.length; n++) {
+						componentVoid(SchemaItem, { 
+							bind: {
+								value: `${this.bind.buffer}/${n}`,
+								item: `${this.bind.buffer}/${n}/item`,
+								cache: `${this.bind.buffer}/${n}/cache`
+							},
+							$index: n,
+							$onDrop: this.handleDropFunc
+						})       
+					} 
+				elementClose("content")  
+			elementClose("sheet")	            
 
 			if(this.$root) {
 				elementOpen("buttons")

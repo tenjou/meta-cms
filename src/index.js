@@ -181,6 +181,7 @@ const init = () => {
 
 const load = () => {
 	clearRoutes()
+	route(/\/#([0-9a-z]*)\/#export/, ExportLayout, (data) => {})		
 	route(/\/#([0-9a-z]*)\/([0-9a-z]*)/, HomeLayout, (data) => {})		
 	route(/\/#([0-9a-z]*)/, HomeLayout, (data) => {})	
 	route("/", ProjectLayout, (data) => {

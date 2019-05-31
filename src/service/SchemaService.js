@@ -59,9 +59,12 @@ const diff = (asset, schema, schemaPrev) => {
 					const schemas = entry.schema
 					const schemasPrev = entryPrev.schema
 					const typesPrev = {}
-					for(let n = 0; n < schemasPrev.length; n++) {
-						const item = schemasPrev[n]
-						typesPrev[item.id] = item
+
+					if(schemasPrev) {
+						for(let n = 0; n < schemasPrev.length; n++) {
+							const item = schemasPrev[n]
+							typesPrev[item.id] = item
+						}
 					}
 
 					for(let n = 0; n < schemas.length; n++) {

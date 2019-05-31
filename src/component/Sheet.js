@@ -12,6 +12,7 @@ import RemoveRowCommand from "../command/RemoveRowCommand"
 
 const propsCaret = { class: "caret" }
 const propsFieldButton = { class: "button" }
+const propsFieldType = { class: "input" }
 
 const findSchema = (schema, type) => {
 	for(let n = 0; n < schema.length; n++) {
@@ -44,7 +45,7 @@ const SheetList = component({
 
 			elementOpen("value")
 				elementOpen("button", this.propsAdd)
-					text("Add Row")
+					elementVoid("i", { class: "fas fa-plus" })
 				elementClose("button")
 			elementClose("value")
 		elementClose("property")
@@ -89,7 +90,7 @@ const SheetRow = component({
 			for(let n = 0; n < buffer.length; n++) {
 				const entry = buffer[n]
 				if(entry.item.type !== "List") {
-					elementOpen("field")
+					elementOpen("field", (entry.item.type === "Type") ? propsFieldType : null)
 						this.renderValue(entry.item)
 					elementClose("field")
 				}
@@ -223,7 +224,7 @@ const Sheet = component({
 				for(let n = 0; n < buffer.length; n++) {
 					const entry = buffer[n]
 					if(entry.item.type !== "List") {
-						elementOpen("field")
+						elementOpen("field", (entry.item.type === "Type") ? propsFieldType : null)
 							text(entry.item.key)
 						elementClose("field")
 					}

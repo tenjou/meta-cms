@@ -17,7 +17,9 @@ const Menu = component({
 			const uploadElement = elementVoid("input", this.propsUpload).element
 
 			this.renderItem("", "Home")
-			this.renderItem("export", "Export")
+			this.renderAction("export", () => {
+				location.hash = `${store.data.meta.id}/#export`
+			})
 			this.renderAction("Import", () => {
 				uploadElement.click()
 			})
