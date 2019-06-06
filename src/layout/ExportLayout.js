@@ -25,11 +25,11 @@ const ExportLayout = component({
 						elementClose("list")
 					elementClose("toolbar")
 
-					elementOpen("panel")
+					elementOpen("content")
 						elementOpen("pre")
 							text(data)
 						elementClose("pre")
-					elementClose("panel")
+					elementClose("content")
 				elementClose("export")
 		elementClose("layout")
 

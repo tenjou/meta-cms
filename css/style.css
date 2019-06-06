@@ -434,7 +434,12 @@ schema builder list item {
 layout > export {
 	display: flex;
 	flex-direction: column;
-	flex: 1;	
+	flex: 1;
+	background: #e0e0e0;	
+}
+export content {
+	overflow-y: auto;
+    height: 100%;	
 }
 export list item key {
 	flex: 0 0 80px;

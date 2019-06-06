@@ -62,6 +62,9 @@ store.set("state", {
 	menu: "",
 	project: {
 		name: ""
+	},
+	cache: {
+		export: {}
 	}
 })
 
