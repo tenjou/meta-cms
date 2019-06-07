@@ -130,12 +130,19 @@ const save = () => {
 	if(!activeProject) {
 		return
 	}
-	FileSystem.write(`${activeProject.meta.id}/db.json`, JSON.stringify(activeProject), (error, json) => {
-		console.log("saved")
+	const rootPath = activeProject.meta.id
+	FileSystem.write(`${rootPath}/db.temp.json`, JSON.stringify(activeProject), (error, json) => {
 		if(error) {
 			console.error(error)
 			return
 		}
+		FileSystem.moveTo(`${rootPath}/db.temp.json`, `${rootPath}/db.json`, (error) => {
+			if(error) {
+				console.error(error)
+				return
+			}
+			console.log("saved")
+		})
 	})
 }
 

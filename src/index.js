@@ -217,10 +217,19 @@ const load = () => {
 	}
 	store.addProxy("", (payload) => {
 		store.handle(payload)
-		ProjectService.save()
+		needSave = true
 	})
 }
 
 init()
+
+let needSave = false
+
+setInterval(() => {
+	if(needSave) {
+		needSave = false
+		ProjectService.save()
+	}
+}, 500)
 
 window.store = store
