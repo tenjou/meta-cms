@@ -47,7 +47,7 @@ const diff = (asset, schema, schemaPrev) => {
 				modifyAsset_rename(asset, entryItemPrev.key, entryItem.key)
 			}
 			if(entryItem.type !== entryItemPrev.type) {
-				modifyAsset_type(asset, entryItem)
+				modifyAsset_type(asset, entryItem, entryItemPrev.type)
 			}
 
 			switch(entryItem.type) {
@@ -93,7 +93,7 @@ const diff = (asset, schema, schemaPrev) => {
 									modifyAsset_rename(asset, propertyPrev.key, property.key, entryItem.key, schema.type)
 								}
 								if(property.type !== propertyPrev.type) {
-									modifyAsset_type(asset, property, entryItem.key, schema.type)
+									modifyAsset_type(asset, property, entryItemPrev.type, entryItem.key, schema.type)
 								}
 								propsHandled++
 
@@ -102,7 +102,7 @@ const diff = (asset, schema, schemaPrev) => {
 								}
 							}
 							else {
-								modifyAsset_type(asset, property, entryItem.key, schema.type)
+								modifyAsset_type(asset, property, entryItemPrev.type, entryItem.key, schema.type)
 
 								if(property.type === "List") {
 									diffList(asset, propertyEntry, emptySchemaCache, schema.type)
@@ -347,7 +347,7 @@ const modifyAsset_rowType = (data, key, typeDef) => {
 	}
 }
 
-const modifyAsset_type = (data, schemaItem, typeColumn = null, type = null) => {
+const modifyAsset_type = (data, schemaItem, prevType = null, typeColumn = null, type = null) => {
 	if(typeColumn) {
 		for(let n = 0; n < data.length; n++) {
 			const item = data[n]
@@ -357,6 +357,12 @@ const modifyAsset_type = (data, schemaItem, typeColumn = null, type = null) => {
 		}
 	}
 	else {
+		if(prevType) {
+			if(schemaItem.type === "UID" && prevType === "String") {
+				return
+			}
+		}
+
 		for(let n = 0; n < data.length; n++) {
 			const item = data[n]
 			item[schemaItem.key] = (schemaItem.default !== undefined) ? schemaItem.default : createDefaultValue(schemaItem, data, schemaItem.key)
