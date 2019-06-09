@@ -1,4 +1,5 @@
 import { store } from "wabi"
+import SchemaService from "./SchemaService"
 import FileSystem from "../fs/FileSystem"
 import Utils from "../Utils"
 
@@ -104,6 +105,8 @@ const load = (onLoad) => {
 			store.set("cache", data.cache)
 			activeProject = data
 
+			loadBuffers()
+
 			if(assetId) {
 				const asset = store.get(`assets/${assetId}`)
 				if(asset) {
@@ -118,6 +121,14 @@ const load = (onLoad) => {
 	else {
 		document.location.hash = ""
 		store.set("state/project/loading", false)
+	}
+}
+
+const loadBuffers = () => {
+	const assets = store.data.assets
+	for(let key in assets) {
+		const asset = assets[key]
+		SchemaService.loadBuffer(asset)
 	}
 }
 

@@ -47,16 +47,6 @@ import Commander from "./Commander"
 
 store.set("buffers", {})
 
-const loadBuffers = () => {
-	const assets = store.data.assets
-	for(let key in assets) {
-		const asset = assets[key]
-		SchemaService.loadBuffer(asset)
-	}
-}
-
-loadBuffers()
-
 store.set("state", {
 	popup: null,
 	menu: "",
