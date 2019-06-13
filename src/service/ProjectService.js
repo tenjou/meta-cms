@@ -248,16 +248,13 @@ const importJson = (json) => {
             fillCache(data)
             SchemaService.updateBuffer(asset)
 		}
-		
-		imported.meta.id = activeProject.meta.id
 
-        store.set("meta", imported.meta)
 		store.set("assets", imported.assets)
         
 		Commander.flush()
 		
 		activeProject = {
-			meta: store.data.meta,
+			meta: activeProject.meta,
 			assets: store.data.assets,
 			cache: store.data.cache
 		}
