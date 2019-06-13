@@ -1,6 +1,7 @@
 import { store } from "wabi"
 import SchemaService from "./SchemaService"
 import FileSystem from "../fs/FileSystem"
+import Commander from "../Commander"
 import Utils from "../Utils"
 
 let activeProject = null
@@ -234,4 +235,51 @@ const createPopupClose = () => {
 	store.set("state/project/create", null)
 }
 
-export { create, remove, rename, open, load, unload, save, fetch, createPopupShow, createPopupClose }
+const importJson = (json) => {
+    try {
+        const imported = JSON.parse(json)
+        store.set("buffers", {})
+
+        const assets = imported.assets
+        for(let key in assets) {
+            const asset = assets[key]
+            const data = asset.data
+            asset.meta.schemaCache = SchemaService.createSchemaCache(asset.meta.schema)
+            fillCache(data)
+            SchemaService.updateBuffer(asset)
+		}
+		
+		imported.meta.id = activeProject.meta.id
+
+        store.set("meta", imported.meta)
+		store.set("assets", imported.assets)
+        
+		Commander.flush()
+		
+		activeProject = {
+			meta: store.data.meta,
+			assets: store.data.assets,
+			cache: store.data.cache
+		}
+		save()
+    }
+    catch(error) {
+        console.error(error)
+    }
+}
+
+const fillCache = (data) => {
+    for(let n = 0; n < data.length; n++) {
+        const item = data[n]
+        for(let key in item) {
+            const property = item[key]
+            if(Array.isArray(property)) {
+                fillCache(property)
+            }
+        }
+        item.__cache = SchemaService.createCache()   
+    }    
+}
+
+export { create, remove, rename, open, load, unload, save, fetch, createPopupShow, createPopupClose,
+	importJson }

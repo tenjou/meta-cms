@@ -1,5 +1,5 @@
 import { component, componentVoid, elementOpen, elementClose, elementVoid, text, store, element } from "wabi"
-import ImportService from "../service/ImportService"
+import ProjectService from "../service/ProjectService"
 import Utils from "../Utils"
 
 const Menu = component({
@@ -47,7 +47,7 @@ const handleChange = (event) => {
 	const files = event.target.files
 	const file = files[0]
 	Utils.readFile(file, (json) => {
-		ImportService.load(json)
+		ProjectService.importJson(json)
 	})
 	event.target.value = ""
 }

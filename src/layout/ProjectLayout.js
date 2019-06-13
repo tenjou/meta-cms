@@ -82,6 +82,8 @@ const ProjectItem = component({
 	},
 
 	handleRemove(event) {
+		event.preventDefault()
+		event.stopPropagation()
 		ProjectService.remove(this.$value.id)
 	},
 
