@@ -313,7 +313,8 @@ sheet field {
     overflow: hidden;
     text-overflow: ellipsis;
     color: #2e1a13;
-    font-weight: 600;
+	font-weight: 600;
+	border-right: 1px solid #bfbebe;
 }
 sheet field.button {
 	flex: 0 0 32px;
@@ -335,7 +336,8 @@ sheet head field {
     padding: 5px;
     white-space: nowrap;
     overflow: hidden;
-    text-overflow: ellipsis;
+	text-overflow: ellipsis;
+	border-right: 1px solid #353535;
 }
 sheet > content {
 	height: calc(100% - 27px);
