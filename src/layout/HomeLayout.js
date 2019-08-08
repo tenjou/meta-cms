@@ -108,7 +108,9 @@ const Asset = component({
 	},
 
 	handleRemove(event) {
-		AssetService.tryRemove(this.$value.id)
+		if(confirm("Are you sure you want to delete this asset?")) {
+			AssetService.tryRemove(this.$value.id)
+		}
 	},
 
 	handleEdit(event) {
