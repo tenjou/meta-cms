@@ -74,17 +74,20 @@ const createProduction = (named) => {
 const cleanup = (data, options) => {
     const assets = data.assets
     for(let key in assets) {
+		const asset = assets[key]
+		const schema = asset.meta.schema
+
         if(options.production) {
             const data = assets[key]
             for(let n = 0; n < data.length; n++) {
-                processAssetItem(data[n])
+                processAssetItem(data[n], schema)
             }
         }
         else {
             const asset = assets[key]
             const data = asset.data
             for(let n = 0; n < data.length; n++) {
-                processAssetItem(data[n])
+                processAssetItem(data[n], schema)
             }
             delete asset.meta.schemaCache
         }
