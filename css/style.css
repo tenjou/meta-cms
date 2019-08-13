@@ -365,21 +365,22 @@ sheet input {
 }
 sheet properties {
 	display: flex;
-	padding-left: 8px;
-	padding-bottom: 4px;
-	flex-direction: column;
-	background: #e0e0e0;
-    border-bottom: 1px solid #b7b7b7;	
+    flex-direction: column;
+    margin-left: 8px;
 }
 sheet properties property {
 	display: flex;
 	padding: 2px;
+	background: #e0e0e0;
 }
 sheet properties property key {
 	flex: 0 0 150px;
 }
 sheet properties property value {
 	flex: 1;
+}
+sheet value > button {
+	color: black;
 }
 
 back {
