@@ -115,7 +115,7 @@ const SchemaItem = component({
 		}
 
 		elementOpen("row", props)
-			elementOpen("field")
+			elementOpen("field", { class: "button" })
 				componentVoid(Caret, { bind: `${this.bind.cache}/open` })
 			elementClose("field")
 
@@ -133,7 +133,7 @@ const SchemaItem = component({
 				})
 			elementClose("field")
 
-			elementOpen("field")
+			elementOpen("field", { class: "button" })
 				elementOpen("button", this.propsRemove)
 					elementVoid("i", { class: "fas fa-times" })
 				elementClose("button")                        
