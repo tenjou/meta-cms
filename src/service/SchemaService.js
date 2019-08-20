@@ -469,7 +469,7 @@ const createDefaultValue = (schemaItem, data, key) => {
 	return null
 }
 
-const createRow = (data, schema, typed = false) => {
+const createRow = (data, schema, typeSchemaIndex = 0) => {
 	const row = {}
 	const buffer = schema.buffer
 
@@ -483,10 +483,10 @@ const createRow = (data, schema, typed = false) => {
 		}
 	}
 
-	if(schema.typeIndex > -1 && typed) {
+	if(schema.typeIndex > -1) {
 		const entry = buffer[schema.typeIndex]
 		if(entry.schema.length > 0) {
-			const typeDefault = entry.schema[0]
+			const typeDefault = entry.schema[typeSchemaIndex]
 			const typeBuffer = typeDefault.schema.buffer
 			for(let n = 0; n < typeBuffer.length; n++) {
 				const item = typeBuffer[n].item
@@ -503,16 +503,8 @@ const createRow = (data, schema, typed = false) => {
 const rebuildRow = (path, schema) => {
 	const data = store.get(path)
 	const entry = schema.buffer[schema.typeIndex]
-	const typeIndex = schema.types.indexOf(data[entry.item.key])
-	const type = entry.schema[typeIndex]
-
-	const row = createRow(data, schema, false)
-
-	const buffer = type.schema.buffer
-	for(let n = 0; n < buffer.length; n++) {
-		const item = buffer[n].item
-		row[item.key] = (item.default !== undefined) ? item.default : createDefaultValue(item, data, item.key)
-	}
+	const typeSchemaIndex = schema.types.indexOf(data[entry.item.key])
+	const row = createRow(data, schema, typeSchemaIndex)
 
 	row.__cache = data.__cache
 	store.set(path, row)
