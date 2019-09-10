@@ -209,10 +209,18 @@ const Sheet = component({
 		schema: null
 	},
 
+	mount() {
+		this.itemCount = 0
+	},
+
 	render() {
 		const items = this.$value
 		const schema = this.$schema
 		const buffer = schema.buffer
+
+		if(this.itemCount === 0) {
+			this.itemCount = items.length
+		}
 
 		elementOpen("sheet")
 			elementOpen("head")
@@ -228,12 +236,11 @@ const Sheet = component({
 							text(entry.item.key)
 						elementClose("field")
 					}
-				}	
-				
+				}
 				elementVoid("field", propsFieldButton)
 			elementClose("head")
 
-			elementOpen("content")
+			const element = elementOpen("content").element
 				for(let n = 0; n < items.length; n++) {
 					componentVoid(SheetRow, { 
 						bind: {
@@ -245,6 +252,10 @@ const Sheet = component({
 					})
 				}
 			elementClose("content")
+
+			if(this.itemCount !== items.length) {
+				element.scrollTop = element.scrollHeight
+			}
 		elementClose("sheet")
 	}
 })
