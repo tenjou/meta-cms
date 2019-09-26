@@ -302,7 +302,6 @@ sheet {
 	box-sizing: border-box;
 }
 sheet sheet {
-	margin-left: 8px;
 	border-top: 0;
 }
 sheet field { 
@@ -367,7 +366,7 @@ sheet input {
 sheet properties {
 	display: flex;
     flex-direction: column;
-    margin-left: 8px;
+    margin-left: 27px;
 }
 sheet properties property {
 	display: flex;
