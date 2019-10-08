@@ -38,24 +38,24 @@ const SheetList = component({
 	},
 
 	render() {
-		elementOpen("property")
-			elementOpen("key")
-				text(this.$key)
-			elementClose("key")
+		elementOpen("sheet-list")
+			elementOpen("header")
+				elementOpen("name")
+					text(this.$key)
+				elementClose("name")
 
-			elementOpen("value")
 				elementOpen("button", this.propsAdd)
 					elementVoid("i", { class: "fas fa-plus" })
 				elementClose("button")
-			elementClose("value")
-		elementClose("property")
+			elementClose("header")
 
-		componentVoid(Sheet, {
-			bind: {
-				value: this.bind
-			},
-			$schema: this.$schema
-		})
+			componentVoid(Sheet, {
+				bind: {
+					value: this.bind
+				},
+				$schema: this.$schema
+			})
+		elementClose("sheet-list")
 	},
 
 	handleAdd(event) {
