@@ -28,11 +28,32 @@ const apply = (id, schema) => {
 const diff = (asset, schema, schemaPrev) => {
 	const buffer = schema.buffer
 	const bufferPrev = schemaPrev.buffer
-
 	const props = []
-	let numEntriesPrev = 0
 	let types = null
 	let typeIndex = -1
+	let numEntriesPrev = 0
+
+	for(let n = 0; n < buffer.length; n++) {
+		const entry = buffer[n]
+		const entryPrev = bufferPrev.find(src => src.id === entry.id)
+		if(entryPrev !== undefined) {
+			numEntriesPrev++
+		}
+	}
+
+	if(numEntriesPrev !== bufferPrev.length) {
+		loop:
+		for(let n = 0; n < bufferPrev.length; n++) {
+			const entryPrev = bufferPrev[n]
+			for(let m = 0; m < buffer.length; m++) {
+				const entry = buffer[m]
+				if(entry.id === entryPrev.id) {
+					continue loop
+				}
+			}
+			modifyAsset_remove(asset, entryPrev)
+		}
+	}	
 
 	for(let n = 0; n < buffer.length; n++) {
 		const entry = buffer[n]
@@ -157,20 +178,6 @@ const diff = (asset, schema, schemaPrev) => {
 					diffList(asset, entry, emptySchemaCache)
 					break
 			}
-		}
-	}
-
-	if(numEntriesPrev !== bufferPrev.length) {
-		loop:
-		for(let n = 0; n < bufferPrev.length; n++) {
-			const entryPrev = bufferPrev[n]
-			for(let m = 0; m < buffer.length; m++) {
-				const entry = buffer[m]
-				if(entry.id === entryPrev.id) {
-					continue loop
-				}
-			}
-			modifyAsset_remove(asset, entryPrev)
 		}
 	}
 
