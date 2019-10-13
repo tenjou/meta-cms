@@ -60,8 +60,10 @@ input {
 	padding-left: 5px;
 }
 input[type="checkbox"] {
+    display: block;
 	width: auto;
 	height: auto;
+	margin-top: 2px;
 }
 
 form {
@@ -373,6 +375,7 @@ sheet properties property {
 	display: flex;
 	padding: 2px;
 	background: #e0e0e0;
+	border-bottom: 1px dashed #ccc;
 }
 sheet properties property key {
 	flex: 0 0 150px;
