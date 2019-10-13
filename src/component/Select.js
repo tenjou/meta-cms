@@ -23,7 +23,7 @@ const Select = component({
                 const keyPair = (typeof options[0] === "object") ? true : false
 
                 if(keyPair) {
-                    if(!this.$value || (options.length === 1 && options[0] !== this.$value)) {
+                    if(!this.$value || !options.find(item => item.value === this.$value) || (options.length === 1 && options[0] !== this.$value)) {
                         this.$value = options[0].value
                     }        
 
@@ -36,7 +36,7 @@ const Select = component({
                     }                    
                 }
                 else {
-                    if(!this.$value || (options.length === 1 && options[0] !== this.$value)) {
+                    if(!this.$value || options.indexOf(this.$value) === -1 || (options.length === 1 && options[0] !== this.$value)) {
                         this.$value = options[0]
                     }
 
