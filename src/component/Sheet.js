@@ -197,9 +197,11 @@ const SheetRow = component({
 	},
 
 	handleRemove(event) {
-		const buffer = this.bind.value.split("/")
-		const path = buffer.slice(0, buffer.length - 1).join("/")
-		Commander.execute(new RemoveRowCommand(path, this.$value))
+		if(confirm("Are you sure you want to delete this row?")) {
+			const buffer = this.bind.value.split("/")
+			const path = buffer.slice(0, buffer.length - 1).join("/")
+			Commander.execute(new RemoveRowCommand(path, this.$value))
+		}
 	}
 })
 
