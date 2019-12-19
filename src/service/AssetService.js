@@ -53,4 +53,27 @@ const addRow = (id) => {
     Commander.execute(new AddRowCommand(`${assetPath}/data`, row, true))
 }
 
-export { open, tryAdd, create, createSheet, tryRemove, edit, addRow }
+const closeAll = (id) => {
+	const assetPath = `assets/${id}`
+	const asset = store.get(assetPath)
+	closeAllArray(asset.data)
+	store.update(assetPath)
+}
+
+const closeAllArray = (array) => {
+	for(let n = 0; n < array.length; n++) {
+		const item = array[n]
+		for(let keyId in item) {
+			const keyItem = item[keyId]
+			if(Array.isArray(keyItem)) {
+				closeAllArray(keyItem)
+			}
+		}
+		item.__cache.open = false
+	}	
+}
+
+export { 
+	open, tryAdd, create, createSheet, tryRemove, edit, addRow,
+	closeAll
+}

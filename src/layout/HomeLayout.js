@@ -31,6 +31,7 @@ const ContentPanel = component({
 	mount() {
 		this.handleAddRowFunc = this.handleAddRow.bind(this)
 		this.handleEditFunc = this.handleEdit.bind(this)
+		this.propsCloseAll = { onclick: this.handleCloseAll.bind(this) }
 	},
 
 	render() {
@@ -53,7 +54,11 @@ const ContentPanel = component({
 						
 						elementOpen("button", { onclick: this.handleEditFunc })
 							elementVoid("i", { class: "fas fa-pen" })
-						elementClose("button")							
+						elementClose("button")	
+						
+						elementOpen("button", this.propsCloseAll)
+							elementVoid("i", { class: "fas fa-angle-double-up" })
+						elementClose("button")	
 					elementClose("buttons")
 				elementClose("header")
 
@@ -75,6 +80,10 @@ const ContentPanel = component({
 
 	handleEdit(event) {
 		editSchema(this.$value.meta.id)
+	},
+
+	handleCloseAll(event) {
+		AssetService.closeAll(this.$value.meta.id)
 	}
 })
 
