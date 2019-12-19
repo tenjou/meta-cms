@@ -19,7 +19,7 @@ class RemoveRowCommand {
 
     undo() {
         const asset = store.get(this.path)
-        store.add(this.assetPath, this.data)
+        store.add(this.path, this.data)
         // SchemaService.updateBuffer(asset)
     }
 }
