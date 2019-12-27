@@ -33,7 +33,11 @@ const create = (type) => {
             schema: [],
             schemaCache: SchemaService.createSchemaCache()
         },
-        data: []
+		data: [],
+		cache: {
+			sortKey: null,
+			sortAsc: true
+		}
     }
     return asset
 }
@@ -73,7 +77,68 @@ const closeAllArray = (array) => {
 	}	
 }
 
+const sort = (dataPath, cachePath, sortKey, type) => {
+	const data = store.get(dataPath)
+	const cache = store.get(cachePath)
+	if(cache.sortKey === sortKey) {
+		cache.sortAsc = !cache.sortAsc
+	}
+	else {
+		cache.sortKey = sortKey
+	}
+
+	switch(type) {
+		case "Boolean":
+		case "Number":
+		case "Float": {
+			if(cache.sortAsc) {
+				data.sort((a, b) => {
+					return a[sortKey] - b[sortKey]
+				})
+			}
+			else {
+				data.sort((a, b) => {
+					return b[sortKey] - a[sortKey]
+				})
+			}
+		} break
+
+		case "GUID": {
+			if(cache.sortAsc) {
+				data.sort((a, b) => {
+					return a[sortKey].localeCompare(b[sortKey], "en", { sensitivity: 'base', numeric: false })
+				})
+			}
+			else {
+				data.sort((a, b) => {
+					return b[sortKey].localeCompare(a[sortKey], "en", { sensitivity: 'base', numeric: false })
+				})
+			}
+		} break		
+
+		default: {
+			if(cache.sortAsc) {
+				data.sort((a, b) => {
+					return a[sortKey].localeCompare(b[sortKey], "en", { sensitivity: "base", numeric: true })
+				})
+			}
+			else {
+				data.sort((a, b) => {
+					return b[sortKey].localeCompare(a[sortKey], "en", { sensitivity: "base", numeric: true })
+				})
+			}
+		} break
+	}
+
+	closeAllArray(data)
+
+	store.update(dataPath)
+	store.update(`${cachePath}/sortKey`)
+	store.update(`${cachePath}/sortAsc`)
+}
+
 export { 
 	open, tryAdd, create, createSheet, tryRemove, edit, addRow,
-	closeAll
+	closeAll,
+	sort
 }

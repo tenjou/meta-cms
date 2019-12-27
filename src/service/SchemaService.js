@@ -204,7 +204,11 @@ const diffList = (asset, entry, entryPrev, type = null) => {
 }
 
 const createCache = () => {
-	return { open: false }
+	return { 
+		open: false, 
+		sortKey: null, 
+		sortAsc: true 
+	}
 }
 
 const createItem = (data, property = false) => {
@@ -252,7 +256,14 @@ const rebuildBufferItem = (schemaCache, type) => {
 }
 
 const createSchemaCache = (schema = null) => {
-	const schemaCache = { id: 0, typeIndex: -1, types: null, buffer: [], props: [] }
+	const schemaCache = { 
+		id: 0, 
+		typeIndex: -1, 
+		types: null, 
+		sortKey: null,
+		buffer: [], 
+		props: [] 
+	}
 	if(!schema) {
 		return schemaCache
 	}

@@ -317,6 +317,10 @@ sheet field {
     color: #2e1a13;
 	font-weight: 600;
 	border-right: 1px solid #bfbebe;
+	cursor: pointer;
+}
+sheet field:hover {
+	background: #111;
 }
 sheet field.button {
 	flex: 0 0 32px;
@@ -326,6 +330,10 @@ sheet field.button button {
 }
 sheet field.input {
 	flex: 0 0 150px;
+}
+sheet field sort {
+	padding: 0 8px;
+    cursor: pointer;
 }
 sheet head {
 	display: flex;

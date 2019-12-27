@@ -66,6 +66,7 @@ const ContentPanel = component({
 					componentVoid(Sheet, {
 						bind: {
 							value: `${this.bind}/data`,
+							cache: `${this.bind}/cache`,
 							schema: `${this.bind}/meta/schemaCache`
 						}	
 					})

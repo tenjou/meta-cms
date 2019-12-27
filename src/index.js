@@ -3,47 +3,9 @@ import ProjectLayout from "./layout/ProjectLayout"
 import LoadingLayout from "./layout/LoadingLayout"
 import HomeLayout from "./layout/HomeLayout"
 import ExportLayout from "./layout/ExportLayout"
-import SchemaService from "./service/SchemaService"
 import ProjectService from "./service/ProjectService"
 import FileSystem from "./fs/FileSystem"
 import Commander from "./Commander"
-
-// const createMeta = () => {
-// 	return {
-// 		name: "Project",
-// 		version: 1,
-// 		created: Date.now()
-// 	}
-// }
-
-// const createCache = () => {
-// 	return {
-// 		assets: {
-// 			selected: null
-// 		},
-// 		export: {
-// 			minify: false,
-// 			production: false,
-// 			named: false
-// 		}
-// 	}
-// }
-
-// const assets = localStorage.getItem("assets")
-// if(assets) {
-// 	store.set("assets", JSON.parse(assets))
-	
-// 	const meta = localStorage.getItem("meta")
-// 	store.set("meta", meta ? JSON.parse(meta) : createMeta())
-
-// 	const cache = localStorage.getItem("cache")
-// 	store.set("cache", cache ? JSON.parse(cache) : createCache())
-// }
-// else {
-// 	store.set("assets", {})
-// 	store.set("cache", createCache())
-// 	store.set("meta", createMeta())
-// }
 
 store.set("buffers", {})
 

@@ -6,6 +6,7 @@ import NumberInput from "./NumberInput"
 import FloatInput from "./FloatInput"
 import Select from "./Select"
 import SchemaService from "../service/SchemaService"
+import AssetService from "../service/AssetService"
 import Commander from "../Commander"
 import AddRowCommand from "../command/AddRowCommand"
 import RemoveRowCommand from "../command/RemoveRowCommand"
@@ -27,6 +28,7 @@ const findSchema = (schema, type) => {
 const SheetList = component({
 	state: {
 		value: null,
+		cache: null,
 		key: null,
 		schema: null
 	},
@@ -51,7 +53,8 @@ const SheetList = component({
 
 			componentVoid(Sheet, {
 				bind: {
-					value: this.bind
+					value: this.bind.value,
+					cache: this.bind.cache
 				},
 				$schema: this.$schema
 			})
@@ -73,6 +76,7 @@ const SheetRow = component({
 	},
 
 	mount() {
+		this.handleSortFunc = this.handleSort.bind(this)
 		this.propsRemove = { onclick: this.handleRemove.bind(this) }
 	},
 
@@ -170,7 +174,10 @@ const SheetRow = component({
 				break
 			case "List":
 				componentVoid(SheetList, {
-					bind: `${this.bind.value}/${entry.key}`,
+					bind: {
+						value: `${this.bind.value}/${entry.key}`,
+						cache: `${this.bind.value}/__cache`
+					},
 					$key: entry.key,
 					$schema: schema
 				})
@@ -196,6 +203,11 @@ const SheetRow = component({
 		}
 	},
 
+	handleSort(event) {
+		const key = event.currentTarget.dataset.key
+		console.log(key)
+	},
+
 	handleRemove(event) {
 		if(confirm("Are you sure you want to delete this row?")) {
 			const buffer = this.bind.value.split("/")
@@ -208,16 +220,19 @@ const SheetRow = component({
 const Sheet = component({
 	state: {
 		value: null,
-		schema: null
+		schema: null,
+		cache: null
 	},
 
 	mount() {
+		this.handleSortFunc = this.handleSort.bind(this)
 		this.itemCount = 0
 	},
 
 	render() {
 		const items = this.$value
 		const schema = this.$schema
+		const cache = this.$cache
 		const buffer = schema.buffer
 
 		if(this.itemCount === 0) {
@@ -234,8 +249,21 @@ const Sheet = component({
 				for(let n = 0; n < buffer.length; n++) {
 					const entry = buffer[n]
 					if(entry.item.type !== "List") {
-						elementOpen("field", (entry.item.type === "Type") ? propsFieldType : null)
+						elementOpen("field", {
+							"data-key": entry.item.key,
+							"data-type": entry.item.type,
+							class: (entry.item.type === "Type") ? "input" : null,
+							onclick: this.handleSortFunc
+						})
 							text(entry.item.key)
+
+							if(entry.item.key === cache.sortKey) {
+								elementOpen("sort")
+									elementVoid("i", { 
+										class: cache.sortAsc ? "fas fa-angle-down" : "fas fa-angle-up" 
+									})
+								elementClose("sort")
+							}
 						elementClose("field")
 					}
 				}
@@ -259,7 +287,13 @@ const Sheet = component({
 				element.scrollTop = element.scrollHeight
 			}
 		elementClose("sheet")
-	}
+	},
+
+	handleSort(event) {
+		const key = event.currentTarget.dataset.key
+		const type = event.currentTarget.dataset.type
+		AssetService.sort(this.bind.value, this.bind.cache, key, type)
+	}	
 })
 
 export default Sheet
