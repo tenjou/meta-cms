@@ -17,10 +17,10 @@ const tryAdd = (type, schema) => {
     Commander.execute(new AddAssetCommand(asset))
 }
 
-const tryRemove = (id) => {
-    Commander.execute(new RemoveAssetCommand(id))
-    if(store.data.cache.assets.selected === id) {
-        document.location.hash = store.data.meta.id
+const remove = (assetId) => {
+    Commander.execute(new RemoveAssetCommand(assetId))
+    if(store.data.cache.assets.selected === assetId) {
+        document.location.hash = assetId
     }
 }
 
@@ -138,7 +138,7 @@ const sort = (dataPath, cachePath, sortKey, type) => {
 }
 
 export { 
-	open, tryAdd, create, createSheet, tryRemove, edit, addRow,
+	open, tryAdd, create, createSheet, remove, edit, addRow,
 	closeAll,
 	sort
 }

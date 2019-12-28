@@ -3,11 +3,13 @@ import LoadingLayout from "./LoadingLayout"
 import AssetService from "../service/AssetService"
 import PopupService from "../service/PopupService"
 import SchemaService from "../service/SchemaService"
+import MenuService from "../service/MenuService"
 import Sheet from "../component/Sheet"
 import Popups from "../component/Popups"
 import Schema from "../component/Schema"
 import Word from "../component/Word"
 import Menu from "../component/Menu"
+import ContextMenu from "../component/ContextMenu"
 import Utils from "../Utils"
 
 const editSchema = (id) => {
@@ -93,12 +95,14 @@ const Asset = component({
 		this.handleRemoveFunc = this.handleRemove.bind(this)
 		this.handleEditFunc = this.handleEdit.bind(this)
 		this.handleClickFunc = this.handleClick.bind(this)
+		this.handleContextFunc = this.handleContext.bind(this)
 	},
 
 	render() {
 		const meta = this.$value
 		const props = {
 			class: (store.data.cache.assets.selected === meta.id) ? "active" : "",
+			oncontextmenu: this.handleContextFunc
 		}
 		const propsA = { 
 			onclick: this.handleClickFunc
@@ -119,12 +123,12 @@ const Asset = component({
 
 	handleRemove(event) {
 		if(confirm("Are you sure you want to delete this asset?")) {
-			AssetService.tryRemove(this.$value.id)
+			AssetService.remove(this.$value.id)
 		}
 	},
 
 	handleEdit(event) {
-		editSchema(this.$value.id)
+        editSchema(this.$value.id)
 	},
 
 	handleClick(event) {
@@ -134,6 +138,10 @@ const Asset = component({
 			SchemaService.updateBuffer(store.data.assets[idPrev]) 
 		}
 		AssetService.open(id)
+	},
+
+	handleContext(event) {
+		MenuService.show("assets.item", this.$value.id, event)
 	}
 })
 
@@ -205,6 +213,7 @@ const HomeLayout = component({
 			elementClose("layout")
 	
 			componentVoid(Popups)
+			componentVoid(ContextMenu)
 		}
 	}
 })

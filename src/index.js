@@ -4,21 +4,12 @@ import LoadingLayout from "./layout/LoadingLayout"
 import HomeLayout from "./layout/HomeLayout"
 import ExportLayout from "./layout/ExportLayout"
 import ProjectService from "./service/ProjectService"
+import MenuService from "./service/MenuService"
 import FileSystem from "./fs/FileSystem"
 import Commander from "./Commander"
+import "./menu/AssetsMenu"
 
 store.set("buffers", {})
-
-store.set("state", {
-	popup: null,
-	menu: "",
-	project: {
-		name: ""
-	},
-	cache: {
-		export: {}
-	}
-})
 
 store.set("types", {
 	UID: {},
@@ -99,9 +90,19 @@ store.set("state", {
 		data: [],
 		loading: false,
 		create: null
-	}
+	},
+	contextmenu: {
+		visible: false,
+		x: 0,
+		y: 0,
+		path: null,
+		props: null
+	}	
 })
 
+window.addEventListener("click", (event) => {
+	MenuService.hide()
+})
 window.addEventListener("keydown", (event) => {
 	if(event.keyCode === 90 && event.ctrlKey) {
 		if(event.shiftKey) {
