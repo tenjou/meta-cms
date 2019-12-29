@@ -12,7 +12,7 @@ const open = (id) => {
 	location.hash = `${store.data.meta.id}/${id}`
 }
 
-const tryAdd = (type, schema) => {
+const add = (type, schema) => {
     const asset = create(type, schema)
     Commander.execute(new AddAssetCommand(asset))
 }
@@ -29,25 +29,25 @@ const create = (type) => {
         meta: {
             id: Utils.uuid4(),
             name: type,
-            type,
-            schema: [],
-            schemaCache: SchemaService.createSchemaCache()
+            type
         },
 		data: [],
-		cache: {
-			sortKey: null,
-			sortAsc: true
-		}
+		cache: createCache(type)
     }
     return asset
 }
 
-const createSheet = () => {
-    tryAdd("Sheet")
-}
-
-const edit = (id) => {
-
+const createCache = (type) => {
+	switch(type) {
+		case "Sheet":
+			return {
+				schema: [],
+				schemaCache: SchemaService.createSchemaCache(),
+				sortKey: null,
+				sortAsc: true
+			}
+	}
+	return null
 }
 
 const addRow = (id) => {
@@ -138,7 +138,7 @@ const sort = (dataPath, cachePath, sortKey, type) => {
 }
 
 export { 
-	open, tryAdd, create, createSheet, remove, edit, addRow,
+	open, add, create, remove, addRow,
 	closeAll,
 	sort
 }

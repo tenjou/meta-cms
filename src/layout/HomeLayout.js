@@ -92,8 +92,6 @@ const ContentPanel = component({
 
 const Asset = component({
 	mount() {
-		this.handleRemoveFunc = this.handleRemove.bind(this)
-		this.handleEditFunc = this.handleEdit.bind(this)
 		this.handleClickFunc = this.handleClick.bind(this)
 		this.handleContextFunc = this.handleContext.bind(this)
 	},
@@ -109,26 +107,12 @@ const Asset = component({
 		}
 
 		elementOpen("item", props)
+			elementVoid("i", { class: "fas fa-database" })
+
 			elementOpen("a", propsA)
 				componentVoid(Word, { bind: `${this.bind}/name` })
 			elementClose("a")
-
-			elementOpen("buttons")
-				elementOpen("button", { onclick: this.handleRemoveFunc })
-					elementVoid("i", { class: "fas fa-times" })
-				elementClose("button")			
-			elementClose("buttons")
 		elementClose("item")
-	},
-
-	handleRemove(event) {
-		if(confirm("Are you sure you want to delete this asset?")) {
-			AssetService.remove(this.$value.id)
-		}
-	},
-
-	handleEdit(event) {
-        editSchema(this.$value.id)
 	},
 
 	handleClick(event) {
@@ -149,12 +133,17 @@ const AssetPanel = component({
 	mount() {
 		this.bind = "assets"
 		this.handleAddAssetFunc = this.handleAddAsset.bind(this)
+		this.handleContextFunc = this.handleContext.bind(this)
 	},
 
 	render() {
 		const assets = this.$value
 
-		elementOpen("panel", { style: "flex: 240px 0 0;", class: "side" })
+		elementOpen("panel", { 
+			style: "flex: 240px 0 0;", 
+			class: "side",
+			oncontextmenu: this.handleContextFunc
+		})
 			elementOpen("header")
 				elementOpen("name")
 					text("Assets")
@@ -179,7 +168,14 @@ const AssetPanel = component({
 	},
 
 	handleAddAsset(event) {
-		AssetService.createSheet()
+		const currentTarget = event.currentTarget
+		const x = currentTarget.offsetLeft + ((currentTarget.offsetWidth * 0.5) | 0)
+		const y = currentTarget.offsetTop + ((currentTarget.offsetHeight * 0.5) | 0)
+		MenuService.show("assets", null, event, x, y)
+	},
+
+	handleContext(event) {
+		MenuService.show("assets", null, event)
 	}
 })
 

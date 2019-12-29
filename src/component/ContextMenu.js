@@ -89,9 +89,16 @@ const ContextMenu = component({
 
 		const rect = element.getBoundingClientRect()
 		const bodyRect = document.body.getBoundingClientRect()
+
+		const rightSpaceLeft = bodyRect.right - rect.right
+		if(rightSpaceLeft < 0) {
+			const newX = data.x + rightSpaceLeft - 10
+			element.style.left = `${newX}px`
+		}
+
 		const bottomSpaceLeft = bodyRect.bottom - rect.bottom
 		if(bottomSpaceLeft < 0) {
-			const newY = this.$y + bottomSpaceLeft
+			const newY = data.y + bottomSpaceLeft
 			element.style.top = `${newY}px`
 		}
 	}

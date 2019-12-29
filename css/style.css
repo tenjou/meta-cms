@@ -466,6 +466,15 @@ pre {
 	user-select: all;
 }
 
+list.assets item {
+	align-items: center;
+}
+list.assets item i {
+	color: #e2e2e2;
+	text-align: center;
+	font-size: 10px;
+	width: 16px;
+}
 list.assets item a {
 	padding: 3px;
 }
