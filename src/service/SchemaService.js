@@ -546,6 +546,10 @@ const moveBefore = (buffer, index, indexBefore) => {
 }
 
 const loadBuffer = (asset) => {
+	if(asset.meta.type !== "Sheet") {
+		return
+	}
+	
 	const schema = asset.meta.schema
 	let idKey = null
 

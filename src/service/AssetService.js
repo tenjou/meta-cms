@@ -7,13 +7,33 @@ import RemoveAssetCommand from "../command/RemoveAssetCommand"
 import Commander from "../Commander"
 import Utils from "../Utils"
 
-const open = (id) => {
-	store.set("cache/assets/selected", id)
-	location.hash = `${store.data.meta.id}/${id}`
+const open = (assetId) => {
+	const newAsset = store.get(`assets/${assetId}`)
+	const openedPrev = store.get("cache/assets/opened")
+	const openedAsset = store.get(`assets/${openedPrev}`)
+	if(openedAsset !== newAsset) {
+		SchemaService.updateBuffer(openedAsset) 
+	}
+	
+	if(newAsset.meta.type === "Folder") {
+		store.set(`assets/${assetId}/cache/open`, !newAsset.cache.open)
+	}
+	else {
+		console.log("here", assetId)
+		store.set("cache/assets/opened", assetId)
+		location.hash = `${store.data.meta.id}/${assetId}`
+	}
 }
 
-const add = (type, schema) => {
-    const asset = create(type, schema)
+const close = (assetId) => {
+}
+
+const select = (assetId) => {
+	store.set("cache/assets/selected", assetId)
+}
+
+const add = (type) => {
+    const asset = create(type)
     Commander.execute(new AddAssetCommand(asset))
 }
 
@@ -45,6 +65,10 @@ const createCache = (type) => {
 				schemaCache: SchemaService.createSchemaCache(),
 				sortKey: null,
 				sortAsc: true
+			}
+		case "Folder":
+			return {
+				open: false
 			}
 	}
 	return null
@@ -138,7 +162,7 @@ const sort = (dataPath, cachePath, sortKey, type) => {
 }
 
 export { 
-	open, add, create, remove, addRow,
+	open, add, select, create, remove, addRow,
 	closeAll,
 	sort
 }

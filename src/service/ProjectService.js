@@ -17,7 +17,8 @@ const create = () => {
 		assets: {},
 		cache: {
 			assets: {
-				selected: null
+				selected: null,
+				opened: null
 			},
 			export: {
 				minify: false,

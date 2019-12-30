@@ -11,14 +11,14 @@ MenuService.register("assets", [
 				name: "Folder",
 				icon: "fa-folder",
 				func() {
-					Assets.createAsset("Folder", null)
+					AssetService.add("Folder")
 				}
 			},
 			{
 				name: "Sheet",
 				icon: "fas fa-database",
 				func() {
-					Assets.createAsset("Sheet", null)
+					AssetService.add("Sheet")
 				}			
 			}			
 		]

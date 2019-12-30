@@ -1,4 +1,4 @@
-import { component, componentVoid, elementOpen, elementClose, elementVoid, text } from "wabi"
+import { component, componentVoid, elementOpen, elementClose, elementVoid, text, store } from "wabi"
 import LoadingLayout from "./LoadingLayout"
 import AssetService from "../service/AssetService"
 import PopupService from "../service/PopupService"
@@ -37,8 +37,10 @@ const ContentPanel = component({
 	},
 
 	render() {
+		const data = this.$value
+
 		elementOpen("panel")
-			if(!this.$value) {
+			if(!data) {
 				elementOpen("info")
 					text("Nothing Selected")
 				elementClose("info")
@@ -65,13 +67,17 @@ const ContentPanel = component({
 				elementClose("header")
 
 				elementOpen("content")
-					componentVoid(Sheet, {
-						bind: {
-							value: `${this.bind}/data`,
-							cache: `${this.bind}/cache`,
-							schema: `${this.bind}/meta/schemaCache`
-						}	
-					})
+					switch(data.meta.type) {
+						case "Sheet":
+							componentVoid(Sheet, {
+								bind: {
+									value: `${this.bind}/data`,
+									cache: `${this.bind}/cache`,
+									schema: `${this.bind}/meta/schemaCache`
+								}	
+							})
+							break
+					}
 				elementClose("content")
 			}
 		elementClose("panel")
@@ -92,36 +98,92 @@ const ContentPanel = component({
 
 const Asset = component({
 	mount() {
-		this.handleClickFunc = this.handleClick.bind(this)
 		this.handleContextFunc = this.handleContext.bind(this)
+		this.propsA = { 
+			onclick: this.handleSelect.bind(this),
+			ondblclick: this.handleOpen.bind(this)
+		}		
 	},
 
 	render() {
 		const meta = this.$value
+		const icon = store.data.icons[meta.type]
 		const props = {
 			class: (store.data.cache.assets.selected === meta.id) ? "active" : "",
 			oncontextmenu: this.handleContextFunc
 		}
-		const propsA = { 
-			onclick: this.handleClickFunc
-		}
 
 		elementOpen("item", props)
-			elementVoid("i", { class: "fas fa-database" })
+			elementVoid("i")
+			elementVoid("i", { class: icon })
 
-			elementOpen("a", propsA)
+			elementOpen("a", this.propsA)
 				componentVoid(Word, { bind: `${this.bind}/name` })
 			elementClose("a")
 		elementClose("item")
 	},
 
-	handleClick(event) {
-		const id = this.$value.id
-		const idPrev = store.get("cache/assets/selected")
-		if(idPrev) {
-			SchemaService.updateBuffer(store.data.assets[idPrev]) 
+	handleSelect(event) {
+		AssetService.select(this.$value.id)
+	},
+
+	handleOpen(event) {
+		AssetService.open(this.$value.id)
+	},
+
+	handleContext(event) {
+		MenuService.show("assets.item", this.$value.id, event)
+	}
+})
+
+const Folder = component({
+	state: {
+		value: null,
+		open: false
+	},
+
+	mount() {
+		this.handleContextFunc = this.handleContext.bind(this)
+		this.propsA = { 
+			onclick: this.handleClick.bind(this)
+			// onclick: this.handleSelect.bind(this),
+			// ondblclick: this.handleOpen.bind(this)
+		}		
+	},
+
+	render() {
+		const meta = this.$value
+		const icon = store.data.icons[meta.type]
+		const props = {
+			class: (store.data.cache.assets.selected === meta.id) ? "active" : "",
+			oncontextmenu: this.handleContextFunc
 		}
-		AssetService.open(id)
+
+		elementOpen("item", props)
+			if(this.$open) {
+				elementVoid("i", { class: "fas fa-caret-down" })
+			}
+			else {
+				elementVoid("i", { class: "fas fa-caret-right" })
+			}
+
+			elementVoid("i", { class: icon })
+
+			elementOpen("a", this.propsA)
+				componentVoid(Word, { bind: `${this.bind.value}/name` })
+			elementClose("a")
+		elementClose("item")
+	},
+
+	handleClick(event) {
+		event.preventDefault()
+
+		if(event.detail % 2) {
+			AssetService.select(this.$value.id)
+		}
+		else {
+			AssetService.open(this.$value.id)
+		}
 	},
 
 	handleContext(event) {
@@ -130,8 +192,16 @@ const Asset = component({
 })
 
 const AssetPanel = component({
+	state: {
+		value: null,
+		selected: null
+	},
+
 	mount() {
-		this.bind = "assets"
+		this.bind = {
+			value: "assets",
+			selected: "cache/assets/selected"
+		}
 		this.handleAddAssetFunc = this.handleAddAsset.bind(this)
 		this.handleContextFunc = this.handleContext.bind(this)
 	},
@@ -160,7 +230,18 @@ const AssetPanel = component({
 				elementOpen("list", { class: "assets" })
 					for(let key in assets) {
 						const asset = assets[key]
-						componentVoid(Asset, { bind: `assets/${asset.meta.id}/meta` })
+						if(asset.meta.type === "Folder") {
+							componentVoid(Folder, { 
+								bind: {
+									value: `assets/${asset.meta.id}/meta`,
+									open: `assets/${asset.meta.id}/cache/open`,
+								}
+							})
+						}
+						else {
+							componentVoid(Asset, { bind: `assets/${asset.meta.id}/meta` })
+
+						}
 					}
 				elementClose("list")				
 			elementClose("content")
@@ -187,7 +268,7 @@ const HomeLayout = component({
 
 	mount() {
 		this.bind = {
-			assetId: "cache/assets/selected",
+			assetId: "cache/assets/opened",
 			loading: "state/project/loading"
 		}
 	},
@@ -197,13 +278,13 @@ const HomeLayout = component({
 			componentVoid(LoadingLayout)
 		}
 		else {
-			const id = this.$assetId
+			console.log(this.$assetId)
 		
 			elementOpen("layout")
 				componentVoid(Menu)
 	
 				elementOpen("workspace")
-					componentVoid(ContentPanel, { bind: `assets/${id}` })
+					componentVoid(ContentPanel, { bind: `assets/${this.$assetId}` })
 					componentVoid(AssetPanel)
 				elementClose("workspace")
 			elementClose("layout")

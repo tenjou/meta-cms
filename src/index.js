@@ -84,6 +84,10 @@ store.set("types", {
 		}
 	}
 })
+store.set("icons", {
+	Folder: "fas fa-folder",
+	Sheet: "fas fa-database"
+})
 store.set("column-types", Object.keys(store.data.types))
 store.set("state", {
 	project: {
