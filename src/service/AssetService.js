@@ -19,7 +19,6 @@ const open = (assetId) => {
 		store.set(`assets/${assetId}/cache/open`, !newAsset.cache.open)
 	}
 	else {
-		console.log("here", assetId)
 		store.set("cache/assets/opened", assetId)
 		location.hash = `${store.data.meta.id}/${assetId}`
 	}

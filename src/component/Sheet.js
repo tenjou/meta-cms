@@ -63,7 +63,7 @@ const SheetList = component({
 
 	handleAdd(event) {
 		const row = SchemaService.createRow(this.$value, this.$schema)
-		Commander.execute(new AddRowCommand(this.bind, row, false))
+		Commander.execute(new AddRowCommand(this.bind.value, row, false))
 	}	
 })
 
