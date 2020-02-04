@@ -29,8 +29,11 @@ const createProduction = (named) => {
     }
     for(let key in assets) {
         const asset = assets[key]
-        const schema = asset.meta.schema
-
+        const schema = asset.cache.schema
+		if(!schema) {
+			continue
+		}
+		
         let dictionaryKey = null
         for(let n = 0; n < schema.length; n++) {
             const entry = schema[n]
@@ -75,7 +78,7 @@ const cleanup = (data, options) => {
     const assets = data.assets
     for(let key in assets) {
 		const asset = assets[key]
-		const schema = asset.meta.schema
+		const schema = asset.cache.schema
 
         if(options.production) {
             const data = assets[key]
@@ -89,7 +92,7 @@ const cleanup = (data, options) => {
             for(let n = 0; n < data.length; n++) {
                 processAssetItem(data[n], schema)
             }
-            delete asset.meta.schemaCache
+            delete asset.cache.schemaCache
         }
     }
 }
@@ -138,4 +141,6 @@ const getUID = (schema) => {
 	return null
 }
 
-export { create }
+export default { 
+	create 
+}

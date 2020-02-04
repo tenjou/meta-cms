@@ -279,5 +279,7 @@ const fillCache = (data) => {
     }    
 }
 
-export { create, remove, rename, open, load, unload, save, fetch, createPopupShow, createPopupClose,
-	importJson }
+export default { 
+	create, remove, rename, open, load, unload, save, fetch, createPopupShow, createPopupClose,
+	importJson 
+}

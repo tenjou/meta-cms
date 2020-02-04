@@ -11,4 +11,7 @@ const closePopup = () => {
     store.set("state/popup", null)
 }
 
-export { openPopup, closePopup }
+export default { 
+	openPopup, 
+	closePopup 
+}

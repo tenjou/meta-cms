@@ -13,16 +13,16 @@ const sortKey = (a, b) => { return a.localeCompare(b) }
 
 const apply = (id, schema) => {
 	const asset = store.get(`assets/${id}`)
-	const meta = asset.meta
+	const cache = asset.cache
 
-	const schemaPrev = createSchemaCache(meta.schema)
+	const schemaPrev = createSchemaCache(cache.schema)
 	diff(asset.data, schema, schemaPrev)
-	meta.schema = populateSchema(schema)
-	meta.schemaCache = schema
+	cache.schema = populateSchema(schema)
+	cache.schemaCache = schema
 
 	updateBuffer(asset)
 	store.update(`assets/${id}/data`)
-	store.update(`assets/${id}/meta`)
+	store.update(`assets/${id}/cache`)
 }
 
 const diff = (asset, schema, schemaPrev) => {
@@ -550,7 +550,7 @@ const loadBuffer = (asset) => {
 		return
 	}
 	
-	const schema = asset.meta.schema
+	const schema = asset.cache.schema
 	let idKey = null
 
 	for(let n = 0; n < schema.length; n++) {
@@ -596,5 +596,7 @@ const emptySchemaCache = {
 	schema: createSchemaCache() 
 } 
 
-export { apply, createItem, createCache, createSchemaCache, createDefaultValue, createRow, isKeyUnique, moveBefore, rebuildBufferItem, rebuildRow,
-	loadBuffer, unloadBuffer, updateBuffer, getNamedBuffers }
+export default { 
+	apply, createItem, createCache, createSchemaCache, createDefaultValue, createRow, isKeyUnique, moveBefore, rebuildBufferItem, rebuildRow,
+	loadBuffer, unloadBuffer, updateBuffer, getNamedBuffers 
+}

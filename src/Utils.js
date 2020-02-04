@@ -17,6 +17,10 @@ const uuid4 = () => {
 }
 
 const cloneObj = (obj) => {
+	if(!obj) {
+		return null
+	}
+
 	if(Array.isArray(obj)) {
 		const result = []
 		
@@ -95,4 +99,6 @@ const hasItems = (obj) => {
 	return false
 }
 
-export { uuid4, cloneObj, readFile, hasItems }
+export default { 
+	uuid4, cloneObj, readFile, hasItems 
+}

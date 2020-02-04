@@ -13,8 +13,8 @@ import ContextMenu from "../component/ContextMenu"
 import Utils from "../Utils"
 
 const editSchema = (id) => {
-	const meta = store.get(`assets/${id}/meta`)
-	const schema = SchemaService.createSchemaCache(Utils.cloneObj(meta.schema))
+	const cache = store.get(`assets/${id}/cache`)
+	const schema = SchemaService.createSchemaCache(Utils.cloneObj(cache.schema))
 	store.set("cache/schema", { id, schema })
 
 	PopupService.openPopup("Edit schema", () => { 
@@ -73,7 +73,7 @@ const ContentPanel = component({
 								bind: {
 									value: `${this.bind}/data`,
 									cache: `${this.bind}/cache`,
-									schema: `${this.bind}/meta/schemaCache`
+									schema: `${this.bind}/cache/schemaCache`
 								}	
 							})
 							break

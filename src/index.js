@@ -118,7 +118,6 @@ window.addEventListener("keydown", (event) => {
 	}
 })
 
-
 // route("/", HomeLayout, () => {
 // 	const assetId = store.data.cache.assets.selected
 // 	const asset = store.get(`assets/${assetId}`)

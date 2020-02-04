@@ -76,7 +76,7 @@ const createCache = (type) => {
 const addRow = (id) => {
     const assetPath = `assets/${id}`
     const asset = store.get(assetPath)
-    const row = SchemaService.createRow(asset.data, asset.meta.schemaCache)
+    const row = SchemaService.createRow(asset.data, asset.cache.schemaCache)
     Commander.execute(new AddRowCommand(`${assetPath}/data`, row, true))
 }
 
@@ -160,7 +160,7 @@ const sort = (dataPath, cachePath, sortKey, type) => {
 	store.update(`${cachePath}/sortAsc`)
 }
 
-export { 
+export default { 
 	open, add, select, create, remove, addRow,
 	closeAll,
 	sort

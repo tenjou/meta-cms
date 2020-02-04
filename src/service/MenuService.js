@@ -117,7 +117,7 @@ const show = (id, data, event, x, y) => {
 	const menuProps = get(id)
 	if(!menuProps) { 
 		return false 
-	}	
+	}
 
 	const contextmenu = store.data.state.contextmenu
 	contextmenu.x = (x !== undefined) ? x : event.x
@@ -135,6 +135,6 @@ const hide = () => {
 	store.set("state/contextmenu/visible", false)
 }
 
-export {
+export default {
 	register, show, hide
 }
