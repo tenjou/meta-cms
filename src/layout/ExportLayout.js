@@ -19,22 +19,26 @@ const ExportLayout = component({
 			componentVoid(Menu)
 				elementOpen("export")
 					elementOpen("toolbar")
-						elementOpen("list")
-							if(Utils.isElectron()) {
-								this.renderComponent("directory", FileInput)
-							}	
-							this.renderComponent("minify", Checkbox)
-							this.renderComponent("production", Checkbox)
-							if(this.$value.production) {
-								this.renderComponent("named", Checkbox)
-							}
-						elementClose("list")
+						elementOpen("column")
+							elementOpen("list")
+								if(Utils.isElectron()) {
+									this.renderComponent("directory", FileInput)
+								}	
+								this.renderComponent("minify", Checkbox)
+								this.renderComponent("production", Checkbox)
+								if(this.$value.production) {
+									this.renderComponent("named", Checkbox)
+								}
+							elementClose("list")
+						elementClose("column")
 
-						elementOpen("buttons")
-							elementOpen("button", this.propsExport)
-								text("Export")
-							elementClose("button")		
-						elementClose("buttons")				
+						elementOpen("column")
+							elementOpen("buttons")
+								elementOpen("button", this.propsExport)
+									text("Export")
+								elementClose("button")		
+							elementClose("buttons")	
+						elementClose("column")
 					elementClose("toolbar")
 
 					elementOpen("content")
