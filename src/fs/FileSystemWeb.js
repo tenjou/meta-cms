@@ -279,9 +279,9 @@ const checkDirectory = function(name, onDone)
 		})
 }
 
-const readDirectory = function(name, onDone)
-{
-	fs.getDirectory(rootDir + name, {},
+const readDirectory = (name, onDone) => {
+	const srcPath = rootDir + name
+	fs.getDirectory(srcPath, {},
 		(dirEntry) =>
 		{
 			const dirReader = dirEntry.createReader()

@@ -8,6 +8,7 @@ import MenuService from "./service/MenuService"
 import FileSystem from "./fs/FileSystem"
 import Commander from "./Commander"
 import "./menu/AssetsMenu"
+import Utils from "./Utils"
 
 store.set("buffers", {})
 
@@ -141,13 +142,29 @@ const init = () => {
 const load = () => {
 	clearRoutes()
 	route(/#([0-9a-z]*)\/#export/, ExportLayout, (data) => {})		
-	route(/#([0-9a-z]*)\/([0-9a-z]*)/, HomeLayout, (data) => {})		
+	route(/#([0-9a-z]*)\/([0-9a-z]*)/, HomeLayout, (data) => {})
 	route(/#([0-9a-z]*)/, HomeLayout, (data) => {})	
 	route("/", ProjectLayout, (data) => {
 		ProjectService.unload()
 	})
 
-	ProjectService.load()
+	if(!Utils.isElectron()) {
+		const url = document.location.hash.slice(1)
+		const segments = url.split("/")
+		if(url.length > 0) {
+			const projectId = segments[0]
+			const assetId = (segments.length > 1) ? segments[1] : null
+			ProjectService.open(projectId, "", () => {
+				if(assetId) {
+					const asset = store.get(`assets/${assetId}`)
+					if(asset) {
+						document.location.hash = `${projectId}/${assetId}`
+						store.set("cache/assets/selected", assetId)
+					}	
+				}
+			})
+		}
+	}
 
 	// route(/#assets\/([0-9a-z]*)/, HomeLayout, (data) => {
 	// 	const assetId = data[0][1]

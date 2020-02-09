@@ -1,5 +1,8 @@
 import { store } from "wabi"
+import FileSystem from "../fs/FileSystem"
 import Utils from "../Utils"
+
+const defaultFileName = "db.json"
 
 const create = (options) => {
     const data = options.production ? createProduction(options.named) : createProject()
@@ -141,6 +144,13 @@ const getUID = (schema) => {
 	return null
 }
 
+const exportData = () => {
+	const options = store.data.cache.export
+	const data = create(options)
+	const targetPath = `${options.directory}/${defaultFileName}`
+	FileSystem.write(targetPath, data, (error) => {}, !!options.directory)
+}
+
 export default { 
-	create 
+	create, exportData
 }

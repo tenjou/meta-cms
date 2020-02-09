@@ -2,6 +2,7 @@ import { component, componentVoid, elementOpen, elementClose, text, elementVoid,
 import ProjectService from "../service/ProjectService"
 import Loader from "../component/Loader"
 import TextInput from "../component/TextInput"
+import FileInput from "../component/FileInput"
 import Word from "../component/Word"
 import Utils from "../Utils"
 
@@ -24,7 +25,7 @@ const CreateProjectWindow = component({
 			elementClose("header")
 
 			elementOpen("content")
-				elementOpen("form")
+				elementOpen("list", { class: "default" })
 					elementOpen("entry")
 						elementOpen("key")
 							text("Name")
@@ -38,7 +39,19 @@ const CreateProjectWindow = component({
 							// elementClose("error")
 						elementClose("value")
 					elementClose("entry")
-				elementClose("form")
+
+					if(Utils.isElectron()) {
+						elementOpen("entry")
+							elementOpen("key")
+								text("Directory")
+							elementClose("key")
+
+							elementOpen("value")
+								componentVoid(FileInput, { bind: "state/project/create/directory" })
+							elementClose("value")					
+						elementClose("entry")	
+					}
+				elementClose("list")
 
 				elementOpen("buttons")
 					elementOpen("button", this.propsCreate)
@@ -69,7 +82,7 @@ const ProjectItem = component({
 		elementOpen("item", this.props)
 			elementOpen("name")
 				componentVoid(Word, { bind: `${this.bind}/name`, $onchange: this.handleChangeFunc })
-			elementClose("name")
+			elementClose("name")		
 
 			elementOpen("button", this.propsRemove)
 				elementVoid("i", { class: "fas fa-times" })
@@ -106,6 +119,7 @@ const ProjectWindow = component({
 			projects: "state/project/data",
 			loading: "state/project/loading"
 		}
+		this.propsOpen = { class: "green", onclick: this.handleOpen.bind(this) }
 		this.propsCreate = { class: "green", onclick: this.handleCreate.bind(this) }
 		ProjectService.fetch()
 	},
@@ -141,12 +155,22 @@ const ProjectWindow = component({
 				}
 
 				elementOpen("buttons")
+					if(Utils.isElectron()) {
+						elementOpen("button", this.propsOpen)
+							text("Open")
+						elementClose("button")
+					}
+
 					elementOpen("button", this.propsCreate)
 						text("Create")
 					elementClose("button")
 				elementClose("buttons")
 			elementClose("content")
 		elementClose("window")		
+	},
+
+	handleOpen(event) {
+		ProjectService.openDirectory()
 	},
 
 	handleCreate(event) {

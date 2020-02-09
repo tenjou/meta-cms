@@ -41,20 +41,36 @@ button:active {
 
 buttons {
 	display: flex;
-	flex-direction: row-reverse;
+	justify-content: flex-end;
 }
-button.green {
+buttons button {
+	margin-right: 4px;
+}
+buttons button:last-child {
+	margin-right: 0;
+}
+button.default {
 	padding: 8px;
-	background: #4CAF50;
 	text-shadow: 0 0 2px #3c3c3c;
 	border-radius: 3px;
 	min-width: 80px;	
+}
+button.green {
+	background: #4CAF50;
+	padding: 8px;
+	text-shadow: 0 0 2px #3c3c3c;
+	border-radius: 3px;
+	min-width: 80px;		
+}
+button.black {
+	background: black;
 }
 
 select, input {
 	width: 100%;
 	height: 20px;
 	box-sizing: border-box;
+	min-width: 0;
 }
 input {
 	padding-left: 2px;
@@ -65,28 +81,45 @@ input[type="checkbox"] {
 	height: auto;
 	margin-top: 2px;
 }
-
-form {
-    margin-bottom: 10px;
-    padding: 4px 3px;
+input.hidden {
+	display: none;
 }
-form entry {
+
+file-input {
 	display: flex;
 }
-form entry key {
+file-input button.default {
+	min-width: 30px;
+	border-radius: 0;
+	padding: 5px;
+}
+
+list.default {
+	display: flex;
+    flex-direction: column;
+    padding-bottom: 6px;
+}
+list.default entry {
+	display: flex;
+	margin-bottom: 4px;
+}
+list.default entry:last-child {
+	margin-bottom: 0;
+}
+list.default entry key {
 	flex: 0 0 150px;
 	padding: 4px 4px 4px 0;
 	color: #e4e4e4;	
 }
-form entry value {
+list.default entry value {
 	flex: 1;
 }
-form entry error {
+list.default entry error {
 	color: #F44336;
 	padding: 3px;
 	display: block;
 }
-form input {
+list.default input {
 	border: none;
 	background: var(--input-background);
 	color: #d2d2d2;
@@ -95,7 +128,7 @@ form input {
 	box-sizing: border-box;
 	font-size: 12px;	
 }
-form input:focus {
+list.default input:focus {
 	outline: 1px solid #4CAF50;
 }
 
@@ -172,6 +205,9 @@ list a {
 list key {
 	flex: 0 0 40px;
 }
+list value {
+	flex: 1;
+}
 
 layout {
 	display: flex;
@@ -243,6 +279,7 @@ menu a.active {
 
 toolbar {
 	display: flex;
+	flex-direction: column;
 	background: #ccc;
 	margin: 2px;
 	padding: 3px;

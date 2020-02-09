@@ -3,22 +3,23 @@
 	"version": "0.1.0",
 	"description": "",
 	"author": "Arturs Šefers",
-	"main": "src/index.js",
+	"main": "desktop.js",
 	"type": "module",
 	"scripts": {
-		"build": "node_modules/.bin/build-replica src/index.js -i index.html -t -u",
-		"dev-wabi": "node_modules/.bin/build-replica src/index.js -i index.html -t -s 8030 8031 -si -l ../../libs/meta2d meta -l ../../libs/wabi",
-		"dev": "node ../replica-next/src/index.js src/index.js -i _index.html index.html -t -s 8030 8031",
-		"start": "electron .",
-		"build-win": "npm run build && electron-packager . MetaEditor --platform=win32 --arch=x64 --out=./dist --overwrite --ignore=/dist --ignore=/libs --ignore=/meta-engine --ignore=/node_modules --ignore=/src --ignore=README.md"
+		"build": "./node_modules/.bin/replica-next src/index.js -i _index.html index.html -t -m ../../libs/wabi",
+		"dev": "./node_modules/.bin/replica-next src/index.js -i _index.html index.html -t -w -s 8030 8031",
+		"dev-local": "node ../replica-next/src/index.js src/index.js -i _index.html index.html -t -w -s 8030 8031",
+		"start": "npm run build && electron .",
+		"build-win": "npm run build && electron-packager . MetaEditor --platform=win32 --arch=x64 --out=./dist --overwrite --ignore=/dist --ignore=/libs --ignore=/meta-engine --ignore=/node_modules --ignore=/src --ignore=_index.html --ignore=README.md"
 	},
 	"keywords": [],
 	"license": "MIT",
 	"dependencies": {
-		"replica-next": "*",
-		"wabi": "^0.10.10"
+		"replica-next": "^0.1.12",
+		"wabi": "^0.10.11"
 	},
 	"devDependencies": {
-		"electron": "^7.1.10"
+		"electron": "^7.1.10",
+		"electron-packager": "^14.2.0"
 	}
 }

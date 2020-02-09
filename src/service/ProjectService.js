@@ -4,7 +4,9 @@ import FileSystem from "../fs/FileSystem"
 import Commander from "../Commander"
 import Utils from "../Utils"
 
+const defaultFileName = "cms.json"
 let activeProject = null
+let activeDirectory = ""
 
 const create = () => {
 	const createData = store.data.state.project.create
@@ -21,25 +23,45 @@ const create = () => {
 				opened: null
 			},
 			export: {
+				directory: "",
 				minify: false,
 				production: false,
 				named: false
 			}
 		}
 	}
-	FileSystem.createDirectory(data.meta.id, (error, path) => {
-		if(error) {
-			console.error(error)
-			createPopupClose()
+
+	if(Utils.isElectron()) {
+		if(!createData.directory) {
 			return
 		}
-		FileSystem.write(`${data.meta.id}/db.json`, JSON.stringify(data), (error, path) => {
+
+		const filePath = `${createData.directory}/${defaultFileName}`
+
+		FileSystem.write(filePath, JSON.stringify(data), (error, path) => {
 			if(error) {
 				console.error(error)
 			}
 			createPopupClose()
 		})
-	})
+	}
+	else {
+		const filePath = data.meta.id
+
+		FileSystem.createDirectory(filePath, (error, path) => {
+			if(error) {
+				console.error(error)
+				createPopupClose()
+				return
+			}
+			FileSystem.write(`${filePath}/${defaultFileName}`, JSON.stringify(data), (error, path) => {
+				if(error) {
+					console.error(error)
+				}
+				createPopupClose()
+			})
+		})	
+	}
 }
 
 const remove = (id) => {
@@ -52,7 +74,7 @@ const remove = (id) => {
 	})
 }
 
-const rename = (id, name) => {
+const rename = (path, name) => {
 	FileSystem.read(path, (error, json) => {
 		if(error) {
 			console.error(error)
@@ -61,7 +83,7 @@ const rename = (id, name) => {
 		const data = JSON.parse(json)
 		data.meta.name = name
 
-		FileSystem.write(`${id}/db.json`, JSON.stringify(data), (error) => {
+		FileSystem.write(`${path}/${defaultFileName}`, JSON.stringify(data), (error) => {
 			if(error) {
 				console.error(error)
 				return
@@ -70,60 +92,67 @@ const rename = (id, name) => {
 	})
 }
 
-const open = (id) => {
-	if(activeProject) {
-		if(activeProject.meta.id === projectId) {
-			return
+const openDirectory = () => {
+	const remote = require("electron").remote
+	
+	remote.dialog.showOpenDialog({
+		properties: [ "openDirectory" ]
+	}).then((result) => {
+		const path = result.filePaths[0]
+		if(path) {
+			const fileName = `${path}/${defaultFileName}`
+			if(FileSystem.checkFile(fileName)) {
+				FileSystem.read(fileName, (error, contents) => {
+					if(!error) {
+						const projectMeta = JSON.parse(contents)
+						open(projectMeta.meta.id, path)
+					}
+				})
+			}
 		}
-	}
-	location.hash = id
-	load()
+	})
 }
 
-const load = (onLoad) => {
+const open = (projectId, directory = "", onDone = null) => {
 	store.set("state/project/loading", true)
 
-	const url = document.location.hash.slice(1)
-	const segments = url.split("/")
-	if(url.length > 0) {
-		const projectId = segments[0]
-		const assetId = (segments.length > 1) ? segments[1] : null
-		if(activeProject) {
-			if(activeProject.meta.id === projectId) {
-				return
-			}
-			unload()
+	if(!directory) {
+		directory = projectId
+	}
+
+	if(activeProject) {
+		if(activeProject.meta.id === projectId) {
+			document.location.hash = ""
+			store.set("state/project/loading", false)			
+			return
+		}
+		unload()
+	}
+
+	location.hash = projectId	
+	activeDirectory = directory
+
+	const srcPath = `${activeDirectory}/${defaultFileName}`
+	FileSystem.read(srcPath, (error, json) => {
+		if(error) {
+			console.error(error)
+			return
+		}
+		
+		const data = JSON.parse(json)
+		store.set("meta", data.meta)
+		store.set("assets", data.assets)
+		store.set("cache", data.cache)
+		activeProject = data
+
+		loadBuffers()	
+		
+		if(onDone) {
+			onDone()
 		}
 
-		FileSystem.read(`${projectId}/db.json`, (error, json) => {
-			if(error) {
-				console.error(error)
-				return
-			}	
-			
-			const data = JSON.parse(json)
-			store.set("meta", data.meta)
-			store.set("assets", data.assets)
-			store.set("cache", data.cache)
-			activeProject = data
-
-			loadBuffers()
-
-			if(assetId) {
-				const asset = store.get(`assets/${assetId}`)
-				if(asset) {
-					document.location.hash = `${projectId}/${assetId}`
-					store.set("cache/assets/selected", assetId)
-				}	
-			}			
-
-			store.set("state/project/loading", false)
-		})
-	}
-	else {
-		document.location.hash = ""
 		store.set("state/project/loading", false)
-	}
+	})
 }
 
 const loadBuffers = () => {
@@ -137,19 +166,21 @@ const loadBuffers = () => {
 const unload = () => {
 	save()
 	activeProject = null
+	activeDirectory = ""
 }
 
 const save = () => {
 	if(!activeProject) {
 		return
 	}
-	const rootPath = activeProject.meta.id
-	FileSystem.write(`${rootPath}/db.temp.json`, JSON.stringify(activeProject), (error, json) => {
+
+	const srcPath = `${activeDirectory}/${defaultFileName}`
+	FileSystem.write(`${srcPath}.tmp`, JSON.stringify(activeProject), (error, json) => {
 		if(error) {
 			console.error(error)
 			return
 		}
-		FileSystem.moveTo(`${rootPath}/db.temp.json`, `${rootPath}/db.json`, (error) => {
+		FileSystem.moveTo(`${srcPath}.tmp`, srcPath, (error) => {
 			if(error) {
 				console.error(error)
 				return
@@ -162,7 +193,11 @@ const save = () => {
 const fetch = () => {
 	store.set("state/project/loading", true)
 
-	if(!window.electron) {
+	if(Utils.isElectron()) {
+		const recent = localStorage.getItem("recent") || {}
+		handleFetch(recent)
+	}
+	else {	
 		FileSystem.readDirectory("", (error, data) => {
 			if(error) {
 				console.error("(Project.fetch) Error while reading root directory")
@@ -170,10 +205,6 @@ const fetch = () => {
 			}
 			fetchLocal(data, handleFetch)
 		})
-	}
-	else {	
-		// TODO: Electron project fetch
-		callback({})
 	}
 }
 
@@ -185,9 +216,11 @@ const fetchLocal = (data, onDone) => {
 	if(num > 0) {
 		for(let n = 0; n < num; n++) {
 			const item = data[n]
-			if(!item.isDirectory) { continue }
+			if(!item.isDirectory) { 
+				continue 
+			}
 
-			const projectDbFile = `${item.name}/db.json`
+			const projectDbFile = `${item.name}/${defaultFileName}`
 			numToLoad++
 
 			FileSystem.read(projectDbFile, (error, json) => {
@@ -208,11 +241,15 @@ const fetchLocal = (data, onDone) => {
 				if(numToLoad === 0) {
 					if(onDone) {
 						onDone(projects)
-					}					
-
+					}
 				}
 			})
 		}
+		if(numToLoad === 0) {
+			if(onDone) {
+				onDone(projects)
+			}
+		}		
 	}
 	else {
 		if(onDone) {
@@ -228,7 +265,8 @@ const handleFetch = (projects) => {
 
 const createPopupShow = () => {
 	store.set("state/project/create", {
-		name: "Project"
+		name: "Project",
+		directory: ""
 	})
 }
 
@@ -280,6 +318,6 @@ const fillCache = (data) => {
 }
 
 export default { 
-	create, remove, rename, open, load, unload, save, fetch, createPopupShow, createPopupClose,
+	create, remove, rename, open, openDirectory, unload, save, fetch, createPopupShow, createPopupClose,
 	importJson 
 }
