@@ -9,12 +9,12 @@ const createWindow = function() {
 	const win = new BrowserWindow({ 
 		width: 1300, 
 		height: 820,
+		backgroundColor: "#fff",
         webPreferences: {
             nodeIntegration: true
         }
 	})
-
-	win.setMenu(null)
+	win.setMenuBarVisibility(false)
 	win.loadURL(
 		url.format({
 			pathname: path.join(__dirname, "index.html"),
@@ -22,7 +22,7 @@ const createWindow = function() {
 			slashes: true
 		}))
 
-	win.webContents.openDevTools()
+	// win.webContents.openDevTools()
 	win.on("closed", () => {})
 }
 
