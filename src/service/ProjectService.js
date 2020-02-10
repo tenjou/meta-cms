@@ -283,10 +283,13 @@ const importJson = (json) => {
         for(let key in assets) {
             const asset = assets[key]
 			const data = asset.data
-			asset.cache = SchemaService.createCache()
-			asset.cache.schema = asset.meta.schema
-            asset.cache.schemaCache = SchemaService.createSchemaCache(asset.meta.schema)
-            fillCache(data)
+			if(!asset.cache) {
+				asset.cache = SchemaService.createCache()
+				asset.cache.schema = asset.meta.schema
+				asset.cache.schemaCache = SchemaService.createSchemaCache(asset.meta.schema)
+				fillCache(data)
+			}
+
             SchemaService.updateBuffer(asset)
 		}
 
