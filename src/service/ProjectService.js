@@ -289,7 +289,6 @@ const importJson = (json) => {
 				asset.cache.schemaCache = SchemaService.createSchemaCache(asset.meta.schema)
 				fillCache(data)
 			}
-
             SchemaService.updateBuffer(asset)
 		}
 

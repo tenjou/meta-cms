@@ -17,7 +17,7 @@ const NumberInput = component({
             min: this.$min,
             max: this.$max,
             onchange: this.handleChangeFunc,
-        }).element
+        })
         element.value = this.$value
     },
 

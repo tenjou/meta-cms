@@ -270,7 +270,7 @@ const Sheet = component({
 				elementVoid("field", propsFieldButton)
 			elementClose("head")
 
-			const element = elementOpen("content").element
+			const element = elementOpen("content")
 				for(let n = 0; n < items.length; n++) {
 					componentVoid(SheetRow, { 
 						bind: {

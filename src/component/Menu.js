@@ -14,7 +14,7 @@ const Menu = component({
 
 	render() {
 		elementOpen("menu")
-			const uploadElement = elementVoid("input", this.propsUpload).element
+			const uploadElement = elementVoid("input", this.propsUpload)
 
 			this.renderItem("", "Home")
 			this.renderAction("export", () => {

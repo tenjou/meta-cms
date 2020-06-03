@@ -40,7 +40,7 @@ const createProduction = (named) => {
         let dictionaryKey = null
         for(let n = 0; n < schema.length; n++) {
             const entry = schema[n]
-            if(entry.type === "UID") {
+            if(entry.type === "UID" || entry.type === "GUID") {
                 dictionaryKey = entry.key
                 break
             }

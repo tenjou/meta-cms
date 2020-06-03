@@ -19,7 +19,7 @@ const FloatInput = component({
             max: this.$max,
             step: this.$step,
             onchange: this.handleChangeFunc,
-        }).element
+        })
         element.value = this.$value
     },
 

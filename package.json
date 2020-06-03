@@ -6,7 +6,7 @@
 	"main": "desktop.js",
 	"type": "module",
 	"scripts": {
-		"build": "./node_modules/.bin/replica-next src/index.js -i _index.html index.html -t -m ../../libs/wabi",
+		"build": "./node_modules/.bin/replica-next src/index.js -i _index.html index.html -t",
 		"dev": "./node_modules/.bin/replica-next src/index.js -i _index.html index.html -t -w -s 8030 8031",
 		"dev-local": "node ../replica-next/src/index.js src/index.js -i _index.html index.html -t -w -s 8030 8031",
 		"start": "npm run build && electron .",
@@ -15,11 +15,11 @@
 	"keywords": [],
 	"license": "MIT",
 	"dependencies": {
-		"replica-next": "^0.1.12",
-		"wabi": "^0.10.11"
+		"replica-next": "^0.1.13",
+		"wabi": "*"
 	},
 	"devDependencies": {
-		"electron": "^7.1.10",
-		"electron-packager": "^14.2.0"
+		"electron": "^7.1.12",
+		"electron-packager": "^14.2.1"
 	}
 }

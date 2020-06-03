@@ -22,7 +22,7 @@ const createWindow = function() {
 			slashes: true
 		}))
 
-	// win.webContents.openDevTools()
+	win.webContents.openDevTools()
 	win.on("closed", () => {})
 }
 

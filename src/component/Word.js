@@ -33,8 +33,8 @@ const Word = component({
 			}, this.attr)		
 		}
 
-		this.word = elementOpen("word", attr).element
-		this.word.innerHTML = this.$value
+		this.word = elementOpen("word", attr)
+			text(this.$value)
 		elementClose("word")
 
 		if(this.$.editing) {

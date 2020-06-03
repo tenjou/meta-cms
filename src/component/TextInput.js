@@ -6,7 +6,7 @@ const TextInput = component({
     },
 
     render() {
-        const element = elementVoid("input", this.props).element
+        const element = elementVoid("input", this.props)
         element.value = this.$value
     },
 

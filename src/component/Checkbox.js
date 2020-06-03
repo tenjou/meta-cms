@@ -6,7 +6,7 @@ const Checkbox = component({
     },
 
     render() {
-        const element = elementVoid("input", this.props).element
+        const element = elementVoid("input", this.props)
         element.checked = this.$value
     },
 

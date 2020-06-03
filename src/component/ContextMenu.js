@@ -83,7 +83,7 @@ const ContextMenu = component({
 				left: `${data.x}px`,
 				top: `${data.y}px`
 			}
-		}).element
+		})
 			componentVoid(ContextMenuInner, { $value: data.props })
 		elementClose("contextmenu")
 

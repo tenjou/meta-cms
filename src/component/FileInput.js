@@ -15,7 +15,7 @@ const FileInput = component({
 
     render() {
 		elementOpen("file-input")
-			const element = elementVoid("input", this.props).element
+			const element = elementVoid("input", this.props)
 			element.value = this.$value
 
 			elementOpen("button", this.propsButton)
