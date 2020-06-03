@@ -108,7 +108,7 @@ const processAssetItem = (item, schema) => {
 		switch(propertySchema.type) {
 			case "List": {
 				const properties = item[propertySchema.key]
-				const uidKey = getUID(propertySchema.schema)
+				const uidKey = getIdKey(propertySchema.schema)
 				if(uidKey) {
 					const dict = {}
 					item[propertySchema.key] = dict
@@ -134,10 +134,10 @@ const processAssetItem = (item, schema) => {
 	}
 }
 
-const getUID = (schema) => {
+const getIdKey = (schema) => {
 	for(let n = 0; n < schema.length; n++) {
 		const item = schema[n]
-		if(item.type === "UID") {
+		if(item.type === "UID" || item.type === "GUID") {
 			return item.key
 		}
 	}
